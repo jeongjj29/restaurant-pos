@@ -20,3 +20,28 @@ class User(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f"<User {self.id}: {self.username} | Name: {self.first_name} {self.last_name} | Role: {self.role}>"
+
+
+class Role(db.Model, SerializerMixin):
+    __tablename__ = "roles"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    access_level = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"<Role {self.id}: {self.name} | Access Level: {self.access_level}>"
+
+
+class Order(db.Model, SerializerMixin):
+    __tablename__ = "orders"
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String, nullable=False)
+    guests = db.Column(db.Integer, nullable=True)
+    total_price = db.Column(db.Float, default=0.0)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    table_id = db.Column(db.Integer, db.ForeignKey("tables.id"))
+    created_at = db.Column(db.DateTime, default=db.func.now())
+    closed_at = db.Column(db.DateTime, nullable=True)
+
+    def __repr__(self):
+        return f"<Order {self.id}: {self.type}>"

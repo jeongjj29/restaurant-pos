@@ -6,6 +6,7 @@ from config import db
 
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     first_name = db.Column(db.String, nullable=False)
@@ -24,6 +25,7 @@ class User(db.Model, SerializerMixin):
 
 class Role(db.Model, SerializerMixin):
     __tablename__ = "roles"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     access_level = db.Column(db.Integer, nullable=False)
@@ -34,10 +36,12 @@ class Role(db.Model, SerializerMixin):
 
 class Order(db.Model, SerializerMixin):
     __tablename__ = "orders"
+
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String, nullable=False)
     guests = db.Column(db.Integer, nullable=True)
     total_price = db.Column(db.Float, default=0.0)
+    status = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     table_id = db.Column(db.Integer, db.ForeignKey("tables.id"))
     created_at = db.Column(db.DateTime, default=db.func.now())
@@ -49,9 +53,22 @@ class Order(db.Model, SerializerMixin):
 
 class Table(db.Model, SerializerMixin):
     __tablename__ = "tables"
+
     id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.Integer, nullable=False)
     capacity = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return f"<Table {self.id}: {self.name} | Capacity: {self.capacity}>"
+
+
+class Payment(db.Model, SerializerMixin):
+    __tablename__ = "payments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Float, nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
+    payment_type = db.Column(db.String, nullable=False)
+
+    def __repr__(self):
+        return f"<Payment {self.id} | {self.payment_type} ${self.amount}>"

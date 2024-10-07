@@ -47,7 +47,7 @@ class Order(db.Model, SerializerMixin):
         return f"<Order {self.id}: {self.type}>"
 
 
-class tables(db.Model, SerializerMixin):
+class Table(db.Model, SerializerMixin):
     __tablename__ = "tables"
     id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.Integer, nullable=False)

@@ -45,3 +45,13 @@ class Order(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f"<Order {self.id}: {self.type}>"
+
+
+class tables(db.Model, SerializerMixin):
+    __tablename__ = "tables"
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer, nullable=False)
+    capacity = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"<Table {self.id}: {self.name} | Capacity: {self.capacity}>"

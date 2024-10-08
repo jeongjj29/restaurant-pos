@@ -1,8 +1,12 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import validates
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import Enum
+import re
 
-from config import db
+from config import db, bcrypt
+
 
 ORDER_STATUS = ["open", "closed"]
 ORDER_TYPE = ["dine_in", "take_out"]
@@ -32,8 +36,32 @@ class User(db.Model, SerializerMixin):
     @validates("username")
     def validate_username(self, key, username):
         if len(username) < 3:
-            raise AssertionError("Username must be at least 3 characters long")
+            raise ValueError("Username must be at least 3 characters long")
         return username
+
+    @validates("first_name", "last_name")
+    def validate_name(self, key, name):
+        if len(name) < 3:
+            raise ValueError("Name must be at least 3 characters long")
+        return name
+
+    @validates("email")
+    def validate_email(self, key, email):
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            raise ValueError("Invalid email address")
+        return email
+
+    @hybrid_property
+    def password_hash(self):
+        return self._password_hash
+
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = bcrypt.generate_password_hash(password.encode("utf-8"))
+        self._password_hash = password_hash.decode("utf-8")
+
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password.encode("utf-8"))
 
     def __repr__(self):
         return f"<User {self.id}: {self.username} | Name: {self.first_name} {self.last_name} | Role: {self.role}>"
@@ -58,10 +86,10 @@ class Order(db.Model, SerializerMixin):
     __tablename__ = "orders"
 
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String, nullable=False)
+    type = db.Column(Enum(*ORDER_TYPE), nullable=False)
     guests = db.Column(db.Integer, nullable=True)
     total_price = db.Column(db.Float, default=0.0)
-    status = db.Column(db.String, nullable=False)
+    status = db.Column(Enum(*ORDER_STATUS), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     table_id = db.Column(db.Integer, db.ForeignKey("tables.id"))
     created_at = db.Column(db.DateTime, default=db.func.now())
@@ -99,7 +127,7 @@ class Table(db.Model, SerializerMixin):
     serialize_rules = ("-orders.table", "-orders.user", "-role.users", "-tables.user")
 
     def __repr__(self):
-        return f"<Table {self.id}: {self.name} | Capacity: {self.capacity}>"
+        return f"<Table {self.id}: {self.number} | Capacity: {self.capacity}>"
 
 
 class Payment(db.Model, SerializerMixin):
@@ -163,7 +191,7 @@ class MenuItem(db.Model, SerializerMixin):
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=False)
 
     order_items = db.relationship("OrderItem", back_populates="menu_item")
-    category = db.relationship("MenuCategory", back_populates="menu_items")
+    menu_category = db.relationship("MenuCategory", back_populates="menu_items")
 
     serialize_rules = (
         "-order_items.menu_item",
@@ -178,7 +206,7 @@ class MenuItem(db.Model, SerializerMixin):
 
 
 class MenuCategory(db.Model, SerializerMixin):
-    __tablename__ = "categories"
+    __tablename__ = "menu_categories"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)

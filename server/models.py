@@ -84,3 +84,43 @@ class OrderItem(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f"<OrderItem {self.id} | {self.order} | {self.item}>"
+
+
+class Discounts(db.Model, SerializerMixin):
+    __tablename__ = "discounts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return f"<Discount {self.id} | {self.name}: ${self.amount}>"
+
+
+class MenuItem(db.Model, SerializerMixin):
+    __tablename__ = "menu_items"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    secondary_name = db.Column(db.String, nullable=True)
+    description = db.Column(db.String, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    image = db.Column(db.String, nullable=True)
+    is_vegetarian = db.Column(db.Boolean, default=False, nullable=False)
+    is_gluten_free = db.Column(db.Boolean, default=False, nullable=False)
+    is_vegan = db.Column(db.Boolean, default=False, nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=False)
+
+    def __repr__(self):
+        return f"<MenuItem {self.id} | {self.name}: ${self.price}>"
+
+
+class MenuCategory(db.Model, SerializerMixin):
+    __tablename__ = "categories"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    secondary_name = db.Column(db.String, nullable=True)
+
+    def __repr__(self):
+        return f"<MenuCategory {self.id} | {self.name}>"

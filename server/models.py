@@ -71,4 +71,16 @@ class Payment(db.Model, SerializerMixin):
     payment_type = db.Column(db.String, nullable=False)
 
     def __repr__(self):
-        return f"<Payment {self.id} | {self.payment_type} ${self.amount}>"
+        return f"<Payment {self.id} | {self.payment_type}: ${self.amount}>"
+
+
+class OrderItem(db.Model, SerializerMixin):
+    __tablename__ = "order_items"
+
+    id = db.Column(db.Integer, primary_key=True)
+    quantity = db.Column(db.Integer, nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
+    menu_item_id = db.Column(db.Integer, db.ForeignKey("menu_items.id"), nullable=False)
+
+    def __repr__(self):
+        return f"<OrderItem {self.id} | {self.order} | {self.item}>"

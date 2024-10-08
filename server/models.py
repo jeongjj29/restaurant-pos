@@ -2,7 +2,6 @@ from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import Enum
 import re
 
 from config import db, bcrypt
@@ -10,6 +9,7 @@ from config import db, bcrypt
 
 ORDER_STATUS = ["open", "closed"]
 ORDER_TYPE = ["dine_in", "take_out"]
+PAYMENT_TYPE = ["cash", "card"]
 
 
 class User(db.Model, SerializerMixin):
@@ -29,7 +29,6 @@ class User(db.Model, SerializerMixin):
 
     role = db.relationship("Role", back_populates="users")
     orders = db.relationship("Order", back_populates="user")
-    tables = association_proxy("orders", "table")
 
     serialize_rules = ("-orders.table", "-orders.user", "-role.users", "-tables.user")
 
@@ -78,6 +77,18 @@ class Role(db.Model, SerializerMixin):
 
     serialize_rules = ("-users.role",)
 
+    @validates("name")
+    def validate_name(self, key, name):
+        if len(name) < 3:
+            raise ValueError("Name must be at least 3 characters long")
+        return name
+
+    @validates("access_level")
+    def validate_access_level(self, key, access_level):
+        if access_level not in [1, 2, 3, 4, 5]:
+            raise ValueError("Invalid access level")
+        return access_level
+
     def __repr__(self):
         return f"<Role {self.id}: {self.name} | Access Level: {self.access_level}>"
 
@@ -86,10 +97,11 @@ class Order(db.Model, SerializerMixin):
     __tablename__ = "orders"
 
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(Enum(*ORDER_TYPE), nullable=False)
-    guests = db.Column(db.Integer, nullable=True)
+    type = db.Column(db.String, nullable=False)
+    guests = db.Column(db.Integer, default=0)
     total_price = db.Column(db.Float, default=0.0)
-    status = db.Column(Enum(*ORDER_STATUS), nullable=False)
+    status = db.Column(db.String, nullable=False)
+    sales_tax = db.Column(db.Float, default=0.08875)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     table_id = db.Column(db.Integer, db.ForeignKey("tables.id"))
     created_at = db.Column(db.DateTime, default=db.func.now())
@@ -99,7 +111,6 @@ class Order(db.Model, SerializerMixin):
     table = db.relationship("Table", back_populates="orders")
     order_items = db.relationship("OrderItem", back_populates="order")
     payments = db.relationship("Payment", back_populates="order")
-    menu_items = association_proxy("order_items", "menu_item")
 
     serialize_rules = (
         "-user.orders",
@@ -108,6 +119,24 @@ class Order(db.Model, SerializerMixin):
         "-payments.order",
         "-menu_items.order",
     )
+
+    @validates("type")
+    def validate_type(self, key, type):
+        if type not in ORDER_TYPE:
+            raise ValueError("Invalid order type")
+        return type
+
+    @validates("guests", "total_price")
+    def validate_guests(self, key, guests):
+        if guests < 0:
+            raise ValueError("Invalid number of guests")
+        return guests
+
+    @validates("status")
+    def validate_status(self, key, status):
+        if status not in ORDER_STATUS:
+            raise ValueError("Invalid order status")
+        return status
 
     def __repr__(self):
         return f"<Order {self.id}: {self.type}>"
@@ -126,6 +155,33 @@ class Table(db.Model, SerializerMixin):
 
     serialize_rules = ("-orders.table", "-orders.user", "-role.users", "-tables.user")
 
+    @validates("number", "capacity")
+    def validate_values(self, key, value):
+        if value < 1:
+            raise ValueError("Invalid table {key}")
+        return value
+
+    @validates("location_x", "location_y")
+    def validate_location(self, key, value):
+        if not (self.location_x and self.location_y):
+            raise ValueError(
+                "Both location_x and location_y must be set or both must be null"
+            )
+        if value is not None:
+            if not (0 <= value <= 50):
+                raise ValueError("Location must be between 0 and 50")
+
+        overlapping_table = Table.query.filter(
+            Table.location_x == self.location_x,
+            Table.location_y == self.location_y,
+            Table.id != self.id,
+        ).first()
+
+        if overlapping_table:
+            raise ValueError("Location is already occupied by another table")
+
+        return value
+
     def __repr__(self):
         return f"<Table {self.id}: {self.number} | Capacity: {self.capacity}>"
 
@@ -136,14 +192,26 @@ class Payment(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
-    payment_type = db.Column(db.String, nullable=False)
+    type = db.Column(db.String, nullable=False)
 
     order = db.relationship("Order", back_populates="payments")
 
     serialize_rules = ("-order.payments", "-order.user", "-role.users", "-tables.user")
 
+    @validates("amount")
+    def validate_amount(self, key, amount):
+        if amount < 0:
+            raise ValueError("Invalid payment amount")
+        return amount
+
+    @validates("type")
+    def validate_type(self, key, type):
+        if type not in PAYMENT_TYPE:
+            raise ValueError("Invalid payment type")
+        return type
+
     def __repr__(self):
-        return f"<Payment {self.id} | {self.payment_type}: ${self.amount}>"
+        return f"<Payment {self.id} | {self.type}: ${self.amount}>"
 
 
 class OrderItem(db.Model, SerializerMixin):
@@ -151,6 +219,8 @@ class OrderItem(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    discount_id = db.Column(db.Integer, db.ForeignKey("discounts.id"), nullable=True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
     menu_item_id = db.Column(db.Integer, db.ForeignKey("menu_items.id"), nullable=False)
 
@@ -164,8 +234,20 @@ class OrderItem(db.Model, SerializerMixin):
         "-tables.user",
     )
 
+    @validates("quantity")
+    def validate_quantity(self, key, quantity):
+        if quantity < 1:
+            raise ValueError("Invalid quantity")
+        return quantity
+
+    @validates("price")
+    def validate_price(self, key, price):
+        if price < 0:
+            raise ValueError("Invalid price")
+        return price
+
     def __repr__(self):
-        return f"<OrderItem {self.id} | {self.order} | {self.item}>"
+        return f"<OrderItem {self.id} | {self.order} | {self.menu_item}>"
 
 
 class Discounts(db.Model, SerializerMixin):
@@ -175,6 +257,18 @@ class Discounts(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False)
     amount = db.Column(db.Float, nullable=False)
 
+    @validates("name")
+    def validate_name(self, key, name):
+        if len(name) < 3:
+            raise ValueError("Name must be at least 3 characters long")
+        return name
+
+    @validates("amount")
+    def validate_amount(self, key, amount):
+        if not (0 < amount <= 1):
+            raise ValueError("Invalid discount amount")
+        return amount
+
     def __repr__(self):
         return f"<Discount {self.id} | {self.name}: ${self.amount}>"
 
@@ -183,12 +277,14 @@ class MenuItem(db.Model, SerializerMixin):
     __tablename__ = "menu_items"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False, unique=True)
     secondary_name = db.Column(db.String, nullable=True)
     description = db.Column(db.String, nullable=False)
     price = db.Column(db.Float, nullable=False)
     image = db.Column(db.String, nullable=True)
-    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=False)
+    category_id = db.Column(
+        db.Integer, db.ForeignKey("menu_categories.id"), nullable=False
+    )
 
     order_items = db.relationship("OrderItem", back_populates="menu_item")
     menu_category = db.relationship("MenuCategory", back_populates="menu_items")
@@ -201,6 +297,18 @@ class MenuItem(db.Model, SerializerMixin):
         "-tables.user",
     )
 
+    @validates("name")
+    def validate_name(self, key, name):
+        if len(name) < 3:
+            raise ValueError("Name must be at least 3 characters long")
+        return name
+
+    @validates("price")
+    def validate_price(self, key, price):
+        if price < 0:
+            raise ValueError("Invalid price")
+        return price
+
     def __repr__(self):
         return f"<MenuItem {self.id} | {self.name}: ${self.price}>"
 
@@ -209,10 +317,10 @@ class MenuCategory(db.Model, SerializerMixin):
     __tablename__ = "menu_categories"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False, unique=True)
     secondary_name = db.Column(db.String, nullable=True)
 
-    menu_items = db.relationship("MenuItem", back_populates="category")
+    menu_items = db.relationship("MenuItem", back_populates="menu_category")
 
     serialize_rules = (
         "-menu_items.category",
@@ -221,6 +329,12 @@ class MenuCategory(db.Model, SerializerMixin):
         "-role.users",
         "-tables.user",
     )
+
+    @validates("name")
+    def validate_name(self, key, name):
+        if len(name) < 3:
+            raise ValueError("Name must be at least 3 characters long")
+        return name
 
     def __repr__(self):
         return f"<MenuCategory {self.id} | {self.name}>"

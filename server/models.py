@@ -28,8 +28,6 @@ class User(db.Model, SerializerMixin):
 
     serialize_rules = ("-orders.table", "-orders.user", "-role.users", "-tables.user")
 
-
-
     def __repr__(self):
         return f"<User {self.id}: {self.username} | Name: {self.first_name} {self.last_name} | Role: {self.role}>"
 
@@ -67,6 +65,14 @@ class Order(db.Model, SerializerMixin):
     order_items = db.relationship("OrderItem", back_populates="order")
     payments = db.relationship("Payment", back_populates="order")
     menu_items = association_proxy("order_items", "menu_item")
+
+    serialize_rules = (
+        "-user.orders",
+        "-table.orders",
+        "-order_items.order",
+        "-payments.order",
+        "-menu_items.order",
+    )
 
     def __repr__(self):
         return f"<Order {self.id}: {self.type}>"
@@ -116,7 +122,12 @@ class OrderItem(db.Model, SerializerMixin):
     order = db.relationship("Order", back_populates="order_items")
     menu_item = db.relationship("MenuItem", back_populates="order_items")
 
-    serialize_rules = ("-order.order_items", "-order.user", "-role.users", "-tables.user")
+    serialize_rules = (
+        "-order.order_items",
+        "-order.user",
+        "-role.users",
+        "-tables.user",
+    )
 
     def __repr__(self):
         return f"<OrderItem {self.id} | {self.order} | {self.item}>"
@@ -145,9 +156,15 @@ class MenuItem(db.Model, SerializerMixin):
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=False)
 
     order_items = db.relationship("OrderItem", back_populates="menu_item")
-    category = db.relationship("MenuCategory", back_populates="menu_items")+
+    category = db.relationship("MenuCategory", back_populates="menu_items")
 
-    serialize_rules = ("-order_items.menu_item", "-order_items.order", "-order.user", "-role.users", "-tables.user")
+    serialize_rules = (
+        "-order_items.menu_item",
+        "-order_items.order",
+        "-order.user",
+        "-role.users",
+        "-tables.user",
+    )
 
     def __repr__(self):
         return f"<MenuItem {self.id} | {self.name}: ${self.price}>"
@@ -161,8 +178,14 @@ class MenuCategory(db.Model, SerializerMixin):
     secondary_name = db.Column(db.String, nullable=True)
 
     menu_items = db.relationship("MenuItem", back_populates="category")
-    
-    serialize_rules = ("-menu_items.category", "-menu_items.order", "-order.user", "-role.users", "-tables.user")
+
+    serialize_rules = (
+        "-menu_items.category",
+        "-menu_items.order",
+        "-order.user",
+        "-role.users",
+        "-tables.user",
+    )
 
     def __repr__(self):
         return f"<MenuCategory {self.id} | {self.name}>"

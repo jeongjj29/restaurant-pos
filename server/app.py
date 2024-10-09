@@ -126,6 +126,7 @@ class OrdersById(Resource):
         return make_response({}, 204)
 
 
+# Table Routes
 class Tables(Resource):
     def get(self):
         tables = [table.to_dict() for table in Table.query.all()]
@@ -159,6 +160,7 @@ class TablesById(Resource):
         return make_response({}, 204)
 
 
+# Payment Routes
 class Payments(Resource):
     def get(self):
         payments = [payment.to_dict() for payment in Payment.query.all()]
@@ -192,6 +194,7 @@ class PaymentsById(Resource):
         return make_response({}, 204)
 
 
+# OrderItem Routes
 class OrderItems(Resource):
     def get(self):
         order_items = [order_item.to_dict() for order_item in OrderItem.query.all()]
@@ -225,6 +228,7 @@ class OrderItemsById(Resource):
         return make_response({}, 204)
 
 
+# Discount Routes
 class Discounts(Resource):
     def get(self):
         discounts = [discount.to_dict() for discount in Discount.query.all()]
@@ -258,6 +262,7 @@ class DiscountsById(Resource):
         return make_response({}, 204)
 
 
+# Menu Item Routes
 class MenuItems(Resource):
     def get(self):
         menu_items = [menu_item.to_dict() for menu_item in MenuItem.query.all()]
@@ -291,6 +296,7 @@ class MenuItemsById(Resource):
         return make_response({}, 204)
 
 
+# Menu Category Routes
 class MenuCategories(Resource):
     def get(self):
         menu_categories = [
@@ -334,6 +340,12 @@ api.add_resource(RolesById, "/roles/<int:id>")
 
 api.add_resource(Orders, "/orders")
 api.add_resource(OrdersById, "/orders/<int:id>")
+
+api.add_resource(Tables, "/tables")
+api.add_resource(TablesById, "/tables/<int:id>")
+
+api.add_resource(Payments, "/payments")
+api.add_resource(PaymentsById, "/payments/<int:id>")
 
 api.add_resource(OrderItems, "/order_items")
 api.add_resource(OrderItemsById, "/order_items/<int:id>")

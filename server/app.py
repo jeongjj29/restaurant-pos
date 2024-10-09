@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response
+from flask import request, make_response, session, abort
 from flask_restful import Resource
 
 # Local imports
@@ -17,7 +17,41 @@ from models import *
 
 @app.route("/")
 def index():
-    return "<h1>Project Server</h1>"
+    return "<h1>Restaurant Server</h1>"
+
+
+# Login
+class Login(Resource):
+    def post(self):
+        data = request.get_json()
+
+        username = data.get("username")
+        password = data.get("password")
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and user.authenticate(password):
+            session["user_id"] = user.id
+
+            return make_response({"message": "Login successful"}, 200)
+        else:
+            return make_response({"message": "Invalid credentials"}, 401)
+
+
+# Logout
+class Logout(Resource):
+    def delete(self):
+        session["user_id"] = None
+        return make_response({"message": "Logout successful"}, 200)
+
+
+class AuthorizedSession(Resource):
+    def get(self):
+        try:
+            user = User.query.filter_by(id=session["user_id"]).first()
+            return make_response(user.to_dict(), 200)
+        except:
+            abort(401, "Unauthorized")
 
 
 # User Routes
@@ -358,6 +392,10 @@ api.add_resource(MenuItemsById, "/menu_items/<int:id>")
 
 api.add_resource(MenuCategories, "/menu_categories")
 api.add_resource(MenuCategoriesById, "/menu_categories/<int:id>")
+
+api.add_resource(Login, "/login")
+api.add_resource(Logout, "/logout")
+api.add_resource(AuthorizedSession, "/authorized")
 
 
 if __name__ == "__main__":

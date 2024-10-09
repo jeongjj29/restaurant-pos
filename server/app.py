@@ -88,6 +88,12 @@ class UsersById(Resource):
         return make_response({}, 204)
 
 
+class UsersByRoleId(Resource):
+    def get(self, id):
+        users = [user.to_dict() for user in User.query.filter_by(role_id=id).all()]
+        return make_response(users, 200)
+
+
 # Role Routes
 class Roles(Resource):
     def get(self):
@@ -158,6 +164,12 @@ class OrdersById(Resource):
         db.session.delete(order)
         db.session.commit()
         return make_response({}, 204)
+
+
+class OrdersByUserId(Resource):
+    def get(self, id):
+        orders = [order.to_dict() for order in Order.query.filter_by(user_id=id).all()]
+        return make_response(orders, 200)
 
 
 # Table Routes
@@ -260,6 +272,15 @@ class OrderItemsById(Resource):
         db.session.delete(order_item)
         db.session.commit()
         return make_response({}, 204)
+
+
+class OrderItemsByOrderId(Resource):
+    def get(self, id):
+        order_items = [
+            order_item.to_dict()
+            for order_item in OrderItem.query.filter_by(order_id=id).all()
+        ]
+        return make_response(order_items, 200)
 
 
 # Discount Routes
@@ -366,14 +387,26 @@ class MenuCategoriesById(Resource):
         return make_response({}, 204)
 
 
+class MenuItemsByMenuCategoryId(Resource):
+    def get(self, id):
+        menu_items = [
+            item.to_dict()
+            for item in MenuItem.query.filter_by(menu_category_id=id).all()
+        ]
+        return make_response(menu_items, 200)
+
+
 api.add_resource(Users, "/users")
 api.add_resource(UsersById, "/users/<int:id>")
+api.add_resource(OrdersByUserId, "/users/<int:id>/orders")
 
 api.add_resource(Roles, "/roles")
 api.add_resource(RolesById, "/roles/<int:id>")
+api.add_resource(UsersByRoleId, "/roles/<int:id>/users")
 
 api.add_resource(Orders, "/orders")
 api.add_resource(OrdersById, "/orders/<int:id>")
+api.add_resource(OrderItemsByOrderId, "/orders/<int:id>/order_items")
 
 api.add_resource(Tables, "/tables")
 api.add_resource(TablesById, "/tables/<int:id>")
@@ -392,6 +425,7 @@ api.add_resource(MenuItemsById, "/menu_items/<int:id>")
 
 api.add_resource(MenuCategories, "/menu_categories")
 api.add_resource(MenuCategoriesById, "/menu_categories/<int:id>")
+api.add_resource(MenuItemsByMenuCategoryId, "/menu_categories/<int:id>/menu_items")
 
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")

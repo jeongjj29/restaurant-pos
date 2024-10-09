@@ -17,10 +17,10 @@ class User(db.Model, SerializerMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True, nullable=False)
+    username = db.Column(db.String, nullable=False)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
     _password_hash = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
@@ -71,7 +71,7 @@ class Role(db.Model, SerializerMixin):
     __tablename__ = "roles"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
+    name = db.Column(db.String, nullable=False)
     access_level = db.Column(db.Integer, nullable=False)
 
     users = db.relationship("User", back_populates="role")
@@ -278,7 +278,7 @@ class MenuItem(db.Model, SerializerMixin):
     __tablename__ = "menu_items"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False, unique=True)
+    name = db.Column(db.String, nullable=False)
     secondary_name = db.Column(db.String, nullable=True)
     description = db.Column(db.String, nullable=False)
     price = db.Column(db.Float, nullable=False)

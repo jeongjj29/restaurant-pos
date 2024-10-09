@@ -1,6 +1,7 @@
 import React from "react";
 import App from "./components/App";
 import Home from "./pages/HomePage/Home";
+import Login from "./pages/LoginPage/Login";
 import ErrorPage from "./pages/ErrorPage";
 import BackOffice from "./pages/BackOfficePage/BackOffice";
 import MenuManagement from "./pages/MenuManagementPage/MenuManagement";
@@ -10,36 +11,36 @@ import SalesReports from "./pages/SalesReportsPage/SalesReports";
 
 const routes = [
   {
-    path: "/login",
-    element: <h1>Login</h1>,
-  },
-  {
     path: "/",
     element: <App />,
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "/",
+        path: "",
         element: <Home />,
       },
       {
-        path: "/backoffice",
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "backoffice",
         element: <BackOffice />,
         children: [
           {
-            path: "/menu",
+            path: "menu",
             element: <MenuManagement />,
           },
           {
-            path: "/employees",
+            path: "employees",
             element: <EmployeeManagement />,
           },
           {
-            path: "/tables",
+            path: "tables",
             element: <TableManagement />,
           },
           {
-            path: "/reports",
+            path: "reports",
             element: <SalesReports />,
           },
         ],

@@ -17,7 +17,8 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.json.compact = False
 
-bcrypt = Bcrypt(app)
+app.secret_key = "[DGa9VbV9hhf@/A1*~CF?>2y{aJDw%"
+
 
 # Define metadata, instantiate db
 metadata = MetaData(
@@ -34,3 +35,6 @@ api = Api(app)
 
 # Instantiate CORS
 CORS(app)
+
+# Instantiate Bcrypt
+bcrypt = Bcrypt(app)

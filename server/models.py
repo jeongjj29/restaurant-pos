@@ -10,6 +10,7 @@ from config import db, bcrypt
 ORDER_STATUS = ["open", "closed"]
 ORDER_TYPE = ["dine_in", "take_out"]
 PAYMENT_TYPE = ["cash", "card"]
+ACCESS_LEVEL = [1, 2, 3, 4]
 
 
 class User(db.Model, SerializerMixin):
@@ -85,7 +86,7 @@ class Role(db.Model, SerializerMixin):
 
     @validates("access_level")
     def validate_access_level(self, key, access_level):
-        if access_level not in [1, 2, 3, 4, 5]:
+        if access_level not in ACCESS_LEVEL:
             raise ValueError("Invalid access level")
         return access_level
 
@@ -250,7 +251,7 @@ class OrderItem(db.Model, SerializerMixin):
         return f"<OrderItem {self.id} | {self.order} | {self.menu_item}>"
 
 
-class Discounts(db.Model, SerializerMixin):
+class Discount(db.Model, SerializerMixin):
     __tablename__ = "discounts"
 
     id = db.Column(db.Integer, primary_key=True)

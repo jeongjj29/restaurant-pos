@@ -1,7 +1,7 @@
 import React from "react";
 
-function UserManagement() {
-  return <div>UserManagement</div>;
+function EmployeeManagement() {
+  return <div>EmployeeManagement</div>;
 }
 
-export default UserManagement;
+export default EmployeeManagement;

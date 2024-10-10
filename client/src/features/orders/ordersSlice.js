@@ -1,4 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+
+export const fetchOrders = createAsyncThunk(
+  "orders/fetchOrders",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get("/orders");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const initialState = {
   orders: [],
@@ -31,4 +44,22 @@ const ordersSlice = createSlice({
       state.error = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchOrders.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload;
+      })
+      .addCase(fetchOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+  },
 });
+
+export const { setOrders, addOrder, updateOrder, setLoading, setError } =
+  ordersSlice.actions;
+export default ordersSlice.reducer;

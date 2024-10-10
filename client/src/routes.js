@@ -3,7 +3,7 @@ import App from "./components/App";
 import Home from "./pages/HomePage/Home";
 import Login from "./pages/LoginPage/Login";
 import ErrorPage from "./pages/ErrorPage";
-import BackOffice from "./pages/BackOfficePage/BackOffice";
+import Settings from "./pages/SettingsPage/Settings";
 import MenuManagement from "./pages/MenuManagementPage/MenuManagement";
 import EmployeeManagement from "./pages/EmployeeManagementPage/EmployeeManagement";
 import TableManagement from "./pages/TableManagementPage/TableManagement";
@@ -24,8 +24,8 @@ const routes = [
         element: <Login />,
       },
       {
-        path: "backoffice",
-        element: <BackOffice />,
+        path: "settings",
+        element: <Settings />,
         children: [
           {
             path: "menu",

@@ -11,8 +11,8 @@ function NavBar() {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <div className="h-full w-48 bg-slate-200">
-      <nav className="flex flex-col ">
+    <div className="h-full w-48 bg-slate-200 mr-8">
+      <nav className="flex flex-col">
         <NavLink to="/">
           <HomeIcon /> Home
         </NavLink>

@@ -5,7 +5,7 @@ export const fetchMenuItems = createAsyncThunk(
   "menuItems/fetchMenuItems",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/menuItems");
+      const response = await axios.get("/menu_items");
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

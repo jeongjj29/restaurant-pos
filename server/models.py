@@ -164,10 +164,6 @@ class Table(db.Model, SerializerMixin):
 
     @validates("location_x", "location_y")
     def validate_location(self, key, value):
-        if not (self.location_x and self.location_y):
-            raise ValueError(
-                "Both location_x and location_y must be set or both must be null"
-            )
         if value is not None:
             if not (0 <= value <= 50):
                 raise ValueError("Location must be between 0 and 50")

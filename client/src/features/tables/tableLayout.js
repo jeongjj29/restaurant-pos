@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTables } from "./tablesSlice";
 import Table from "./Table";
+import TableList from "./TableList";
 
 function TablesLayout() {
   const dispatch = useDispatch();
@@ -13,18 +14,8 @@ function TablesLayout() {
     dispatch(fetchTables());
   }, [dispatch]);
 
-  // console.log(tables);
-  //   {
-  //     "capacity": 6,
-  //     "id": 1,
-  //     "location_x": null,
-  //     "location_y": null,
-  //     "number": 1,
-  //     "orders": []
-  // }
-
-  const rows = 6;
-  const cols = 12;
+  const height = 5;
+  const width = 9;
 
   const createEmptyTableLayout = (r, c) => {
     const tableLayout = [];
@@ -38,33 +29,38 @@ function TablesLayout() {
     }
     return tableLayout;
   };
-  const emptyTableLayout = createEmptyTableLayout(rows, cols);
 
-  const loadTables = () => {
-    tables.forEach((table) => {
-      if (table["location_x"] === null || table["location_y"] === null) {
-        return;
-      }
-      const row = table["location_x"];
-      const col = table["location_y"];
-      emptyTableLayout[row][col] = { isTable: true, ...table };
-    });
-  };
+  const tableLayout = createEmptyTableLayout(height, width);
 
-  loadTables();
+  tables.forEach((table) => {
+    if (table.location_x !== null && table.location_y !== null) {
+      tableLayout[table.location_y][table.location_x] = {
+        isTable: true,
+        ...table,
+      };
+    }
+  });
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
-      {emptyTableLayout.map((row, i) => (
+      {tableLayout.map((row, i) => (
         <div key={i} className="flex flex-row m-2 gap-2">
           {row.map((col, j) => (
-            <Table key={j} isTable={col.isTable} table={col} />
+            <Table
+              key={j}
+              isTable={col.isTable}
+              tableId={col.id}
+              number={col.number}
+              orders={col.orders}
+              capacity={col.capacity}
+            />
           ))}
         </div>
       ))}
+      <TableList tables={tables} />
     </div>
   );
 }

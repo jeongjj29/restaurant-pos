@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 function Table({ isTable, tableId, capacity, orders, number }) {
   const dispatch = useDispatch();
 
-  handleClick = () => {};
+  const handleClick = () => {};
 
   if (isTable) {
     return (

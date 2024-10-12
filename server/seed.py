@@ -57,7 +57,7 @@ if __name__ == "__main__":
         db.session.commit()
 
         tables = [
-            Table(number=1, capacity=6),
+            Table(number=1, capacity=6, location_x=1, location_y=1),
             Table(number=2, capacity=4),
             Table(number=3, capacity=4),
             Table(number=4, capacity=4),

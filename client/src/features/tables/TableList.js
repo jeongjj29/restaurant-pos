@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateTable, addNewTable, deleteTable } from "./tablesSlice";
 
-function TableList({ tables, onTableClick, selectedSpot }) {
+function TableList({ tables, onTableClick, selectedSpot, setSelectedSpot }) {
   const dispatch = useDispatch();
   const [editFormHidden, setEditFormHidden] = useState(true);
   const [tableToEdit, setTableToEdit] = useState(null);
@@ -24,9 +24,17 @@ function TableList({ tables, onTableClick, selectedSpot }) {
   });
 
   return (
-    <div className="p-6 bg-gray-100 rounded-md shadow-lg">
+    <div className="w-160 h-screen overflow-y-auto bg-white p-4 shadow-lg p-6 bg-gray-100 rounded-md shadow-lg">
+      {selectedSpot && (
+        <button
+          onClick={() => setSelectedSpot(null)}
+          className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded mb-4"
+        >
+          Cancel Table Selection
+        </button>
+      )}
       {/* Add New Table Button */}
-      {editFormHidden && (
+      {editFormHidden && !selectedSpot && (
         <button
           className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4"
           onClick={() => {
@@ -176,32 +184,34 @@ function TableList({ tables, onTableClick, selectedSpot }) {
 
             {/* Edit and Delete Buttons */}
             <div className="flex gap-2">
-              <button
-                className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded"
-                onClick={() => {
-                  setEditFormHidden(false);
-                  setTableToEdit(table);
-                }}
-              >
-                Edit
-              </button>
-              <button
-                className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded"
-                onClick={() => {
-                  dispatch(
-                    deleteTable({ tableId: table.id })
-                      .unwrap()
+              {!selectedSpot && (
+                <button
+                  className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => {
+                    setEditFormHidden(false);
+                    setTableToEdit(table);
+                  }}
+                >
+                  Edit
+                </button>
+              )}
+              {!selectedSpot && (
+                <button
+                  className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => {
+                    dispatch(deleteTable(table.id)) // Pass just the table ID
+                      .unwrap() // Unwrap the result to handle the actual promise
                       .then((res) => {
                         console.log("Table deleted successfully:", res);
                       })
                       .catch((err) => {
                         console.error("Error deleting table:", err);
-                      })
-                  );
-                }}
-              >
-                Delete
-              </button>
+                      });
+                  }}
+                >
+                  Delete
+                </button>
+              )}
             </div>
           </li>
         ))}

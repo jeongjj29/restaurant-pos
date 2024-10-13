@@ -12,6 +12,7 @@ function TablesLayout() {
   const error = useSelector((state) => state.tables.error);
 
   const [selectedSpot, setSelectedSpot] = useState(null);
+  const [formHidden, setFormHidden] = useState(true);
 
   useEffect(() => {
     dispatch(fetchTables());
@@ -61,6 +62,10 @@ function TablesLayout() {
     setSelectedSpot(null);
   };
 
+  const handleAddTableButton = () => {
+    setFormHidden(!formHidden);
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -90,6 +95,7 @@ function TablesLayout() {
           onCloseList={handleCloseList}
         />
       )}
+      <button>Add Table</button>
     </div>
   );
 }

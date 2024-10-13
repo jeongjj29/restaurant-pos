@@ -1,29 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTables } from "./tablesSlice";
+import { fetchTables, addNewTable, updateTable } from "./tablesSlice"; // Import updateTable
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as yup from "yup";
 import Table from "./Table";
 import TableList from "./TableList";
-import axios from "axios";
 
 function TablesLayout() {
   const dispatch = useDispatch();
   const tables = useSelector((state) => state.tables.tables);
-  const loading = useSelector((state) => state.tables.loading);
   const error = useSelector((state) => state.tables.error);
 
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [formHidden, setFormHidden] = useState(true);
 
+  // Validation schema for form
+  const tableSchema = yup.object().shape({
+    number: yup
+      .number()
+      .required("Number is required")
+      .test("unique-number", "Table number already exists", function (value) {
+        return !tables.some((table) => table.number === value);
+      }),
+    capacity: yup
+      .number()
+      .min(1, "Capacity must be at least 1")
+      .required("Capacity is required"),
+  });
+
   useEffect(() => {
-    dispatch(fetchTables());
+    dispatch(fetchTables()); // Fetch tables on component mount
   }, [dispatch]);
 
   const height = 5;
   const width = 9;
 
+  // Creates an empty grid layout for tables
   const createEmptyTableLayout = (r, c) => {
     const tableLayout = [];
-
     for (let i = 0; i < r; i++) {
       const row = [];
       for (let j = 0; j < c; j++) {
@@ -36,6 +50,7 @@ function TablesLayout() {
 
   const layout = createEmptyTableLayout(height, width);
 
+  // Place tables on the layout
   tables.forEach((table) => {
     if (table.location_x !== null && table.location_y !== null) {
       layout[table.location_y][table.location_x] = {
@@ -45,32 +60,64 @@ function TablesLayout() {
     }
   });
 
-  const handleTableClick = (xIndex, yIndex) => {
-    console.log(xIndex, yIndex);
-    setSelectedSpot({ location_x: xIndex, location_y: yIndex });
+  // Handle clicking a table or empty spot
+  const handleTableClick = (xIndex, yIndex, tableId) => {
+    if (tableId) {
+      setSelectedSpot({
+        location_x: xIndex,
+        location_y: yIndex,
+        tableId: tableId,
+      });
+    } else {
+      setSelectedSpot({ location_x: xIndex, location_y: yIndex });
+    }
   };
 
+  // Handle assigning a table to a new spot
   const handleTableAssign = (tableId) => {
-    console.log(tableId);
-    axios.patch(`/tables/${tableId}`, selectedSpot).then(() => {
-      setSelectedSpot(null);
-      dispatch(fetchTables());
-    });
+    // Remove table from the previous spot
+    if (selectedSpot.tableId) {
+      dispatch(
+        updateTable({
+          tableId: selectedSpot.tableId,
+          updatedData: { location_x: null, location_y: null },
+        })
+      ).then(() => {
+        if (!tableId) {
+          setSelectedSpot(null);
+          dispatch(fetchTables());
+        }
+      });
+    }
+
+    // Assign table to the new spot
+    if (tableId) {
+      dispatch(
+        updateTable({
+          tableId: tableId,
+          updatedData: {
+            location_x: selectedSpot.location_x,
+            location_y: selectedSpot.location_y,
+          },
+        })
+      ).then(() => {
+        setSelectedSpot(null);
+        dispatch(fetchTables());
+      });
+    }
   };
 
-  const handleCloseList = () => {
-    setSelectedSpot(null);
-  };
-
+  // Toggle Add Table form visibility
   const handleAddTableButton = () => {
     setFormHidden(!formHidden);
   };
 
-  if (loading) return <p>Loading...</p>;
+  // Error handling
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
+      {/* Render grid layout */}
       {layout.map((row, i) => (
         <div key={i} className="flex flex-row m-2 gap-2">
           {row.map((col, j) => (
@@ -79,8 +126,6 @@ function TablesLayout() {
               isTable={col.isTable}
               tableId={col.id}
               number={col.number}
-              orders={col.orders}
-              capacity={col.capacity}
               onTableClick={handleTableClick}
               xIndex={j}
               yIndex={i}
@@ -88,14 +133,57 @@ function TablesLayout() {
           ))}
         </div>
       ))}
-      {selectedSpot && (
-        <TableList
-          tables={tables}
-          onTableClick={handleTableAssign}
-          onCloseList={handleCloseList}
-        />
+
+      {/* Render table list for assigning tables */}
+      <TableList
+        tables={tables}
+        onTableClick={handleTableAssign}
+        selectedSpot={selectedSpot}
+      />
+
+      {/* Add Table Button */}
+      <button onClick={handleAddTableButton}>Add Table</button>
+
+      {/* Add Table Form */}
+      {!formHidden && (
+        <Formik
+          initialValues={{ number: "", capacity: "" }}
+          validationSchema={tableSchema}
+          onSubmit={(values, { setSubmitting, resetForm }) => {
+            dispatch(addNewTable(values))
+              .unwrap()
+              .then((res) => {
+                console.log("New table created: ", res);
+                resetForm();
+              })
+              .catch((err) => {
+                console.error("Error creating table: ", err);
+              })
+              .finally(() => {
+                setSubmitting(false);
+                setFormHidden(true);
+              });
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form className="flex flex-col gap-2">
+              <div>
+                <label htmlFor="number">Table Number</label>
+                <Field type="number" name="number" />
+                <ErrorMessage name="number" component="div" />
+              </div>
+              <div>
+                <label htmlFor="capacity">Capacity</label>
+                <Field type="number" name="capacity" />
+                <ErrorMessage name="capacity" component="div" />
+              </div>
+              <button type="submit" disabled={isSubmitting}>
+                Submit
+              </button>
+            </Form>
+          )}
+        </Formik>
       )}
-      <button>Add Table</button>
     </div>
   );
 }

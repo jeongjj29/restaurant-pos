@@ -12,7 +12,10 @@ function Table({
 }) {
   if (isTable) {
     return (
-      <div className="w-12 h-12 bg-black text-white flex justify-center items-center rounded text-2xl">
+      <div
+        onClick={() => onTableClick(xIndex, yIndex, tableId)}
+        className="w-12 h-12 bg-black text-white flex justify-center items-center rounded text-2xl"
+      >
         {number}
       </div>
     );

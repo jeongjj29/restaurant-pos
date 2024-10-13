@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTables, updateTable } from "./tablesSlice"; // Import updateTable
-
 import Table from "./Table";
 import TableList from "./TableList";
 
@@ -95,9 +94,9 @@ function TablesLayout() {
   if (error) return <p className="text-red-600">Error: {error}</p>;
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      {/* Render grid layout */}
-      <div className="mb-8">
+    <div className=" bg-gray-50 min-h-screen flex flex-row">
+      {/* Grid Layout */}
+      <div className="flex-1 mb-8">
         {layout.map((row, i) => (
           <div key={i} className="flex flex-row gap-2 justify-center mb-2">
             {row.map((col, j) => (
@@ -115,11 +114,13 @@ function TablesLayout() {
         ))}
       </div>
 
-      {/* Render table list for assigning tables */}
+      {/* TableList (Scrollable) */}
+
       <TableList
         tables={tables}
         onTableClick={handleTableAssign}
         selectedSpot={selectedSpot}
+        setSelectedSpot={setSelectedSpot}
       />
     </div>
   );

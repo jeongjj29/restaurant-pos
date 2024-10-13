@@ -22,8 +22,8 @@ function TableList({
         <div>
           <Formik
             initialValues={{
-              number: tableToEdit.number,
-              capacity: tableToEdit.capacity,
+              number: "",
+              capacity: "",
             }}
             validationSchema={tableSchema}
             onSubmit={(values, { setSubmitting, resetForm }) => {
@@ -80,8 +80,12 @@ function TableList({
               <button
                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                 onClick={() => {
-                  setEditFormHidden(!editFormHidden);
-                  setTableToEdit(table);
+                  if (tableToEdit === table) {
+                    setEditFormHidden(true);
+                  } else {
+                    setEditFormHidden(false);
+                    setTableToEdit(table);
+                  }
                 }}
               >
                 Edit

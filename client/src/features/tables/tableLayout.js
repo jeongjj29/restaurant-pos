@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTables, addNewTable, updateTable } from "./tablesSlice"; // Import updateTable
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as yup from "yup";
+import { fetchTables, updateTable } from "./tablesSlice"; // Import updateTable
+
 import Table from "./Table";
 import TableList from "./TableList";
 
@@ -12,21 +11,6 @@ function TablesLayout() {
   const error = useSelector((state) => state.tables.error);
 
   const [selectedSpot, setSelectedSpot] = useState(null);
-  const [formHidden, setFormHidden] = useState(true);
-
-  // Validation schema for form
-  const tableSchema = yup.object().shape({
-    number: yup
-      .number()
-      .required("Number is required")
-      .test("unique-number", "Table number already exists", function (value) {
-        return !tables.some((table) => table.number === value);
-      }),
-    capacity: yup
-      .number()
-      .min(1, "Capacity must be at least 1")
-      .required("Capacity is required"),
-  });
 
   useEffect(() => {
     dispatch(fetchTables()); // Fetch tables on component mount
@@ -107,32 +91,37 @@ function TablesLayout() {
     }
   };
 
-  // Toggle Add Table form visibility
-  const handleAddTableButton = () => {
-    setFormHidden(!formHidden);
-  };
-
   // Error handling
-  if (error) return <p>Error: {error}</p>;
+  if (error) return <p className="text-red-600">Error: {error}</p>;
 
   return (
-    <div>
+    <div className="p-6 bg-gray-50 min-h-screen">
       {/* Render grid layout */}
-      {layout.map((row, i) => (
-        <div key={i} className="flex flex-row m-2 gap-2">
-          {row.map((col, j) => (
-            <Table
-              key={j}
-              isTable={col.isTable}
-              tableId={col.id}
-              number={col.number}
-              onTableClick={handleTableClick}
-              xIndex={j}
-              yIndex={i}
-            />
-          ))}
-        </div>
-      ))}
+      <div className="mb-8">
+        {layout.map((row, i) => (
+          <div key={i} className="flex flex-row gap-2 justify-center mb-2">
+            {row.map((col, j) => (
+              <Table
+                key={j}
+                isTable={col.isTable}
+                tableId={col.id}
+                number={col.number}
+                onTableClick={handleTableClick}
+                xIndex={j}
+                yIndex={i}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+      {selectedSpot && (
+        <button
+          onClick={() => handleTableAssign(null)}
+          className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
+        >
+          Cancel
+        </button>
+      )}
 
       {/* Render table list for assigning tables */}
       <TableList
@@ -140,50 +129,6 @@ function TablesLayout() {
         onTableClick={handleTableAssign}
         selectedSpot={selectedSpot}
       />
-
-      {/* Add Table Button */}
-      <button onClick={handleAddTableButton}>Add Table</button>
-
-      {/* Add Table Form */}
-      {!formHidden && (
-        <Formik
-          initialValues={{ number: "", capacity: "" }}
-          validationSchema={tableSchema}
-          onSubmit={(values, { setSubmitting, resetForm }) => {
-            dispatch(addNewTable(values))
-              .unwrap()
-              .then((res) => {
-                console.log("New table created: ", res);
-                resetForm();
-              })
-              .catch((err) => {
-                console.error("Error creating table: ", err);
-              })
-              .finally(() => {
-                setSubmitting(false);
-                setFormHidden(true);
-              });
-          }}
-        >
-          {({ isSubmitting }) => (
-            <Form className="flex flex-col gap-2">
-              <div>
-                <label htmlFor="number">Table Number</label>
-                <Field type="number" name="number" />
-                <ErrorMessage name="number" component="div" />
-              </div>
-              <div>
-                <label htmlFor="capacity">Capacity</label>
-                <Field type="number" name="capacity" />
-                <ErrorMessage name="capacity" component="div" />
-              </div>
-              <button type="submit" disabled={isSubmitting}>
-                Submit
-              </button>
-            </Form>
-          )}
-        </Formik>
-      )}
     </div>
   );
 }

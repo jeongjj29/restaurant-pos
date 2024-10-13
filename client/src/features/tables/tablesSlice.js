@@ -91,6 +91,14 @@ const tablesSlice = createSlice({
       })
       .addCase(updateTable.rejected, (state, action) => {
         state.error = action.error.message;
+      })
+      .addCase(deleteTable.fulfilled, (state, action) => {
+        state.tables = state.tables.filter(
+          (table) => table.id !== action.payload
+        );
+      })
+      .addCase(deleteTable.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });

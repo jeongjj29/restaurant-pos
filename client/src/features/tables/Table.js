@@ -1,11 +1,15 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 
-function Table({ isTable, tableId, capacity, orders, number }) {
-  const dispatch = useDispatch();
-
-  const handleClick = () => {};
-
+function Table({
+  isTable,
+  tableId,
+  capacity,
+  orders,
+  number,
+  xIndex,
+  yIndex,
+  onTableClick,
+}) {
   if (isTable) {
     return (
       <div className="w-12 h-12 bg-black text-white flex justify-center items-center rounded text-2xl">
@@ -13,7 +17,12 @@ function Table({ isTable, tableId, capacity, orders, number }) {
       </div>
     );
   } else {
-    return <div className="w-12 h-12 bg-black"></div>;
+    return (
+      <div
+        className="w-12 h-12 bg-black"
+        onClick={() => onTableClick(xIndex, yIndex)}
+      ></div>
+    );
   }
 }
 

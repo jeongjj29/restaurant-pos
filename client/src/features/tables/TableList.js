@@ -1,16 +1,15 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchTables } from "./tablesSlice";
+import React from "react";
 
-function TableList(tables) {
-  const tablesArr = tables.tables;
-
+function TableList({ tables, onTableClick, onCloseList }) {
   return (
     <div>
+      <button onClick={() => onCloseList()}>Close</button>
       <ul>
-        {tablesArr.map((table) => (
+        {tables.map((table) => (
           <li key={table.id}>
-            Table: {table.number} | Capacity: {table.capacity}
+            <button onClick={() => onTableClick(table.id)}>
+              Table: {table.number} | Capacity: {table.capacity}
+            </button>
           </li>
         ))}
       </ul>

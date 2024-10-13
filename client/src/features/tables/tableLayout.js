@@ -114,14 +114,6 @@ function TablesLayout() {
           </div>
         ))}
       </div>
-      {selectedSpot && (
-        <button
-          onClick={() => handleTableAssign(null)}
-          className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
-        >
-          Cancel
-        </button>
-      )}
 
       {/* Render table list for assigning tables */}
       <TableList

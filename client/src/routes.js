@@ -3,11 +3,12 @@ import App from "./components/App";
 import Home from "./pages/HomePage/Home";
 import Login from "./pages/LoginPage/Login";
 import ErrorPage from "./pages/ErrorPage";
-import Settings from "./pages/SettingsPage/Settings";
+import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import MenuManagement from "./pages/MenuManagementPage/MenuManagement";
 import EmployeeManagement from "./pages/EmployeeManagementPage/EmployeeManagement";
 import TableManagement from "./pages/TableManagementPage/TableManagement";
 import SalesReports from "./pages/SalesReportsPage/SalesReports";
+import OrdersPage from "./pages/OrdersPage/OrdersPage";
 
 const routes = [
   {
@@ -24,8 +25,12 @@ const routes = [
         element: <Login />,
       },
       {
+        path: "orders",
+        element: <OrdersPage />,
+      }
+      {
         path: "settings",
-        element: <Settings />,
+        element: <SettingsPage />,
         children: [
           {
             path: "menu",

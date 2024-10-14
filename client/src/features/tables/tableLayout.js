@@ -96,7 +96,7 @@ function TablesLayout() {
   return (
     <div className=" bg-gray-50 min-h-screen flex flex-row">
       {/* Grid Layout */}
-      <div className="flex-1 mb-8">
+      <div className="flex-1 self-center justify-self-center">
         {layout.map((row, i) => (
           <div key={i} className="flex flex-row gap-2 justify-center mb-2">
             {row.map((col, j) => (

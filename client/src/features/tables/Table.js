@@ -14,7 +14,7 @@ function Table({
     return (
       <div
         onClick={() => onTableClick(xIndex, yIndex, tableId)}
-        className="w-12 h-12 bg-black text-white flex justify-center items-center rounded text-2xl"
+        className="text-2xl flex items-center justify-center w-24 h-24 border-2 rounded-lg bg-blue-500 text-white cursor-pointer hover:bg-blue-600"
       >
         {number}
       </div>
@@ -22,7 +22,7 @@ function Table({
   } else {
     return (
       <div
-        className="w-12 h-12 bg-black"
+        className="flex items-center justify-center w-24 h-24 border-2 rounded-lg bg-gray-300 cursor-pointer hover:bg-gray-400"
         onClick={() => onTableClick(xIndex, yIndex)}
       ></div>
     );

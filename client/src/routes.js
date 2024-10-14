@@ -9,6 +9,7 @@ import EmployeeManagement from "./pages/EmployeeManagementPage/EmployeeManagemen
 import TableManagement from "./pages/TableManagementPage/TableManagement";
 import SalesReports from "./pages/SalesReportsPage/SalesReports";
 import OrdersPage from "./pages/OrdersPage/OrdersPage";
+import TakeOutPage from "./features/orders/pages/TakeOutPage";
 
 const routes = [
   {
@@ -27,6 +28,12 @@ const routes = [
       {
         path: "orders",
         element: <OrdersPage />,
+        children: [
+          {
+            path: "takeout",
+            element: <TakeOutPage />,
+          },
+        ],
       },
       {
         path: "settings",

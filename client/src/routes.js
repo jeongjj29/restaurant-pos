@@ -1,7 +1,7 @@
 import React from "react";
 import App from "./components/App";
 import Home from "./pages/HomePage/Home";
-import Login from "./pages/LoginPage/Login";
+import LoginPage from "./pages/LoginPage/LoginPage";
 import ErrorPage from "./pages/ErrorPage";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import MenuManagement from "./pages/MenuManagementPage/MenuManagement";
@@ -22,7 +22,7 @@ const routes = [
       },
       {
         path: "login",
-        element: <Login />,
+        element: <LoginPage />,
       },
       {
         path: "orders",

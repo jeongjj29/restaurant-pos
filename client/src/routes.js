@@ -1,15 +1,15 @@
 import React from "react";
 import App from "./components/App";
-import Home from "./pages/HomePage/Home";
-import LoginPage from "./pages/LoginPage/LoginPage";
+import Home from "./pages/Home";
+import LoginPage from "./pages/LoginPage";
 import ErrorPage from "./pages/ErrorPage";
-import SettingsPage from "./pages/SettingsPage/SettingsPage";
-import MenuManagement from "./pages/MenuManagementPage/MenuManagement";
+import SettingsPage from "./pages/SettingsPage";
+import MenuManagement from "./pages/MenuManagement";
 import EmployeeManagement from "./pages/EmployeeManagementPage/EmployeeManagement";
 import TableManagement from "./pages/TableManagementPage/TableManagement";
-import SalesReports from "./pages/SalesReportsPage/SalesReports";
-import OrdersPage from "./pages/OrdersPage/OrdersPage";
-import TakeOutPage from "./features/orders/pages/TakeOutPage";
+import SalesReports from "./pages/SalesReports";
+import OrdersPage from "./pages/OrdersPage";
+import TakeOutPage from "./pages/TakeOutPage";
 
 const routes = [
   {

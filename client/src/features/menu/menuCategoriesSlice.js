@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { addMenuItem, setMenuItems } from "../menuItems/menuItemsSlice";
+import { addMenuItem, setMenuItems } from "./menuItemsSlice";
 import { setLoading } from "../employees/employeesSlice";
 
 export const fetchMenuCategories = createAsyncThunk(

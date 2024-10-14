@@ -167,6 +167,11 @@ function TableList({ tables, onTableClick, selectedSpot, setSelectedSpot }) {
             key={table.id}
             className="bg-white p-4 rounded-md shadow-md flex justify-between items-center"
           >
+            {/* Table Information */}
+            <span className="text-lg font-semibold">
+              Table: {table.number} | Capacity: {table.capacity}
+            </span>
+
             {/* Select Table Button */}
             {selectedSpot && (
               <button
@@ -176,11 +181,6 @@ function TableList({ tables, onTableClick, selectedSpot, setSelectedSpot }) {
                 Select
               </button>
             )}
-
-            {/* Table Information */}
-            <span className="text-lg font-semibold">
-              Table: {table.number} | Capacity: {table.capacity}
-            </span>
 
             {/* Edit and Delete Buttons */}
             <div className="flex gap-2">

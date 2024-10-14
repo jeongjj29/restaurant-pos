@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 
-function Settings() {
+function SettingsPage() {
   return (
     <>
       <Outlet />
@@ -9,4 +9,4 @@ function Settings() {
   );
 }
 
-export default Settings;
+export default SettingsPage;

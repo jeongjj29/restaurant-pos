@@ -6,12 +6,15 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import SettingsIcon from "@mui/icons-material/Settings";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
 
 function NavBar() {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [ordersOpen, setOrdersOpen] = useState(false);
 
   return (
-    <div className="h-full w-48 bg-gray-100 p-4 shadow-md">
+    <div className="h-full w-48 bg-gray-200 p-4 shadow-md">
       <nav className="flex flex-col space-y-4">
         <NavLink
           to="/"
@@ -20,6 +23,27 @@ function NavBar() {
           <HomeIcon className="text-gray-500" />
           <span>Home</span>
         </NavLink>
+
+        <button
+          className="flex items-center space-x-2 text-left text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+          onClick={() => setOrdersOpen(!ordersOpen)}
+        >
+          <AssignmentIcon className="text-gray-500" />
+          <span>Orders</span>
+        </button>
+
+        {/* Orders Dropdown */}
+        {ordersOpen && (
+          <div className="flex flex-col space-y-2 ml-4">
+            <NavLink
+              to="/orders/takeout"
+              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+            >
+              <TakeoutDiningIcon className="text-gray-500" />
+              <span>Take-Out</span>
+            </NavLink>
+          </div>
+        )}
 
         <button
           className="flex items-center space-x-2 text-left text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"

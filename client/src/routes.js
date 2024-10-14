@@ -1,13 +1,15 @@
 import React from "react";
 import App from "./components/App";
-import Home from "./pages/HomePage/Home";
-import Login from "./pages/LoginPage/Login";
+import Home from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
 import ErrorPage from "./pages/ErrorPage";
-import Settings from "./pages/SettingsPage/Settings";
-import MenuManagement from "./pages/MenuManagementPage/MenuManagement";
-import EmployeeManagement from "./pages/EmployeeManagementPage/EmployeeManagement";
-import TableManagement from "./pages/TableManagementPage/TableManagement";
-import SalesReports from "./pages/SalesReportsPage/SalesReports";
+import SettingsPage from "./pages/settings/SettingsPage";
+import MenuManagementPage from "./pages/settings/MenuManagementPage";
+import EmployeeManagementPage from "./pages/settings/EmployeeManagementPage";
+import TableManagementPage from "./pages/settings/TableManagementPage";
+import SalesReportsPage from "./pages/settings/SalesReportPage";
+import OrdersManagementPage from "./pages/orders/OrdersManagementPage";
+import TakeOutPage from "./pages/orders/TakeOutPage";
 
 const routes = [
   {
@@ -21,27 +23,37 @@ const routes = [
       },
       {
         path: "login",
-        element: <Login />,
+        element: <LoginPage />,
+      },
+      {
+        path: "orders",
+        element: <OrdersManagementPage />,
+        children: [
+          {
+            path: "takeout",
+            element: <TakeOutPage />,
+          },
+        ],
       },
       {
         path: "settings",
-        element: <Settings />,
+        element: <SettingsPage />,
         children: [
           {
             path: "menu",
-            element: <MenuManagement />,
+            element: <MenuManagementPage />,
           },
           {
             path: "employees",
-            element: <EmployeeManagement />,
+            element: <EmployeeManagementPage />,
           },
           {
             path: "tables",
-            element: <TableManagement />,
+            element: <TableManagementPage />,
           },
           {
             path: "reports",
-            element: <SalesReports />,
+            element: <SalesReportsPage />,
           },
         ],
       },

@@ -13,6 +13,30 @@ export const fetchMenuItems = createAsyncThunk(
   }
 );
 
+export const addMenuItem = createAsyncThunk(
+  "menuItems/addMenuItem",
+  async (menuItemData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/menu_items", menuItemData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateMenuItem = createAsyncThunk(
+  "menuItems/updateMenuItem",
+  async (menuItemData, { rejectWithValue }) => {
+    try {
+      const response = await axios.put("/menu_items", menuItemData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   menuItems: [],
   loading: false,
@@ -25,17 +49,6 @@ const menuItemsSlice = createSlice({
   reducers: {
     setMenuItems(state, action) {
       state.menuItems = action.payload;
-    },
-    addMenuItem(state, action) {
-      state.menuItems.push(action.payload);
-    },
-    updateMenuItem(state, action) {
-      const index = state.menuItems.findIndex(
-        (menuItem) => menuItem.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.menuItems[index] = action.payload;
-      }
     },
     setError(state, action) {
       state.error = action.payload;
@@ -56,15 +69,25 @@ const menuItemsSlice = createSlice({
       .addCase(fetchMenuItems.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(addMenuItem.fulfilled, (state, action) => {
+        state.menuItems.push(action.payload);
+      })
+      .addCase(addMenuItem.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(updateMenuItem.fulfilled, (state, action) => {
+        const index = state.menuItems.findIndex(
+          (menuItem) => menuItem.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.menuItems[index] = action.payload;
+        }
+      })
+      .addCase(updateMenuItem.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });
 
-export const {
-  setMenuItems,
-  addMenuItem,
-  updateMenuItem,
-  setError,
-  setLoading,
-} = menuItemsSlice.actions;
 export default menuItemsSlice.reducer;

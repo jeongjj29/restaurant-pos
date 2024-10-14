@@ -259,7 +259,7 @@ class MenuItem(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     secondary_name = db.Column(db.String, nullable=True)
-    description = db.Column(db.String, nullable=False)
+    description = db.Column(db.String, nullable=True)
     price = db.Column(db.Float, nullable=False)
     image = db.Column(db.String, nullable=True)
     category_id = db.Column(

@@ -3,13 +3,13 @@ import App from "./components/App";
 import Home from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ErrorPage from "./pages/ErrorPage";
-import SettingsPage from "./pages/SettingsPage";
-import MenuManagementPage from "./pages/MenuManagementPage";
-import EmployeeManagementPage from "./pages/EmployeeManagementPage";
-import TableManagementPage from "./pages/TableManagementPage";
-import SalesReportsPage from "./pages/SalesReportPage";
-import OrdersManagementPage from "./pages/OrdersManagementPage";
-import TakeOutPage from "./pages/TakeOutPage";
+import SettingsPage from "./pages/settings/SettingsPage";
+import MenuManagementPage from "./pages/settings/MenuManagementPage";
+import EmployeeManagementPage from "./pages/settings/EmployeeManagementPage";
+import TableManagementPage from "./pages/settings/TableManagementPage";
+import SalesReportsPage from "./pages/settings/SalesReportPage";
+import OrdersManagementPage from "./pages/orders/OrdersManagementPage";
+import TakeOutPage from "./pages/orders/TakeOutPage";
 
 const routes = [
   {

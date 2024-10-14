@@ -1,5 +1,5 @@
 import React from "react";
-import TableLayout from "../features/tables/TableLayout";
+import TableLayout from "../../features/tables/TableLayout";
 
 function TableManagementPage() {
   return (

@@ -1,5 +1,5 @@
 import React from "react";
-import MenuInput from "../features/orders/components/MenuInput";
+import MenuInput from "../../features/orders/MenuInput";
 
 function TakeOutPage() {
   return (

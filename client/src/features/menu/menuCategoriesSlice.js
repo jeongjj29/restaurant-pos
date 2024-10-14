@@ -15,6 +15,33 @@ export const fetchMenuCategories = createAsyncThunk(
   }
 );
 
+export const addMenuCategory = createAsyncThunk(
+  "menuCategories/addMenuCategory",
+  async (menuCategoryData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/menu_categories", menuCategoryData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateMenuCategory = createAsyncThunk(
+  "menuCategories/updateMenuCategory",
+  async (menuCategoryData, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(
+        `/menu_categories/${menuCategoryData.id}`,
+        menuCategoryData
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   menuCategories: [],
   loading: false,
@@ -27,23 +54,6 @@ const menuCategoriesSlice = createSlice({
   reducers: {
     setMenuCategories: (state, action) => {
       state.menuCategories = action.payload;
-    },
-    addMenuCategory: (state, action) => {
-      state.menuCategories.push(action.payload);
-    },
-    updateMenuCategory: (state, action) => {
-      const index = state.menuCategories.findIndex(
-        (menuCategory) => menuCategory.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.menuCategories[index] = action.payload;
-      }
-    },
-    setLoading: (state, action) => {
-      state.loading = action.payload;
-    },
-    setError: (state, action) => {
-      state.error = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -58,15 +68,25 @@ const menuCategoriesSlice = createSlice({
       .addCase(fetchMenuCategories.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(addMenuCategory.fulfilled, (state, action) => {
+        state.menuCategories.push(action.payload);
+      })
+      .addCase(addMenuCategory.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(updateMenuCategory.fulfilled, (state, action) => {
+        const index = state.menuCategories.findIndex(
+          (menuCategory) => menuCategory.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.menuCategories[index] = action.payload;
+        }
+      })
+      .addCase(updateMenuCategory.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });
 
-export const {
-  setMenuCategories,
-  addMenuCategory,
-  updateMenuCategory,
-  setLoading,
-  setError,
-} = menuCategoriesSlice.actions;
 export default menuCategoriesSlice.reducer;

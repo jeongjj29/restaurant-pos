@@ -11,33 +11,60 @@ function NavBar() {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <div className="h-full w-48 bg-slate-200 mr-8">
-      <nav className="flex flex-col">
-        <NavLink to="/">
-          <HomeIcon /> Home
+    <div className="h-full w-48 bg-gray-100 p-4 shadow-md">
+      <nav className="flex flex-col space-y-4">
+        <NavLink
+          to="/"
+          className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+        >
+          <HomeIcon className="text-gray-500" />
+          <span>Home</span>
         </NavLink>
+
         <button
-          className="text-left"
+          className="flex items-center space-x-2 text-left text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
           onClick={() => setSettingsOpen(!settingsOpen)}
         >
-          <SettingsIcon /> Settings
+          <SettingsIcon className="text-gray-500" />
+          <span>Settings</span>
         </button>
-        {settingsOpen ? (
-          <div className="flex flex-col ml-8">
-            <NavLink to="/settings/employees">
-              <GroupIcon /> Employees
+
+        {/* Settings Dropdown */}
+        {settingsOpen && (
+          <div className="flex flex-col space-y-2 ml-4">
+            <NavLink
+              to="/settings/employees"
+              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+            >
+              <GroupIcon className="text-gray-500" />
+              <span>Employees</span>
             </NavLink>
-            <NavLink to="/settings/menu">
-              <MenuBookIcon /> Menu
+
+            <NavLink
+              to="/settings/menu"
+              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+            >
+              <MenuBookIcon className="text-gray-500" />
+              <span>Menu</span>
             </NavLink>
-            <NavLink to="/settings/tables">
-              <TableRestaurantIcon /> Tables
+
+            <NavLink
+              to="/settings/tables"
+              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+            >
+              <TableRestaurantIcon className="text-gray-500" />
+              <span>Tables</span>
             </NavLink>
-            <NavLink to="/settings/reports">
-              <AssessmentIcon /> Reports
+
+            <NavLink
+              to="/settings/reports"
+              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+            >
+              <AssessmentIcon className="text-gray-500" />
+              <span>Reports</span>
             </NavLink>
           </div>
-        ) : null}
+        )}
       </nav>
     </div>
   );

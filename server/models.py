@@ -162,27 +162,6 @@ class Table(db.Model, SerializerMixin):
             raise ValueError("Invalid table {key}")
         return value
 
-    @validates("location_x", "location_y")
-    def validate_location(self, key, value):
-        if not (self.location_x and self.location_y):
-            raise ValueError(
-                "Both location_x and location_y must be set or both must be null"
-            )
-        if value is not None:
-            if not (0 <= value <= 50):
-                raise ValueError("Location must be between 0 and 50")
-
-        overlapping_table = Table.query.filter(
-            Table.location_x == self.location_x,
-            Table.location_y == self.location_y,
-            Table.id != self.id,
-        ).first()
-
-        if overlapping_table:
-            raise ValueError("Location is already occupied by another table")
-
-        return value
-
     def __repr__(self):
         return f"<Table {self.id}: {self.number} | Capacity: {self.capacity}>"
 

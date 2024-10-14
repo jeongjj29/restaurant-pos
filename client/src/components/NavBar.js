@@ -6,12 +6,13 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import SettingsIcon from "@mui/icons-material/Settings";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 
 function NavBar() {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <div className="h-full w-48 bg-gray-100 p-4 shadow-md">
+    <div className="h-full w-48 bg-gray-200 p-4 shadow-md">
       <nav className="flex flex-col space-y-4">
         <NavLink
           to="/"
@@ -19,6 +20,14 @@ function NavBar() {
         >
           <HomeIcon className="text-gray-500" />
           <span>Home</span>
+        </NavLink>
+
+        <NavLink
+          to="/orders"
+          className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+        >
+          <AssignmentIcon className="text-gray-500" />
+          <span>Orders</span>
         </NavLink>
 
         <button

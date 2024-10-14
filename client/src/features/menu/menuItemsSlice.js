@@ -25,6 +25,18 @@ export const addMenuItem = createAsyncThunk(
   }
 );
 
+export const updateMenuItem = createAsyncThunk(
+  "menuItems/updateMenuItem",
+  async (menuItemData, { rejectWithValue }) => {
+    try {
+      const response = await axios.put("/menu_items", menuItemData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   menuItems: [],
   loading: false,
@@ -78,11 +90,4 @@ const menuItemsSlice = createSlice({
   },
 });
 
-export const {
-  setMenuItems,
-  addMenuItem,
-  updateMenuItem,
-  setError,
-  setLoading,
-} = menuItemsSlice.actions;
 export default menuItemsSlice.reducer;

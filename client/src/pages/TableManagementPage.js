@@ -1,7 +1,7 @@
 import React from "react";
 import TableLayout from "../features/tables/TableLayout";
 
-function TableManagement() {
+function TableManagementPage() {
   return (
     <div>
       <TableLayout />
@@ -9,4 +9,4 @@ function TableManagement() {
   );
 }
 
-export default TableManagement;
+export default TableManagementPage;

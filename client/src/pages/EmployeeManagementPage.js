@@ -1,7 +1,7 @@
 import React from "react";
 import EmployeeTable from "../features/employees/employeeTable";
 
-function EmployeeManagement() {
+function EmployeeManagementPage() {
   return (
     <div>
       <h1>Employees</h1>
@@ -10,4 +10,4 @@ function EmployeeManagement() {
   );
 }
 
-export default EmployeeManagement;
+export default EmployeeManagementPage;

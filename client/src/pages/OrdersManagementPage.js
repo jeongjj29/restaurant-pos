@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 
-function OrdersPage() {
+function OrdersManagementPage() {
   return (
     <>
       <Outlet />
@@ -9,4 +9,4 @@ function OrdersPage() {
   );
 }
 
-export default OrdersPage;
+export default OrdersManagementPage;

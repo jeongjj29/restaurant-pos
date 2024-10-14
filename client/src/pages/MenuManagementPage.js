@@ -1,7 +1,7 @@
 import React from "react";
 
-function MenuManagement() {
-  return <div>MenuManagement</div>;
+function MenuManagementPage() {
+  return <div>MenuManagementPage</div>;
 }
 
-export default MenuManagement;
+export default MenuManagementPage;

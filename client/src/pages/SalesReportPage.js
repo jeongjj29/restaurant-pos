@@ -1,7 +1,7 @@
 import React from "react";
 
-function SalesReports() {
-  return <div>SalesReports</div>;
+function SalesReportsPage() {
+  return <div>SalesReportsPage</div>;
 }
 
-export default SalesReports;
+export default SalesReportsPage;

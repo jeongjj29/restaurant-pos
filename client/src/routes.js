@@ -4,11 +4,11 @@ import Home from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ErrorPage from "./pages/ErrorPage";
 import SettingsPage from "./pages/SettingsPage";
-import MenuManagement from "./pages/MenuManagementPage";
-import EmployeeManagement from "./pages/EmployeeManagementPage";
-import TableManagement from "./pages/TableManagementPage";
-import SalesReports from "./pages/SalesReportPage";
-import OrdersPage from "./pages/OrdersPage";
+import MenuManagementPage from "./pages/MenuManagementPage";
+import EmployeeManagementPage from "./pages/EmployeeManagementPage";
+import TableManagementPage from "./pages/TableManagementPage";
+import SalesReportsPage from "./pages/SalesReportPage";
+import OrdersManagementPage from "./pages/OrdersManagementPage";
 import TakeOutPage from "./pages/TakeOutPage";
 
 const routes = [
@@ -27,7 +27,7 @@ const routes = [
       },
       {
         path: "orders",
-        element: <OrdersPage />,
+        element: <OrdersManagementPage />,
         children: [
           {
             path: "takeout",
@@ -41,19 +41,19 @@ const routes = [
         children: [
           {
             path: "menu",
-            element: <MenuManagement />,
+            element: <MenuManagementPage />,
           },
           {
             path: "employees",
-            element: <EmployeeManagement />,
+            element: <EmployeeManagementPage />,
           },
           {
             path: "tables",
-            element: <TableManagement />,
+            element: <TableManagementPage />,
           },
           {
             path: "reports",
-            element: <SalesReports />,
+            element: <SalesReportsPage />,
           },
         ],
       },

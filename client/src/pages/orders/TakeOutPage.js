@@ -1,10 +1,10 @@
 import React from "react";
-import MenuInput from "../../features/orders/MenuInput";
+import OrderInput from "../../features/orders/OrderInput";
 
 function TakeOutPage() {
   return (
     <div>
-      <MenuInput />
+      <OrderInput />
     </div>
   );
 }

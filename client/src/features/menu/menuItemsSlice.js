@@ -46,17 +46,7 @@ const initialState = {
 const menuItemsSlice = createSlice({
   name: "menuItems",
   initialState,
-  reducers: {
-    setMenuItems(state, action) {
-      state.menuItems = action.payload;
-    },
-    setError(state, action) {
-      state.error = action.payload;
-    },
-    setLoading(state, action) {
-      state.loading = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchMenuItems.pending, (state) => {

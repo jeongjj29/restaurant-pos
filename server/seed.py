@@ -103,4 +103,52 @@ if __name__ == "__main__":
         db.session.add_all(users)
         db.session.commit()
 
+        menu_items = [
+            MenuItem(
+                name="Seafood Pancake",
+                secondary_name="해물파전",
+                price=20.0,
+                category_id=1,
+            ),
+            MenuItem(
+                name="Prime Ribeye Steak",
+                secondary_name="꽃등심",
+                price=45.0,
+                category_id=2,
+            ),
+            MenuItem(
+                name="Seafood Stir-Fry",
+                secondary_name="해물찜",
+                price=50.0,
+                category_id=3,
+            ),
+            MenuItem(
+                name="Steamed Pork Belly",
+                secondary_name="간장수육",
+                price=30.0,
+                category_id=4,
+            ),
+            MenuItem(
+                name="Empire Seafood Hotpot",
+                secondary_name="용궁전골",
+                price=99.0,
+                category_id=5,
+            ),
+            MenuItem(
+                name="Seafood Jjampong",
+                secondary_name="해물짬뽕탕",
+                price=35.0,
+                category_id=6,
+            ),
+            MenuItem(
+                name="Kimchi Jjigae",
+                secondary_name="김치찌개",
+                price=15.0,
+                category_id=7,
+            ),
+        ]
+
+        db.session.add_all(menu_items)
+        db.session.commit()
+
         print("Seeding complete!")

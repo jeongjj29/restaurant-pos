@@ -1,13 +1,38 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { addMenuItem, setMenuItems } from "./menuItemsSlice";
-import { setLoading } from "../employees/employeesSlice";
 
 export const fetchMenuCategories = createAsyncThunk(
   "menuCategories/fetchMenuCategories",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get("/menu_categories");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const addMenuCategory = createAsyncThunk(
+  "menuCategories/addMenuCategory",
+  async (menuCategoryData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/menu_categories", menuCategoryData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateMenuCategory = createAsyncThunk(
+  "menuCategories/updateMenuCategory",
+  async (menuCategoryData, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(
+        `/menu_categories/${menuCategoryData.id}`,
+        menuCategoryData
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -28,23 +53,6 @@ const menuCategoriesSlice = createSlice({
     setMenuCategories: (state, action) => {
       state.menuCategories = action.payload;
     },
-    addMenuCategory: (state, action) => {
-      state.menuCategories.push(action.payload);
-    },
-    updateMenuCategory: (state, action) => {
-      const index = state.menuCategories.findIndex(
-        (menuCategory) => menuCategory.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.menuCategories[index] = action.payload;
-      }
-    },
-    setLoading: (state, action) => {
-      state.loading = action.payload;
-    },
-    setError: (state, action) => {
-      state.error = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -58,15 +66,25 @@ const menuCategoriesSlice = createSlice({
       .addCase(fetchMenuCategories.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(addMenuCategory.fulfilled, (state, action) => {
+        state.menuCategories.push(action.payload);
+      })
+      .addCase(addMenuCategory.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(updateMenuCategory.fulfilled, (state, action) => {
+        const index = state.menuCategories.findIndex(
+          (menuCategory) => menuCategory.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.menuCategories[index] = action.payload;
+        }
+      })
+      .addCase(updateMenuCategory.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });
 
-export const {
-  setMenuCategories,
-  addMenuCategory,
-  updateMenuCategory,
-  setLoading,
-  setError,
-} = menuCategoriesSlice.actions;
 export default menuCategoriesSlice.reducer;

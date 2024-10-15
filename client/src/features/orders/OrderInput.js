@@ -48,7 +48,7 @@ function OrderInput() {
     dispatch(
       addOrder({
         type: "take_out",
-        total_price: totalPrice * (1 + TAX_RATE),
+        total_price: totalPriceWithTax,
         status: "open",
         sales_tax: TAX_RATE,
         user_id: 1,
@@ -66,9 +66,7 @@ function OrderInput() {
             })
           )
             .unwrap()
-            .then((res) => {
-              console.log(res);
-            })
+            .then()
             .catch((err) => {
               console.error(err);
             })
@@ -85,11 +83,13 @@ function OrderInput() {
       });
   };
 
-  // Calculate the total price
-  const totalPrice = pendingOrderItems.reduce(
+  // Calculate subtotal, tax, and total price
+  const subtotalPrice = pendingOrderItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+  const taxPrice = parseFloat((subtotalPrice * TAX_RATE).toFixed(2));
+  const totalPriceWithTax = parseFloat((subtotalPrice + taxPrice).toFixed(2));
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -166,19 +166,19 @@ function OrderInput() {
                 <tr>
                   <td className="py-2 px-4 font-bold text-right">SUBTOTAL</td>
                   <td className="py-2 px-4 font-bold">
-                    ${totalPrice.toFixed(2)}
+                    ${subtotalPrice.toFixed(2)}
                   </td>
                 </tr>
                 <tr>
                   <td className="py-2 px-4 font-bold text-right">TAX</td>
                   <td className="py-2 px-4 font-bold">
-                    ${(totalPrice * TAX_RATE).toFixed(2)}
+                    ${taxPrice.toFixed(2)}
                   </td>
                 </tr>
                 <tr>
                   <td className="py-2 px-4 font-bold text-right">TOTAL</td>
                   <td className="py-2 px-4 font-bold">
-                    ${(totalPrice * (1 + TAX_RATE)).toFixed(2)}
+                    ${totalPriceWithTax.toFixed(2)}
                   </td>
                 </tr>
               </tfoot>

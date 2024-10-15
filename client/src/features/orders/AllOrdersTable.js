@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrders } from "./ordersSlice";
 
-function AllOrdersTable() {
+function AllOrdersTable({ setClickedOrder }) {
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders.orders);
   const error = useSelector((state) => state.orders.error);
@@ -30,6 +30,7 @@ function AllOrdersTable() {
             <tr
               key={order.id}
               className={index % 2 === 0 ? "bg-gray-100" : "bg-gray-50"}
+              onClick={() => setClickedOrder(order.id)}
             >
               <td className="py-2 px-4">{order.id}</td>
               <td className="py-2 px-4">

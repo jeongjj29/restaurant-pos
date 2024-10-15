@@ -148,4 +148,7 @@ if __name__ == "__main__":
             ),
         ]
 
+        db.session.add_all(menu_items)
+        db.session.commit()
+
         print("Seeding complete!")

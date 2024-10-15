@@ -36,6 +36,13 @@ function NavBar() {
         {ordersOpen && (
           <div className="flex flex-col space-y-2 ml-4">
             <NavLink
+              to="/orders/all"
+              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+            >
+              <AssignmentIcon className="text-gray-500" />
+              <span>All Orders</span>
+            </NavLink>
+            <NavLink
               to="/orders/takeout"
               className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
             >

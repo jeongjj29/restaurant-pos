@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchMenuCategories } from "../menu/menuCategoriesSlice";
 import { addOrder } from "./ordersSlice";
 import { addOrderItem } from "./orderItemsSlice";
+import { TAX_RATE } from "../../constants";
 
 function OrderInput() {
   const navigate = useNavigate();
@@ -13,8 +14,6 @@ function OrderInput() {
   );
   const [selectedCategory, setSelectedCategory] = useState(1);
   const [pendingOrderItems, setPendingOrderItems] = useState([]);
-
-  const TAX_RATE = 0.08875;
 
   useEffect(() => {
     dispatch(fetchMenuCategories());

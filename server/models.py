@@ -275,6 +275,7 @@ class MenuItem(db.Model, SerializerMixin):
         "-order.user",
         "-role.users",
         "-tables.user",
+        "-menu_category.menu_items",
     )
 
     @validates("name")
@@ -300,20 +301,21 @@ class MenuCategory(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False, unique=True)
     secondary_name = db.Column(db.String, nullable=True)
 
+    # Relationships
     menu_items = db.relationship("MenuItem", back_populates="menu_category")
 
+    # Serialization rules to prevent recursion
     serialize_rules = (
-        "-menu_items.category",
+        "-menu_items.menu_category",
+        "-menu_items.order_items",
         "-menu_items.order",
-        "-order.user",
-        "-role.users",
-        "-tables.user",
     )
 
+    # Validation
     @validates("name")
     def validate_name(self, key, name):
         if len(name) < 3:
-            raise ValueError("Name must be at least 3 characters long")
+            raise ValueError("Category name must be at least 3 characters long")
         return name
 
     def __repr__(self):

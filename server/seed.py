@@ -105,9 +105,69 @@ if __name__ == "__main__":
 
         menu_items = [
             MenuItem(
+                name="Garlic Butter Squid",
+                secondary_name="오징어버터구이",
+                price=21.0,
+                category_id=1,
+            ),
+            MenuItem(
+                name="Bulgogi Pancake",
+                secondary_name="불고기파전",
+                price=23.0,
+                category_id=1,
+            ),
+            MenuItem(
                 name="Seafood Pancake",
                 secondary_name="해물파전",
                 price=20.0,
+                category_id=1,
+            ),
+            MenuItem(
+                name="Kimchi Pancake",
+                secondary_name="김치전",
+                price=20.0,
+                category_id=1,
+            ),
+            MenuItem(
+                name="Japchae",
+                secondary_name="잡채",
+                price=18.0,
+                category_id=1,
+            ),
+            MenuItem(
+                name="Fried Dumpling",
+                secondary_name="군만두",
+                price=10.0,
+                category_id=1,
+            ),
+            MenuItem(
+                name="Takoyaki",
+                secondary_name="타코야끼",
+                price=10.0,
+                category_id=1,
+            ),
+            MenuItem(
+                name="Ddukbokki",
+                secondary_name="떡볶이",
+                price=14.0,
+                category_id=1,
+            ),
+            MenuItem(
+                name="Cheese Ddukbokki",
+                secondary_name="치즈떡볶이",
+                price=16.0,
+                category_id=1,
+            ),
+            MenuItem(
+                name="Rosé Ddukbokki",
+                secondary_name="로제떡볶이",
+                price=18.0,
+                category_id=1,
+            ),
+            MenuItem(
+                name="Corn Cheese",
+                secondary_name="콘치즈",
+                price=12.0,
                 category_id=1,
             ),
             MenuItem(

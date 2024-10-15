@@ -1,13 +1,12 @@
 import React from "react";
 import MenuLayout from "../../features/menu/MenuLayout";
-import MenuItemList from "../../features/menu/MenuItemList";
+import MenuItemTable from "../../features/menu/MenuItemTable";
 
 function MenuManagementPage() {
   return (
     <div>
-      MenuManagementPage
       <MenuLayout />
-      <MenuItemList />
+      <MenuItemTable />
     </div>
   );
 }

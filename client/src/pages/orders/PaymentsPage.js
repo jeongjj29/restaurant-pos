@@ -10,11 +10,16 @@ function PaymentsPage() {
   console.log(order);
 
   return (
-    <div>
-      <PaymentIcon type="visa" format="flatRounded" width={100} />
-      <PaymentIcon type="mastercard" format="flatRounded" width={100} />
-      <PaymentIcon type="amex" format="flatRounded" width={100} />
-      <PaymentIcon type="discover" format="flatRounded" width={100} />
+    <div className="">
+      <div>
+        <OrderDetails order={order} />
+      </div>
+      <div>
+        <PaymentIcon type="visa" format="flatRounded" width={100} />
+        <PaymentIcon type="mastercard" format="flatRounded" width={100} />
+        <PaymentIcon type="amex" format="flatRounded" width={100} />
+        <PaymentIcon type="discover" format="flatRounded" width={100} />
+      </div>
     </div>
   );
 }

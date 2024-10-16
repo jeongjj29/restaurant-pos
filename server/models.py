@@ -2,6 +2,7 @@ from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.hybrid import hybrid_property
+from datetime import datetime
 import re
 
 from config import db, bcrypt
@@ -320,3 +321,9 @@ class MenuCategory(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f"<MenuCategory {self.id} | {self.name}>"
+
+
+class TokenBlockList(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)

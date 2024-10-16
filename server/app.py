@@ -53,7 +53,7 @@ class Login(Resource):
         user = User.query.filter_by(username=username).first()
 
         if user and user.authenticate(password):
-            access_token = create_access_token(identity=user)
+            access_token = create_access_token(identity=user.id)
             return make_response({"access_token": access_token}, 200)
 
         else:

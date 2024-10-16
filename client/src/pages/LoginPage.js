@@ -1,7 +1,7 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
-import { login } from "../features/auth/authService";
+import { login } from "../features/auth/authSlice";
 
 function LoginPage() {
   const loginSchema = yup.object().shape({

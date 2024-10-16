@@ -11,6 +11,7 @@ import SalesReportsPage from "./pages/settings/SalesReportPage";
 import OrdersManagementPage from "./pages/orders/OrdersManagementPage";
 import TakeOutPage from "./pages/orders/TakeOutPage";
 import AllOrdersPage from "./pages/orders/AllOrdersPage";
+import PaymentsPage from "./pages/orders/PaymentsPage";
 
 const routes = [
   {
@@ -37,6 +38,10 @@ const routes = [
           {
             path: "all",
             element: <AllOrdersPage />,
+          },
+          {
+            path: "payment",
+            element: <PaymentsPage />,
           },
         ],
       },

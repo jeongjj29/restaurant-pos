@@ -14,7 +14,7 @@ function AllOrdersTable({ setClickedOrder }) {
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (
-    <div className="overflow-x-auto w-1/2">
+    <div className="overflow-x-auto w-1/2 m-8">
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead>
           <tr className="bg-gray-800 text-white">

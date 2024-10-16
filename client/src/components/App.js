@@ -9,7 +9,7 @@ function App() {
       <NavBar className="w-64 bg-gray-800" />
 
       {/* Outlet to take the remaining space */}
-      <div className="flex-grow bg-gray-100 overflow-auto">
+      <div className="w-full h-full bg-gray-100 overflow-auto">
         <Outlet />
       </div>
     </div>

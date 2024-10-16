@@ -18,7 +18,8 @@ function AllOrdersPage() {
           </button>
           <button
             onClick={() => {
-              navigate("/orders/payment", { state: { clickedOrder } });
+              const order = { ...clickedOrder };
+              navigate("/orders/payment", { state: { order } });
             }}
             className="bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 m-4 rounded"
           >

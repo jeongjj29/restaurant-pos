@@ -5,6 +5,13 @@
 # Remote library imports
 from flask import request, make_response, session, abort
 from flask_restful import Resource
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+)
+
 
 # Local imports
 from config import app, db, api
@@ -12,7 +19,22 @@ from config import app, db, api
 # Add your model imports
 from models import *
 
-# Views go here!
+app.config["JWT_SECRET_KEY"] = "[DGa9VbV9hhfdsaf@/A1*~CF?>2y{aJDw%"
+app.config["JWT_BLACKLIST_ENABLED"] = True
+app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = ["access", "refresh"]
+jwt = JWTManager(app)
+
+
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blacklist(jwt_header, jwt_payload):
+    jti = jwt_payload["jti"]
+    token = TokenBlockList.query.filter_by(jti=jti).first()
+    return token is not None
+
+
+@jwt.revoked_token_loader
+def revoked_token_callback(jwt_header, jwt_payload):
+    return make_response({"description": "The token has been revoked"}, 401)
 
 
 @app.route("/")
@@ -31,27 +53,28 @@ class Login(Resource):
         user = User.query.filter_by(username=username).first()
 
         if user and user.authenticate(password):
-            session["user_id"] = user.id
+            access_token = create_access_token(identity=user)
+            return make_response({"access_token": access_token}, 200)
 
-            return make_response({"message": "Login successful"}, 200)
         else:
             return make_response({"message": "Invalid credentials"}, 401)
 
 
-# Logout
 class Logout(Resource):
-    def delete(self):
-        session["user_id"] = None
-        return make_response({"message": "Logout successful"}, 200)
+    @jwt_required()
+    def post(self):
+        jti = get_jwt_identity()
+        token = TokenBlockList(jti=jti)
+        db.session.add(token)
+        db.session.commit()
+        return make_response({"message": "Successfully logged out"}, 200)
 
 
-class AuthorizedSession(Resource):
+class ProtectedRoute(Resource):
+    @jwt_required()
     def get(self):
-        try:
-            user = User.query.filter_by(id=session["user_id"]).first()
-            return make_response(user.to_dict(), 200)
-        except:
-            abort(401, "Unauthorized")
+        current_user = get_jwt_identity()
+        return make_response({"message": f"Hello, {current_user['username']}"}), 200
 
 
 # User Routes
@@ -429,7 +452,7 @@ api.add_resource(MenuItemsByMenuCategoryId, "/menu_categories/<int:id>/menu_item
 
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
-api.add_resource(AuthorizedSession, "/authorized")
+api.add_resource(ProtectedRoute, "/protected")
 
 
 if __name__ == "__main__":

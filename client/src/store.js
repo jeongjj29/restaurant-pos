@@ -8,6 +8,7 @@ import menuItemsReducer from "./features/menu/menuItemsSlice";
 // import discountsReducer from "./features/discounts/discountsSlice";
 // import rolesReducer from "./features/roles/rolesSlice";
 import menuCategoriesReducer from "./features/menu/menuCategoriesSlice";
+import authSliceReducer from "./features/auth/authSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +21,6 @@ export const store = configureStore({
     // discounts: discountsReducer,
     // roles: rolesReducer,
     menuCategories: menuCategoriesReducer,
+    auth: authSliceReducer,
   },
 });

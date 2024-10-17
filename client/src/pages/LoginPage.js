@@ -3,9 +3,11 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { login } from "../features/auth/authSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [loginError, setLoginError] = useState(null); // State for error message
 
   const loginSchema = yup.object().shape({
@@ -25,13 +27,11 @@ function LoginPage() {
             .then(() => {
               resetForm(); // Reset form on successful login
               setLoginError(null); // Clear any previous errors
+              navigate("/");
             })
             .catch((err) => {
               setLoginError(err); // Set error to display
               console.error(err);
-            })
-            .finally(() => {
-              setSubmitting(false); // Always stop submitting
             });
         }}
       >

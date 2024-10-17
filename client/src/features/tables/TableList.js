@@ -11,6 +11,7 @@ function TableList({ tables, onTableClick, selectedSpot, setSelectedSpot }) {
 
   return (
     <div className="w-160 h-screen overflow-y-auto bg-white p-4 shadow-lg p-6 bg-gray-100 rounded-md shadow-lg">
+      {/* Cancel Table Selection Button */}
       {selectedSpot && (
         <button
           onClick={() => setSelectedSpot(null)}
@@ -19,6 +20,7 @@ function TableList({ tables, onTableClick, selectedSpot, setSelectedSpot }) {
           Cancel Table Selection
         </button>
       )}
+
       {/* Add New Table Button */}
       {editFormHidden && !selectedSpot && (
         <button

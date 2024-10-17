@@ -18,7 +18,7 @@ const employeeSchema = yup.object().shape({
     .required("Password is required"),
 });
 
-function EmployeeForm({ employee, setFormHidden }) {
+function EmployeeForm({ employee, setFormHidden, setSelectedEmployee }) {
   const dispatch = useDispatch();
   const roles = useSelector((state) => state.roles.roles);
 
@@ -45,13 +45,19 @@ function EmployeeForm({ employee, setFormHidden }) {
         validationSchema={employeeSchema}
         onSubmit={(values, { resetForm }) => {
           if (employee) {
-            dispatch(updateEmployee({ ...values, id: employee.id }));
-            resetForm();
-            setFormHidden(true);
+            dispatch(updateEmployee({ ...values, id: employee.id }))
+              .unwrap()
+              .then(() => {
+                setSelectedEmployee(null);
+                setFormHidden(true);
+              });
           } else {
-            dispatch(addEmployee(values));
-            resetForm();
-            setFormHidden(true);
+            dispatch(addEmployee(values))
+              .unwrap()
+              .then(() => {
+                resetForm();
+                setFormHidden(true);
+              });
           }
         }}
       >

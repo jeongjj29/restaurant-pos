@@ -1,4 +1,5 @@
 import React from "react";
+import { toTitleCase } from "../../utils";
 
 function Employee({ employee, setSelectedEmployee }) {
   return (
@@ -9,7 +10,7 @@ function Employee({ employee, setSelectedEmployee }) {
           <h2 className="text-lg font-semibold">
             {employee.first_name} {employee.last_name}
           </h2>
-          <h3 className="text-gray-500">{employee.role.name}</h3>
+          <h3 className="text-gray-500">{toTitleCase(employee.role.name)}</h3>
         </div>
 
         <div className="sm:border-l sm:pl-4 sm:ml-4">

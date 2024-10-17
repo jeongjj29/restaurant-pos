@@ -271,8 +271,7 @@ class MenuItem(db.Model, SerializerMixin):
     menu_category = db.relationship("MenuCategory", back_populates="menu_items")
 
     serialize_rules = (
-        "-order_items.menu_item",
-        "-order_items.order",
+        "-order_items",
         "-order.user",
         "-role.users",
         "-tables.user",

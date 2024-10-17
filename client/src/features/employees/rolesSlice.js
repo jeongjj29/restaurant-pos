@@ -13,6 +13,30 @@ export const fetchRoles = createAsyncThunk(
   }
 );
 
+export const addRole = createAsyncThunk(
+  "roles/addRole",
+  async (roleData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/roles", roleData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateRole = createAsyncThunk(
+  "roles/updateRole",
+  async (roleData, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`/roles/${roleData.id}`, roleData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   roles: [],
   loading: false,
@@ -26,17 +50,7 @@ const rolesSlice = createSlice({
     setRoles: (state, action) => {
       state.roles = action.payload;
     },
-    addRole: (state, action) => {
-      state.roles.push(action.payload);
-    },
-    updateRole: (state, action) => {
-      const index = state.roles.findIndex(
-        (role) => role.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.roles[index] = action.payload;
-      }
-    },
+
     deleteRole: (state, action) => {
       state.roles = state.roles.filter((role) => role.id !== action.payload);
     },
@@ -63,12 +77,6 @@ const rolesSlice = createSlice({
   },
 });
 
-export const {
-  setRoles,
-  addRole,
-  updateRole,
-  deleteRole,
-  setLoading,
-  setError,
-} = rolesSlice.actions;
+export const { setRoles, deleteRole, setLoading, setError } =
+  rolesSlice.actions;
 export default rolesSlice.reducer;

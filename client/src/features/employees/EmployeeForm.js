@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch, useSelector } from "react-redux";
+import { updateEmployee, addEmployee } from "./employeesSlice";
 import { fetchRoles } from "./rolesSlice";
 import * as yup from "yup";
 
@@ -17,7 +18,7 @@ const employeeSchema = yup.object().shape({
     .required("Password is required"),
 });
 
-function EmployeeForm({ employee, onSubmit }) {
+function EmployeeForm({ employee, setFormHidden }) {
   const dispatch = useDispatch();
   const roles = useSelector((state) => state.roles.roles);
 
@@ -32,6 +33,7 @@ function EmployeeForm({ employee, onSubmit }) {
       </h2>
 
       <Formik
+        enableReinitialize
         initialValues={{
           first_name: employee?.first_name || "",
           last_name: employee?.last_name || "",
@@ -42,8 +44,15 @@ function EmployeeForm({ employee, onSubmit }) {
         }}
         validationSchema={employeeSchema}
         onSubmit={(values, { resetForm }) => {
-          onSubmit(values);
-          resetForm();
+          if (employee) {
+            dispatch(updateEmployee({ ...values, id: employee.id }));
+            resetForm();
+            setFormHidden(true);
+          } else {
+            dispatch(addEmployee(values));
+            resetForm();
+            setFormHidden(true);
+          }
         }}
       >
         {({ isSubmitting }) => (

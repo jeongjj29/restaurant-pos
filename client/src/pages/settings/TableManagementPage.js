@@ -15,9 +15,6 @@ function TableManagementPage() {
     dispatch(fetchTables()); // Fetch tables on component mount
   }, [dispatch]);
 
-  const height = 5;
-  const width = 9;
-
   // Handle clicking a table or empty spot
   const handleTableClick = (xIndex, yIndex, tableId) => {
     if (tableId) {

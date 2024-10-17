@@ -1,10 +1,7 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { TAX_RATE } from "../../constants";
 
 function OrderDetails({ order }) {
-  const navigate = useNavigate();
-
   if (!order) {
     return null;
   }

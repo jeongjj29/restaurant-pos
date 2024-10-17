@@ -1,10 +1,8 @@
-import TableLayout from "../../features/tables/TableLayout";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTables, updateTable } from "../../features/tables/tablesSlice";
-
+import TableLayout from "../../features/tables/TableLayout";
 import TableList from "../../features/tables/TableList";
-import TablesLayout from "../../features/tables/TableLayout";
 
 function TableManagementPage() {
   const dispatch = useDispatch();

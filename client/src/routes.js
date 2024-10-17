@@ -12,6 +12,7 @@ import OrdersManagementPage from "./pages/orders/OrdersManagementPage";
 import TakeOutPage from "./pages/orders/TakeOutPage";
 import AllOrdersPage from "./pages/orders/AllOrdersPage";
 import PaymentsPage from "./pages/orders/PaymentsPage";
+import ProtectedRoute from "./features/auth/ProtectedRoute"; // Import ProtectedRoute
 
 const routes = [
   {
@@ -29,41 +30,77 @@ const routes = [
       },
       {
         path: "orders",
-        element: <OrdersManagementPage />,
+        element: (
+          <ProtectedRoute>
+            <OrdersManagementPage />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "takeout",
-            element: <TakeOutPage />,
+            element: (
+              <ProtectedRoute>
+                <TakeOutPage />
+              </ProtectedRoute>
+            ),
           },
           {
             path: "all",
-            element: <AllOrdersPage />,
+            element: (
+              <ProtectedRoute>
+                <AllOrdersPage />
+              </ProtectedRoute>
+            ),
           },
           {
             path: "payment",
-            element: <PaymentsPage />,
+            element: (
+              <ProtectedRoute>
+                <PaymentsPage />
+              </ProtectedRoute>
+            ),
           },
         ],
       },
       {
         path: "settings",
-        element: <SettingsPage />,
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "menu",
-            element: <MenuManagementPage />,
+            element: (
+              <ProtectedRoute>
+                <MenuManagementPage />
+              </ProtectedRoute>
+            ),
           },
           {
             path: "employees",
-            element: <EmployeeManagementPage />,
+            element: (
+              <ProtectedRoute>
+                <EmployeeManagementPage />
+              </ProtectedRoute>
+            ),
           },
           {
             path: "tables",
-            element: <TableManagementPage />,
+            element: (
+              <ProtectedRoute>
+                <TableManagementPage />
+              </ProtectedRoute>
+            ),
           },
           {
             path: "reports",
-            element: <SalesReportsPage />,
+            element: (
+              <ProtectedRoute>
+                <SalesReportsPage />
+              </ProtectedRoute>
+            ),
           },
         ],
       },

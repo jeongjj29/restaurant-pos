@@ -7,24 +7,28 @@ function EmployeeManagementPage() {
   const [formHidden, setFormHidden] = useState(true);
 
   return (
-    <div>
-      <h1>Employees</h1>
-      <button
-        onClick={() => {
-          setSelectedEmployee(null);
-          setFormHidden(false);
-        }}
-      >
-        Add Employee
-      </button>
-      <EmployeeTable setSelectedEmployee={setSelectedEmployee} />
-
-      {(selectedEmployee || !formHidden) && (
-        <EmployeeForm
-          employee={selectedEmployee}
-          setFormHidden={setFormHidden}
-        />
-      )}
+    <div className="flex flex-row">
+      <div className="w-full">
+        <h1>Employees</h1>
+        <button
+          onClick={() => {
+            setSelectedEmployee(null);
+            setFormHidden(false);
+          }}
+        >
+          Add Employee
+        </button>
+        <EmployeeTable setSelectedEmployee={setSelectedEmployee} />
+      </div>
+      <div>
+        {(selectedEmployee || !formHidden) && (
+          <EmployeeForm
+            employee={selectedEmployee}
+            setSelectedEmployee={setSelectedEmployee}
+            setFormHidden={setFormHidden}
+          />
+        )}
+      </div>
     </div>
   );
 }

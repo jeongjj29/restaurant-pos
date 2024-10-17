@@ -1,29 +1,13 @@
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as yup from "yup";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { updateTable, addNewTable, deleteTable } from "./tablesSlice";
+import { deleteTable } from "./tablesSlice";
 import TableForm from "./TableForm";
-import Table from "./Table";
 
 function TableList({ tables, onTableClick, selectedSpot, setSelectedSpot }) {
   const dispatch = useDispatch();
   const [editFormHidden, setEditFormHidden] = useState(true);
   const [tableToEdit, setTableToEdit] = useState(null);
   const sortedTables = [...tables].sort((a, b) => a.number - b.number);
-
-  const tableSchema = yup.object().shape({
-    number: yup
-      .number()
-      .required("Number is required")
-      .test("unique-number", "Table number already exists", function (value) {
-        return !tables.some((table) => table.number === value);
-      }),
-    capacity: yup
-      .number()
-      .min(1, "Capacity must be at least 1")
-      .required("Capacity is required"),
-  });
 
   return (
     <div className="w-160 h-screen overflow-y-auto bg-white p-4 shadow-lg p-6 bg-gray-100 rounded-md shadow-lg">

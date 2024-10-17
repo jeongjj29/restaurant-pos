@@ -4,13 +4,27 @@ import EmployeeForm from "../../features/employees/EmployeeForm";
 
 function EmployeeManagementPage() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [formHidden, setFormHidden] = useState(true);
 
   return (
     <div>
       <h1>Employees</h1>
+      <button
+        onClick={() => {
+          setSelectedEmployee(null);
+          setFormHidden(false);
+        }}
+      >
+        Add Employee
+      </button>
       <EmployeeTable setSelectedEmployee={setSelectedEmployee} />
 
-      {selectedEmployee && <EmployeeForm employee={selectedEmployee} />}
+      {(selectedEmployee || !formHidden) && (
+        <EmployeeForm
+          employee={selectedEmployee}
+          setFormHidden={setFormHidden}
+        />
+      )}
     </div>
   );
 }

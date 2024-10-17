@@ -17,7 +17,14 @@ export const addEmployee = createAsyncThunk(
   "employees/addEmployee",
   async (employeeData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/users", employeeData);
+      const response = await axios.post("/users", {
+        first_name: employeeData.first_name,
+        last_name: employeeData.last_name,
+        email: employeeData.email,
+        username: employeeData.username,
+        role_id: employeeData.role_id,
+        password_hash: employeeData.password,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -29,10 +36,13 @@ export const updateEmployee = createAsyncThunk(
   "employees/updateEmployee",
   async (employeeData, { rejectWithValue }) => {
     try {
-      const response = await axios.patch(
-        `/users/${employeeData.id}`,
-        employeeData
-      );
+      const response = await axios.patch(`/users/${employeeData.id}`, {
+        first_name: employeeData.first_name,
+        last_name: employeeData.last_name,
+        email: employeeData.email,
+        username: employeeData.username,
+        role_id: employeeData.role_id,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

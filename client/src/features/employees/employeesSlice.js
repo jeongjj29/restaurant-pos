@@ -13,6 +13,33 @@ export const fetchEmployees = createAsyncThunk(
   }
 );
 
+export const addEmployee = createAsyncThunk(
+  "employees/addEmployee",
+  async (employeeData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/users", employeeData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateEmployee = createAsyncThunk(
+  "employees/updateEmployee",
+  async (employeeData, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(
+        `/users/${employeeData.id}`,
+        employeeData
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   employees: [],
   loading: false,
@@ -26,17 +53,7 @@ const employeesSlice = createSlice({
     setEmployees(state, action) {
       state.employees = action.payload;
     },
-    addEmployee(state, action) {
-      state.employees.push(action.payload);
-    },
-    updateEmployee(state, action) {
-      const index = state.employees.findIndex(
-        (employee) => employee.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.employees[index] = action.payload;
-      }
-    },
+
     setLoading(state, action) {
       state.loading = action.payload;
     },
@@ -56,14 +73,30 @@ const employeesSlice = createSlice({
       .addCase(fetchEmployees.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(addEmployee.fulfilled, (state, action) => {
+        state.employees.push(action.payload);
+      })
+      .addCase(addEmployee.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(updateEmployee.fulfilled, (state, action) => {
+        const index = state.employees.findIndex(
+          (employee) => employee.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.employees[index] = action.payload;
+        }
+      })
+      .addCase(updateEmployee.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });
 
 export const {
   setEmployees,
-  addEmployee,
-  updateEmployee,
+
   setLoading,
   setError,
 } = employeesSlice.actions;

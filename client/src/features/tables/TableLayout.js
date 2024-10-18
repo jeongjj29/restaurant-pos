@@ -2,7 +2,7 @@ import React from "react";
 import Table from "./Table";
 import DroppableTable from "./DroppableTable";
 
-function TablesLayout({ tables, handleTableClick }) {
+function TablesLayout({ tables }) {
   const height = 5;
   const width = 9;
 

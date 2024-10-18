@@ -9,98 +9,62 @@ function TableManagementPage() {
   const dispatch = useDispatch();
   const tables = useSelector((state) => state.tables.tables);
   const error = useSelector((state) => state.tables.error);
+  const loading = useSelector((state) => state.tables.loading); // Assume this exists in your slice
 
   const [selectedSpot, setSelectedSpot] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchTables()); // Fetch tables on component mount
+    const loadTables = async () => {
+      try {
+        await dispatch(fetchTables());
+      } catch (err) {
+        console.error("Failed to fetch tables:", err);
+      }
+    };
+    loadTables();
   }, [dispatch]);
 
-  // Handle assigning a table to a new spot
-  const handleTableAssign = (tableId) => {
-    // Remove table from the previous spot
-    if (selectedSpot.tableId) {
-      dispatch(
-        updateTable({
-          tableId: selectedSpot.tableId,
-          updatedData: { location_x: null, location_y: null },
-        })
-      ).then(() => {
-        if (!tableId) {
-          setSelectedSpot(null);
-          dispatch(fetchTables());
-        }
-      });
-    }
-
-    // Assign table to the new spot
-    if (tableId) {
-      dispatch(
-        updateTable({
-          tableId: tableId,
-          updatedData: {
-            location_x: selectedSpot.location_x,
-            location_y: selectedSpot.location_y,
-          },
-        })
-      ).then(() => {
-        setSelectedSpot(null);
-        dispatch(fetchTables());
-      });
-    }
-  };
-
-  function handleDragEnd(event) {
+  const handleDragEnd = (event) => {
     const { active, over } = event;
 
     if (over) {
       const [overX, overY] = over.id.split("-");
-      console.log(overX, overY);
       const occupiedLocation = tables.find(
         (table) =>
           table.location_x === parseInt(overX) &&
           table.location_y === parseInt(overY)
       );
-      console.log(occupiedLocation);
+
       if (occupiedLocation) {
         dispatch(
           updateTable({
             tableId: occupiedLocation.id,
             updatedData: { location_x: null, location_y: null },
           })
-        );
+        ).catch((err) => console.error("Error updating occupied table:", err));
       }
+
       dispatch(
         updateTable({
           tableId: active.id,
           updatedData: { location_x: overX, location_y: overY },
         })
-      );
+      ).catch((err) => console.error("Error updating dragged table:", err));
     }
-  }
+  };
 
   // Error handling
   if (error) return <p className="text-red-600">Error: {error}</p>;
+  if (loading) return <p className="text-gray-600">Loading tables...</p>;
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className=" bg-gray-50 min-h-screen flex flex-row">
+      <div className="bg-gray-50 min-h-screen flex flex-row relative overflow-visible">
         {/* Grid Layout */}
-
-        <TableLayout
-          tables={tables}
-          selectedSpot={selectedSpot}
-          setSelectedSpot={setSelectedSpot}
-        />
+        <TableLayout tables={tables} />
 
         {/* TableList (Scrollable) */}
-
-        <TableList
-          tables={tables}
-          onTableClick={handleTableAssign}
-          selectedSpot={selectedSpot}
-          setSelectedSpot={setSelectedSpot}
-        />
+        <TableList tables={tables} />
       </div>
     </DndContext>
   );

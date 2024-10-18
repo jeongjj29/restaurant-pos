@@ -1,5 +1,6 @@
 import React from "react";
 import Table from "./Table";
+import DroppableTable from "./DroppableTable";
 
 function TablesLayout({ tables, handleTableClick }) {
   const height = 5;
@@ -35,12 +36,10 @@ function TablesLayout({ tables, handleTableClick }) {
       {layout.map((row, i) => (
         <div key={i} className="flex flex-row gap-2 justify-center mb-2">
           {row.map((col, j) => (
-            <Table
+            <DroppableTable
               key={j}
               isTable={col.isTable}
-              tableId={col.id}
               number={col.number}
-              onTableClick={handleTableClick}
               xIndex={j}
               yIndex={i}
             />

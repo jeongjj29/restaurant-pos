@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteTable } from "./tablesSlice";
 import TableForm from "./TableForm";
+import DraggableTable from "./DraggableTable";
 
 function TableList({ tables, onTableClick, selectedSpot, setSelectedSpot }) {
   const dispatch = useDispatch();
@@ -52,9 +53,11 @@ function TableList({ tables, onTableClick, selectedSpot, setSelectedSpot }) {
             className="bg-white p-4 rounded-md shadow-md flex justify-between items-center"
           >
             {/* Table Information */}
-            <span className="text-lg font-semibold">
-              Table: {table.number} | Capacity: {table.capacity}
-            </span>
+            <DraggableTable
+              tableId={table.id}
+              number={table.number}
+              capacity={table.capacity}
+            />
 
             {/* Select Table Button */}
             {selectedSpot && (

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { DndContext } from "@dnd-kit/core";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTables, updateTable } from "../../features/tables/tablesSlice";
 import TableLayout from "../../features/tables/TableLayout";
@@ -14,19 +15,6 @@ function TableManagementPage() {
   useEffect(() => {
     dispatch(fetchTables()); // Fetch tables on component mount
   }, [dispatch]);
-
-  // Handle clicking a table or empty spot
-  const handleTableClick = (xIndex, yIndex, tableId) => {
-    if (tableId) {
-      setSelectedSpot({
-        location_x: xIndex,
-        location_y: yIndex,
-        tableId: tableId,
-      });
-    } else {
-      setSelectedSpot({ location_x: xIndex, location_y: yIndex });
-    }
-  };
 
   // Handle assigning a table to a new spot
   const handleTableAssign = (tableId) => {
@@ -62,29 +50,59 @@ function TableManagementPage() {
     }
   };
 
+  function handleDragEnd(event) {
+    const { active, over } = event;
+
+    if (over) {
+      const [overX, overY] = over.id.split("-");
+      console.log(overX, overY);
+      const occupiedLocation = tables.find(
+        (table) =>
+          table.location_x === parseInt(overX) &&
+          table.location_y === parseInt(overY)
+      );
+      console.log(occupiedLocation);
+      if (occupiedLocation) {
+        dispatch(
+          updateTable({
+            tableId: occupiedLocation.id,
+            updatedData: { location_x: null, location_y: null },
+          })
+        );
+      }
+      dispatch(
+        updateTable({
+          tableId: active.id,
+          updatedData: { location_x: overX, location_y: overY },
+        })
+      );
+    }
+  }
+
   // Error handling
   if (error) return <p className="text-red-600">Error: {error}</p>;
 
   return (
-    <div className=" bg-gray-50 min-h-screen flex flex-row">
-      {/* Grid Layout */}
+    <DndContext onDragEnd={handleDragEnd}>
+      <div className=" bg-gray-50 min-h-screen flex flex-row">
+        {/* Grid Layout */}
 
-      <TableLayout
-        tables={tables}
-        handleTableClick={handleTableClick}
-        selectedSpot={selectedSpot}
-        setSelectedSpot={setSelectedSpot}
-      />
+        <TableLayout
+          tables={tables}
+          selectedSpot={selectedSpot}
+          setSelectedSpot={setSelectedSpot}
+        />
 
-      {/* TableList (Scrollable) */}
+        {/* TableList (Scrollable) */}
 
-      <TableList
-        tables={tables}
-        onTableClick={handleTableAssign}
-        selectedSpot={selectedSpot}
-        setSelectedSpot={setSelectedSpot}
-      />
-    </div>
+        <TableList
+          tables={tables}
+          onTableClick={handleTableAssign}
+          selectedSpot={selectedSpot}
+          setSelectedSpot={setSelectedSpot}
+        />
+      </div>
+    </DndContext>
   );
 }
 

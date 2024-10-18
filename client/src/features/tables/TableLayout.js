@@ -1,5 +1,4 @@
 import React from "react";
-import Table from "./Table";
 import DroppableTable from "./DroppableTable";
 
 function TablesLayout({ tables }) {
@@ -32,7 +31,7 @@ function TablesLayout({ tables }) {
   });
 
   return (
-    <div className="flex-1 self-center justify-self-center">
+    <div className="flex-1 self-center justify-self-center relative overflow-visible">
       {layout.map((row, i) => (
         <div key={i} className="flex flex-row gap-2 justify-center mb-2">
           {row.map((col, j) => (

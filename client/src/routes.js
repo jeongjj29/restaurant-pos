@@ -47,7 +47,7 @@ const routes = [
             ),
           },
           {
-            path: "table/:tableNumber",
+            path: "table/:tableId",
             element: (
               <ProtectedRoute>
                 <TableOrdersPage />

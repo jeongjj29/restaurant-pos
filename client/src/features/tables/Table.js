@@ -11,7 +11,7 @@ function Table({ isTable, tableId, number, orders }) {
           axios.get(`/orders/table/${tableId}`).then((res) => {
             const orders = res.data;
             if (orders.length > 0) {
-              navigate(`/orders/${tableId}`);
+              navigate(`/orders/table/${tableId}`);
             } else {
               navigate(`/orders/table/${tableId}/new`);
             }

@@ -56,7 +56,7 @@ const routes = [
             ),
           },
           {
-            path: "table/:tableId/order",
+            path: "table/:tableId/new",
             element: (
               <ProtectedRoute>
                 <DineInOrderInputPage />

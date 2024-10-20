@@ -1,10 +1,10 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-function TableOrdersPage() {
+function OrdersByTablePage() {
   const tableId = useParams().tableId;
   console.log(tableId);
-  return <div>TableOrdersPage</div>;
+  return <div>OrdersByTablePage</div>;
 }
 
-export default TableOrdersPage;
+export default OrdersByTablePage;

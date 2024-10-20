@@ -1,30 +1,22 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-function Table({
-  isTable,
-  tableId,
-  capacity,
-  orders,
-  number,
-  xIndex,
-  yIndex,
-  onTableClick,
-}) {
+function Table({ isTable, tableId, number, xIndex, yIndex }) {
+  const navigate = useNavigate();
   if (isTable) {
     return (
       <div
-        onClick={() => onTableClick(xIndex, yIndex, tableId)}
-        className="text-2xl flex items-center justify-center w-24 h-24 border-2 rounded-lg bg-blue-500 text-white cursor-pointer hover:bg-blue-600"
+        onClick={() => {
+          navigate(`/orders/table/${number}`);
+        }}
+        className="text-2xl flex items-center justify-center w-24 h-24 border-2 rounded-lg text-white cursor-pointer bg-slate-400"
       >
         {number}
       </div>
     );
   } else {
     return (
-      <div
-        className="flex items-center justify-center w-24 h-24 border-2 rounded-lg bg-gray-300 cursor-pointer hover:bg-gray-400"
-        onClick={() => onTableClick(xIndex, yIndex)}
-      ></div>
+      <div className="flex items-center justify-center w-24 h-24  rounded-lg"></div>
     );
   }
 }

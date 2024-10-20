@@ -14,8 +14,8 @@ import TakeOutPage from "./pages/orders/TakeOutPage";
 import AllOrdersPage from "./pages/orders/AllOrdersPage";
 import PaymentsPage from "./pages/orders/PaymentsPage";
 import ProtectedRoute from "./features/auth/ProtectedRoute"; // Import ProtectedRoute
-import TableOrdersPage from "./pages/orders/TableOrdersPage";
-import DineInOrderPage from "./pages/orders/DineInOrderPage";
+import OrdersByTablePage from "./pages/orders/OrdersByTablePage";
+import DineInOrderInputPage from "./pages/orders/DineInOrderInputPage";
 
 const routes = [
   {
@@ -51,7 +51,7 @@ const routes = [
             path: "table/:tableId",
             element: (
               <ProtectedRoute>
-                <TableOrdersPage />
+                <OrdersByTablePage />
               </ProtectedRoute>
             ),
           },
@@ -59,7 +59,7 @@ const routes = [
             path: "table/:tableId/order",
             element: (
               <ProtectedRoute>
-                <DineInOrderPage />
+                <DineInOrderInputPage />
               </ProtectedRoute>
             ),
           },

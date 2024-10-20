@@ -50,7 +50,7 @@ function TableManagementPage() {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="bg-gray-50 min-h-screen flex flex-row relative overflow-visible">
+      <div className="bg-gray-50 min-h-screen max-h-screen flex flex-row relative overflow-visible">
         {/* Grid Layout */}
         <TableLayout tables={tables} />
 

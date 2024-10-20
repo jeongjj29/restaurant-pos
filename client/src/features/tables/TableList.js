@@ -11,7 +11,7 @@ function TableList({ tables }) {
   const sortedTables = [...tables].sort((a, b) => a.number - b.number);
 
   return (
-    <div className="relative overflow-visible w-160 h-screen overflow-y-auto bg-white p-4 rounded-md shadow-lg">
+    <div className=" relative w-160 max-h-screen bg-white p-4 rounded-md shadow-lg">
       {/* Add New Table Button */}
       {editFormHidden && (
         <button
@@ -36,7 +36,7 @@ function TableList({ tables }) {
       )}
 
       {/* Table List */}
-      <ul className="list-none space-y-4 overflow-visible relative">
+      <ul className="list-none space-y-4 max-h-screen relative">
         {sortedTables.map((table) => (
           <li
             key={table.id}

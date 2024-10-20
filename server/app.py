@@ -197,7 +197,12 @@ class OrdersByUserId(Resource):
 
 class OrdersByTableId(Resource):
     def get(self, id):
-        orders = [order.to_dict() for order in Order.query.filter_by(table_id=id).all(), status="open"]
+        orders = [
+            order.to_dict()
+            for order in Order.query.filter(
+                Order.table_id == id, Order.status == "open"
+            ).all()
+        ]
         return make_response(orders, 200)
 
 

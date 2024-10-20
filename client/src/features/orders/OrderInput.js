@@ -5,8 +5,9 @@ import { fetchMenuCategories } from "../menu/menuCategoriesSlice";
 import { addOrder } from "./ordersSlice";
 import { addOrderItem } from "./orderItemsSlice";
 import { TAX_RATE } from "../../constants";
+import axios from "axios";
 
-function OrderInput() {
+function OrderInput({ tableId }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const menuCategories = useSelector(
@@ -14,10 +15,19 @@ function OrderInput() {
   );
   const [selectedCategory, setSelectedCategory] = useState(1);
   const [pendingOrderItems, setPendingOrderItems] = useState([]);
+  const [table, setTable] = useState({
+    id: null,
+    number: null,
+  });
 
   useEffect(() => {
     dispatch(fetchMenuCategories());
-  }, [dispatch]);
+    if (tableId) {
+      axios.get(`/tables/${tableId}`).then((res) => {
+        setTable(res.data);
+      });
+    }
+  }, [dispatch, tableId]);
 
   const handleCategoryButtonClick = (categoryId) => {
     setSelectedCategory(categoryId);
@@ -46,11 +56,12 @@ function OrderInput() {
   const handleOrderSubmit = () => {
     dispatch(
       addOrder({
-        type: "take_out",
+        type: table.id ? "dine_in" : "take_out",
         total_price: totalPriceWithTax,
         status: "open",
         sales_tax: TAX_RATE,
         user_id: 1,
+        table_id: table.id ? table.id : null,
       })
     )
       .unwrap()
@@ -126,7 +137,7 @@ function OrderInput() {
         {/* Order Display */}
         <div className="w-1/3 m-6 border-2 rounded-lg shadow-lg flex flex-col justify-between overflow-hidden">
           <h1 className="text-2xl text-center mt-4 mb-4 bg-gray-200 py-2">
-            Take-Out Order
+            {table.id ? `Table ${table.number} Order` : "Take-Out Order"}
           </h1>
 
           {/* Scrollable Menu Items */}

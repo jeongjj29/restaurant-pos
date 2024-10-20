@@ -15,7 +15,7 @@ function DineInPage() {
                 number={col.number}
                 xIndex={j}
                 yIndex={i}
-                tableId={col.tableId}
+                tableId={col.id}
                 orders={col.orders}
               />
             ))}

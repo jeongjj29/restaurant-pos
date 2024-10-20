@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEmployees } from "./employeesSlice";
-import { toTitleCase } from "../../helpers";
 import Employee from "./Employee";
 
 function EmployeeTable({ setSelectedEmployee }) {

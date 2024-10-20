@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTables, updateTable } from "../../features/tables/tablesSlice";
@@ -11,17 +11,8 @@ function TableManagementPage() {
   const error = useSelector((state) => state.tables.error);
   const loading = useSelector((state) => state.tables.loading); // Assume this exists in your slice
 
-  const [selectedSpot, setSelectedSpot] = useState(null);
-
   useEffect(() => {
-    const loadTables = async () => {
-      try {
-        await dispatch(fetchTables());
-      } catch (err) {
-        console.error("Failed to fetch tables:", err);
-      }
-    };
-    loadTables();
+    dispatch(fetchTables());
   }, [dispatch]);
 
   const handleDragEnd = (event) => {

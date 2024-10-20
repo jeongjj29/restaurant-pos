@@ -2,8 +2,8 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 function TableOrdersPage() {
-  const tableNumber = useParams().tableNumber;
-  console.log(tableNumber);
+  const tableId = useParams().tableId;
+  console.log(tableId);
   return <div>TableOrdersPage</div>;
 }
 

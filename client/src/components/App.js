@@ -7,6 +7,7 @@ import { fetchOrders } from "../features/orders/ordersSlice";
 import { fetchEmployees } from "../features/employees/employeesSlice";
 import { fetchMenuItems } from "../features/menu/menuItemsSlice";
 import { fetchMenuCategories } from "../features/menu/menuCategoriesSlice";
+import { fetchPayments } from "../features/payments/paymentsSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ function App() {
     dispatch(fetchEmployees());
     dispatch(fetchMenuItems());
     dispatch(fetchMenuCategories());
+    dispatch(fetchPayments());
   }, [dispatch]);
 
   return (

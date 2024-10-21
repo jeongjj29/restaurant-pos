@@ -21,7 +21,7 @@ export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { getState, rejectWithValue }) => {
     try {
-      const state = getState();
+      // const state = getState();
       // const token = state.auth.token;
 
       // console.log(token);

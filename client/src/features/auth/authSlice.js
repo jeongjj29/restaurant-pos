@@ -17,6 +17,35 @@ export const login = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const token = state.auth.token;
+
+      // console.log(token);
+
+      // Make a POST request to the logout route
+      // await axios.post(
+      //   "/logout",
+      //   {},
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`, // Attach the token to the request
+      //     },
+      //   }
+      // );
+
+      // Clear token from localStorage after successful logout
+      localStorage.removeItem("token");
+    } catch (error) {
+      console.error("Logout error:", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const tokenFromStorage = localStorage.getItem("token");
 
 const initialState = {
@@ -30,36 +59,37 @@ const initialState = {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    logout(state) {
-      state.loading = false;
-      state.isAuthenticated = false;
-      state.token = null;
-      state.user = null;
-      state.error = null;
-
-      localStorage.removeItem("token");
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
         state.loading = true;
-        state.error = null; // Reset error on new login attempt
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.isAuthenticated = true;
-        state.token = action.payload.token; // Token from login response
-        state.user = action.payload.user; // User data from login response
+        state.token = action.payload.token;
+        state.user = action.payload.user;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload; // Error message from the API
+        state.error = action.payload;
+      })
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.token = null;
+        state.user = null;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
-
-export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;

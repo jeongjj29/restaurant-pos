@@ -22,7 +22,7 @@ export const logout = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState();
-      const token = state.auth.token;
+      // const token = state.auth.token;
 
       // console.log(token);
 

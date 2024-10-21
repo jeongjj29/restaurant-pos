@@ -6,13 +6,7 @@ import { fetchMenuCategories } from "./menuCategoriesSlice";
 function MenuItemTable() {
   const dispatch = useDispatch();
   const menuItems = useSelector((state) => state.menuItems.menuItems);
-  const menuCategories = useSelector(
-    (state) => state.menuCategories.menuCategories
-  );
   const menuItemsError = useSelector((state) => state.menuItems.error);
-  const menuCategoriesError = useSelector(
-    (state) => state.menuCategories.error
-  );
 
   const thCSS =
     "border border-gray-300 p-3 text-left text-sm font-semibold text-gray-700";
@@ -30,8 +24,6 @@ function MenuItemTable() {
 
   if (menuItemsError)
     return <p className="text-red-600">Error: {menuItemsError}</p>;
-  if (menuCategoriesError)
-    return <p className="text-red-600">Error: {menuCategoriesError}</p>;
 
   return (
     <div className="max-w-4xl mx-auto my-8 overflow-x-auto shadow-md rounded-lg">

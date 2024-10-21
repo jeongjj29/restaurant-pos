@@ -9,10 +9,13 @@ import EmployeeManagementPage from "./pages/settings/EmployeeManagementPage";
 import TableManagementPage from "./pages/settings/TableManagementPage";
 import SalesReportsPage from "./pages/settings/SalesReportPage";
 import OrdersManagementPage from "./pages/orders/OrdersManagementPage";
+import DineInPage from "./pages/orders/DineInPage";
 import TakeOutPage from "./pages/orders/TakeOutPage";
 import AllOrdersPage from "./pages/orders/AllOrdersPage";
 import PaymentsPage from "./pages/orders/PaymentsPage";
 import ProtectedRoute from "./features/auth/ProtectedRoute"; // Import ProtectedRoute
+import OrdersByTablePage from "./pages/orders/OrdersByTablePage";
+import DineInOrderInputPage from "./pages/orders/DineInOrderInputPage";
 
 const routes = [
   {
@@ -36,6 +39,30 @@ const routes = [
           </ProtectedRoute>
         ),
         children: [
+          {
+            path: "dinein",
+            element: (
+              <ProtectedRoute>
+                <DineInPage />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: "table/:tableId",
+            element: (
+              <ProtectedRoute>
+                <OrdersByTablePage />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: "table/:tableId/new",
+            element: (
+              <ProtectedRoute>
+                <DineInOrderInputPage />
+              </ProtectedRoute>
+            ),
+          },
           {
             path: "takeout",
             element: (

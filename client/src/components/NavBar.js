@@ -43,6 +43,13 @@ function NavBar() {
               <span>All Orders</span>
             </NavLink>
             <NavLink
+              to="/orders/dinein"
+              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+            >
+              <TableRestaurantIcon className="text-gray-500" />
+              <span>Dine-In</span>
+            </NavLink>
+            <NavLink
               to="/orders/takeout"
               className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
             >

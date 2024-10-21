@@ -195,6 +195,17 @@ class OrdersByUserId(Resource):
         return make_response(orders, 200)
 
 
+class OrdersByTableId(Resource):
+    def get(self, id):
+        orders = [
+            order.to_dict()
+            for order in Order.query.filter(
+                Order.table_id == id, Order.status == "open"
+            ).all()
+        ]
+        return make_response(orders, 200)
+
+
 # Table Routes
 class Tables(Resource):
     def get(self):
@@ -430,6 +441,7 @@ api.add_resource(UsersByRoleId, "/roles/<int:id>/users")
 api.add_resource(Orders, "/orders")
 api.add_resource(OrdersById, "/orders/<int:id>")
 api.add_resource(OrderItemsByOrderId, "/orders/<int:id>/order_items")
+api.add_resource(OrdersByTableId, "/orders/table/<int:id>")
 
 api.add_resource(Tables, "/tables")
 api.add_resource(TablesById, "/tables/<int:id>")

@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { TABLES_LAYOUT_WIDTH, TABLES_LAYOUT_HEIGHT } from "../../constants";
 import axios from "axios";
 
 // Fetch tables action
@@ -52,8 +53,29 @@ export const deleteTable = createAsyncThunk(
   }
 );
 
+const createTableLayout = (tables) => {
+  const cols = TABLES_LAYOUT_HEIGHT;
+  const rows = TABLES_LAYOUT_WIDTH;
+
+  const layout = Array.from({ length: rows }, () =>
+    Array.from({ length: cols }, () => ({ isTable: false }))
+  );
+
+  tables.forEach((table) => {
+    if (table.location_x !== null && table.location_y !== null) {
+      layout[table.location_y][table.location_x] = {
+        isTable: true,
+        ...table,
+      };
+    }
+  });
+
+  return layout;
+};
+
 const initialState = {
   tables: [],
+  tableLayout: [],
   loading: false,
   error: null,
 };
@@ -70,6 +92,8 @@ const tablesSlice = createSlice({
       .addCase(fetchTables.fulfilled, (state, action) => {
         state.loading = false;
         state.tables = action.payload;
+
+        state.tableLayout = createTableLayout(state.tables);
       })
       .addCase(fetchTables.rejected, (state, action) => {
         state.loading = false;
@@ -77,6 +101,8 @@ const tablesSlice = createSlice({
       })
       .addCase(addNewTable.fulfilled, (state, action) => {
         state.tables.push(action.payload); // Add new table to tables
+
+        state.tableLayout = createTableLayout(state.tables);
       })
       .addCase(addNewTable.rejected, (state, action) => {
         state.error = action.error.message;
@@ -96,6 +122,8 @@ const tablesSlice = createSlice({
         state.tables = state.tables.filter(
           (table) => table.id !== action.payload
         );
+
+        state.tableLayout = createTableLayout(state.tables);
       })
       .addCase(deleteTable.rejected, (state, action) => {
         state.error = action.error.message;

@@ -25,7 +25,7 @@ function App() {
       <NavBar className="w-64 h-full bg-gray-800 shadow-lg" />
 
       {/* Outlet to take the remaining space */}
-      <div className="flex-1 h-full p-6 bg-white shadow-inner">
+      <div className="flex-1 h-full p-6 bg-white shadow-inner overflow-y-auto">
         <Outlet />
       </div>
     </div>

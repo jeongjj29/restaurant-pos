@@ -2,6 +2,7 @@ import { ErrorMessage, Formik, Field, Form } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { addPayment } from "./paymentsSlice";
+import { updateOrder } from "../orders/ordersSlice"; // Import your new action
 
 const PaymentSchema = yup.object().shape({
   amount: yup
@@ -13,6 +14,11 @@ const PaymentSchema = yup.object().shape({
 function PaymentForm({ order, type }) {
   const dispatch = useDispatch();
 
+  const totalPayments = order.payments.reduce(
+    (total, payment) => total + payment.amount,
+    0
+  );
+
   return (
     <Formik
       initialValues={{
@@ -21,19 +27,40 @@ function PaymentForm({ order, type }) {
         type: type,
       }}
       validationSchema={PaymentSchema}
-      onSubmit={(values, { setSubmitting }) => {
+      onSubmit={(values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
+
+        // Parse amount to float and calculate new total payments
+        const paymentAmount = parseFloat(values.amount);
+        const newTotalPayments = totalPayments + paymentAmount;
+
+        if (newTotalPayments > order.total_price) {
+          // Handle overpayment scenario if total exceeds order total price
+          alert(
+            `Error: The payment exceeds the order total of ${order.total_price}`
+          );
+          setSubmitting(false);
+          return;
+        }
+
+        // Dispatch the addPayment action
         dispatch(addPayment(values))
           .unwrap()
           .then(() => {
+            // If the new total payments equals the order total price
+            if (newTotalPayments === order.total_price) {
+              // Dispatch the updateOrder action to mark the order as "closed"
+              dispatch(updateOrder({ orderId: order.id, status: "closed" }));
+            }
             setSubmitting(false);
+            resetForm(); // Optional: Reset the form after successful submission
           })
           .catch((err) => {
             console.error(err);
             setSubmitting(false);
           });
       }}
-      enableReinitialize // Correct placement of enableReinitialize
+      enableReinitialize
     >
       {({ isSubmitting }) => (
         <Form className="p-4 space-y-4 bg-white shadow-md rounded">

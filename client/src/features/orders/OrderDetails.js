@@ -14,10 +14,8 @@ function OrderDetails({ order }) {
   const total = subtotal + tax;
 
   return (
-    <div className="w-1/3 m-6 flex flex-col justify-between overflow-hidden">
-      <h1 className="text-2xl text-center mt-4 mb-4 bg-gray-200 ">
-        Order #{order.id}
-      </h1>
+    <div className=" m-6 flex flex-col justify-between overflow-hidden border-2 rounded-lg shadow-lg">
+      <h1 className="text-2xl text-center mt-4 mb-4">Order #{order.id}</h1>
       <p>Type: {order.type === "take_out" ? "TAKE-OUT" : "DINE-IN"}</p>
       <div>
         <table className="min-w-full divide-y divide-gray-200">

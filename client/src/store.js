@@ -4,7 +4,7 @@ import tablesReducer from "./features/tables/tablesSlice";
 import ordersReducer from "./features/orders/ordersSlice";
 import orderItemsReducer from "./features/orders/orderItemsSlice";
 import menuItemsReducer from "./features/menu/menuItemsSlice";
-// import paymentsReducer from "./features/payments/paymentsSlice";
+import paymentsReducer from "./features/payments/paymentsSlice";
 // import discountsReducer from "./features/discounts/discountsSlice";
 import rolesReducer from "./features/employees/rolesSlice";
 import menuCategoriesReducer from "./features/menu/menuCategoriesSlice";
@@ -17,7 +17,7 @@ export const store = configureStore({
     orders: ordersReducer,
     orderItems: orderItemsReducer,
     menuItems: menuItemsReducer,
-    // payments: paymentsReducer,
+    payments: paymentsReducer,
     // discounts: discountsReducer,
     roles: rolesReducer,
     menuCategories: menuCategoriesReducer,

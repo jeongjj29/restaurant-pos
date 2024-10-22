@@ -114,6 +114,8 @@ const tablesSlice = createSlice({
         if (index !== -1) {
           state.tables[index] = action.payload; // Update table in tables array
         }
+
+        state.tableLayout = createTableLayout(state.tables);
       })
       .addCase(updateTable.rejected, (state, action) => {
         state.error = action.error.message;

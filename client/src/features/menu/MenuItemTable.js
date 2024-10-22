@@ -4,7 +4,7 @@ import { fetchMenuItems } from "./menuItemsSlice";
 import { fetchMenuCategories } from "./menuCategoriesSlice";
 import AddIcon from "@mui/icons-material/Add";
 
-function MenuItemTable({ setMenuItemToEdit, setEditFormHidden }) {
+function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
   const dispatch = useDispatch();
   const menuItems = useSelector((state) => state.menuItems.menuItems);
   const menuItemsError = useSelector((state) => state.menuItems.error);
@@ -84,7 +84,7 @@ function MenuItemTable({ setMenuItemToEdit, setEditFormHidden }) {
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 onClick={() => {
                   setMenuItemToEdit(null);
-                  setEditFormHidden(false);
+                  setMenuItemFormHidden(false);
                 }}
               >
                 <AddIcon />
@@ -103,7 +103,7 @@ function MenuItemTable({ setMenuItemToEdit, setEditFormHidden }) {
                 <button
                   onClick={() => {
                     setMenuItemToEdit(menuItem);
-                    setEditFormHidden(false);
+                    setMenuItemFormHidden(false);
                   }}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >

@@ -6,7 +6,7 @@ import { updateMenuItem, addMenuItem } from "./menuItemsSlice";
 function MenuItemForm({
   menuItemToEdit,
   setMenuItemToEdit,
-  setEditFormHidden,
+  setMenuItemFormHidden,
 }) {
   const dispatch = useDispatch();
   const menuCategories = useSelector(
@@ -47,7 +47,7 @@ function MenuItemForm({
               })
               .finally(() => {
                 setSubmitting(false);
-                setEditFormHidden(true);
+                setMenuItemFormHidden(true);
                 setMenuItemToEdit(null);
               });
           } else {
@@ -62,7 +62,7 @@ function MenuItemForm({
               })
               .finally(() => {
                 setSubmitting(false);
-                setEditFormHidden(true);
+                setMenuItemFormHidden(true);
               });
           }
         }}
@@ -172,7 +172,7 @@ function MenuItemForm({
               <button
                 type="button"
                 onClick={() => {
-                  setEditFormHidden(true);
+                  setMenuItemFormHidden(true);
                   setMenuItemToEdit(null);
                 }}
                 className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"

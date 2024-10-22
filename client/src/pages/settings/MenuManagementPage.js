@@ -2,25 +2,33 @@ import React, { useState } from "react";
 // import MenuLayout from "../../features/menu/MenuLayout";
 import MenuItemTable from "../../features/menu/MenuItemTable";
 import MenuItemForm from "../../features/menu/MenuItemForm";
+import MenuCategoriesTable from "../../features/menu/MenuCategoriesTable";
 
 function MenuManagementPage() {
-  const [editFormHidden, setEditFormHidden] = useState(true);
+  const [menuItemFormHidden, setMenuItemFormHidden] = useState(true);
   const [menuItemToEdit, setMenuItemToEdit] = useState(null);
+  const [menuCategoryToEdit, setMenuCategoryToEdit] = useState(null);
+  const [menuCategoryFormHidden, setMenuCategoryFormHidden] = useState(true);
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row justify-start">
       {/* Menu Items Table */}
       <MenuItemTable
         setMenuItemToEdit={setMenuItemToEdit}
-        setEditFormHidden={setEditFormHidden}
+        setMenuItemFormHidden={setMenuItemFormHidden}
+      />
+
+      <MenuCategoriesTable
+        setMenuCategoryToEdit={setMenuCategoryToEdit}
+        setMenuCategoryFormHidden={setMenuCategoryFormHidden}
       />
 
       {/* Menu Item Form */}
-      {!editFormHidden && (
+      {!menuItemFormHidden && (
         <MenuItemForm
           menuItemToEdit={menuItemToEdit}
           setMenuItemToEdit={setMenuItemToEdit}
-          setEditFormHidden={setEditFormHidden}
+          setMenuItemFormHidden={setMenuItemFormHidden}
         />
       )}
     </div>

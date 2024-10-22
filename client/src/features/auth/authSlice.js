@@ -10,6 +10,7 @@ export const login = createAsyncThunk(
       const { access_token, user } = response.data; // Assuming you also get user data
 
       localStorage.setItem("token", access_token);
+      localStorage.setItem("user", JSON.stringify(user)); // Store user data
       return { token: access_token, user }; // Return both token and user data
     } catch (error) {
       return rejectWithValue(error.response.data); // Pass error message to rejected case
@@ -19,26 +20,14 @@ export const login = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   "auth/logout",
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      // const state = getState();
-      // const token = state.auth.token;
-
-      // console.log(token);
-
       // Make a POST request to the logout route
-      // await axios.post(
-      //   "/logout",
-      //   {},
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${token}`, // Attach the token to the request
-      //     },
-      //   }
-      // );
+      // await axios.post("/logout", {});
 
       // Clear token from localStorage after successful logout
       localStorage.removeItem("token");
+      localStorage.removeItem("user"); // Clear user data
     } catch (error) {
       console.error("Logout error:", error);
       return rejectWithValue(error.response.data);
@@ -47,11 +36,12 @@ export const logout = createAsyncThunk(
 );
 
 const tokenFromStorage = localStorage.getItem("token");
+const userFromStorage = JSON.parse(localStorage.getItem("user"));
 
 const initialState = {
   isAuthenticated: !!tokenFromStorage,
   token: tokenFromStorage || null,
-  user: null,
+  user: userFromStorage || null, // Initialize user data from localStorage
   loading: false,
   error: null,
 };

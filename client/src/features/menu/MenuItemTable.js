@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchMenuItems } from "./menuItemsSlice";
 import { fetchMenuCategories } from "./menuCategoriesSlice";
 
-function MenuItemTable() {
+function MenuItemTable({ setMenuItemToEdit, setEditFormHidden }) {
   const dispatch = useDispatch();
   const menuItems = useSelector((state) => state.menuItems.menuItems);
   const menuItemsError = useSelector((state) => state.menuItems.error);
@@ -78,6 +78,7 @@ function MenuItemTable() {
               {sortConfig.key === "price" &&
                 (sortConfig.direction === "asc" ? "↑" : "↓")}
             </th>
+            <th className={thCSS}></th>
           </tr>
         </thead>
         <tbody>
@@ -87,6 +88,17 @@ function MenuItemTable() {
               <td className={tdCSS}>{menuItem.secondary_name}</td>
               <td className={tdCSS}>{menuItem.menu_category.name}</td>
               <td className={tdCSS}>{menuItem.price}</td>
+              <td className={tdCSS}>
+                <button
+                  onClick={() => {
+                    setMenuItemToEdit(menuItem);
+                    setEditFormHidden(false);
+                  }}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Edit
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

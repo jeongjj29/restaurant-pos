@@ -9,17 +9,6 @@ function MenuManagementPage() {
 
   return (
     <div className="flex flex-row">
-      <div>
-        <button
-          onClick={() => {
-            setMenuItemToEdit(null);
-            setEditFormHidden(false);
-          }}
-        >
-          Add New Menu Item
-        </button>
-      </div>
-
       {/* Menu Items Table */}
       <MenuItemTable
         setMenuItemToEdit={setMenuItemToEdit}

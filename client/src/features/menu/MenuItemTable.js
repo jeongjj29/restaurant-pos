@@ -51,7 +51,18 @@ function MenuItemTable({ setMenuItemToEdit, setEditFormHidden }) {
     return <p className="text-red-600">Error: {menuItemsError}</p>;
 
   return (
-    <div className="max-w-4xl mx-auto my-8 overflow-x-auto shadow-md rounded-lg">
+    <div className="max-w-3xl mx-auto my-2 overflow-x-auto shadow-md rounded-lg">
+      <div className="text-right mb-4">
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => {
+            setMenuItemToEdit(null);
+            setEditFormHidden(false);
+          }}
+        >
+          Add New Menu Item
+        </button>
+      </div>
       <table className="min-w-full bg-white border border-gray-300">
         <thead className="bg-gray-100">
           <tr>

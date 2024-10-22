@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { addPayment } from "./paymentsSlice";
 import { updateOrder } from "../orders/ordersSlice"; // Import your new action
+import { useNavigate } from "react-router-dom";
 
 const PaymentSchema = yup.object().shape({
   amount: yup
@@ -13,6 +14,7 @@ const PaymentSchema = yup.object().shape({
 
 function PaymentForm({ order, type }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const totalPayments = order.payments.reduce(
     (total, payment) => total + payment.amount,
@@ -37,7 +39,9 @@ function PaymentForm({ order, type }) {
         if (newTotalPayments > order.total_price) {
           // Handle overpayment scenario if total exceeds order total price
           alert(
-            `Error: The payment exceeds the order total of ${order.total_price}`
+            `Error: The payment exceeds the order balance of ${
+              order.total_price - totalPayments
+            }`
           );
           setSubmitting(false);
           return;
@@ -50,7 +54,17 @@ function PaymentForm({ order, type }) {
             // If the new total payments equals the order total price
             if (newTotalPayments === order.total_price) {
               // Dispatch the updateOrder action to mark the order as "closed"
-              dispatch(updateOrder({ orderId: order.id, status: "closed" }));
+              dispatch(updateOrder({ id: order.id, status: "closed" }))
+                .unwrap()
+                .then(() => {
+                  setSubmitting(false);
+                  resetForm();
+                  navigate("/");
+                })
+                .catch((err) => {
+                  console.error(err);
+                  setSubmitting(false);
+                });
             }
             setSubmitting(false);
             resetForm(); // Optional: Reset the form after successful submission

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMenuItems } from "./menuItemsSlice";
 import { fetchMenuCategories } from "./menuCategoriesSlice";
+import AddIcon from "@mui/icons-material/Add";
 
 function MenuItemTable({ setMenuItemToEdit, setEditFormHidden }) {
   const dispatch = useDispatch();
@@ -51,18 +52,7 @@ function MenuItemTable({ setMenuItemToEdit, setEditFormHidden }) {
     return <p className="text-red-600">Error: {menuItemsError}</p>;
 
   return (
-    <div className="max-w-3xl mx-auto my-2 overflow-x-auto shadow-md rounded-lg">
-      <div className="text-right mb-4">
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => {
-            setMenuItemToEdit(null);
-            setEditFormHidden(false);
-          }}
-        >
-          Add New Menu Item
-        </button>
-      </div>
+    <div className="max-w-3xl overflow-x-auto shadow-md rounded-lg">
       <table className="min-w-full bg-white border border-gray-300">
         <thead className="bg-gray-100">
           <tr>
@@ -89,7 +79,17 @@ function MenuItemTable({ setMenuItemToEdit, setEditFormHidden }) {
               {sortConfig.key === "price" &&
                 (sortConfig.direction === "asc" ? "↑" : "↓")}
             </th>
-            <th className={thCSS}></th>
+            <th className={thCSS}>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => {
+                  setMenuItemToEdit(null);
+                  setEditFormHidden(false);
+                }}
+              >
+                <AddIcon />
+              </button>
+            </th>
           </tr>
         </thead>
         <tbody>

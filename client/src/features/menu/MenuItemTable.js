@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMenuItems } from "./menuItemsSlice";
 import { fetchMenuCategories } from "./menuCategoriesSlice";
@@ -8,14 +8,39 @@ function MenuItemTable() {
   const menuItems = useSelector((state) => state.menuItems.menuItems);
   const menuItemsError = useSelector((state) => state.menuItems.error);
 
+  const [sortConfig, setSortConfig] = useState({
+    key: "name",
+    direction: "asc",
+  });
+
   const thCSS =
-    "border border-gray-300 p-3 text-left text-sm font-semibold text-gray-700";
+    "border border-gray-300 p-3 text-left text-sm font-semibold text-gray-700 cursor-pointer";
   const tdCSS = "border border-gray-300 p-3 text-left text-sm text-gray-700";
 
   useEffect(() => {
     dispatch(fetchMenuItems());
     dispatch(fetchMenuCategories());
   }, [dispatch]);
+
+  // Sorting function
+  const sortedMenuItems = [...menuItems].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === "asc" ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+
+  // Function to handle column sorting
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
 
   // Loading state handling
   if (menuItems.length === 0 && !menuItemsError) {
@@ -30,14 +55,33 @@ function MenuItemTable() {
       <table className="min-w-full bg-white border border-gray-300">
         <thead className="bg-gray-100">
           <tr>
-            <th className={thCSS}>Name</th>
-            <th className={thCSS}>Secondary Name</th>
-            <th className={thCSS}>Category</th>
-            <th className={thCSS}>Price</th>
+            <th className={thCSS} onClick={() => handleSort("name")}>
+              Name{" "}
+              {sortConfig.key === "name" &&
+                (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </th>
+            <th className={thCSS} onClick={() => handleSort("secondary_name")}>
+              Secondary Name{" "}
+              {sortConfig.key === "secondary_name" &&
+                (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </th>
+            <th
+              className={thCSS}
+              onClick={() => handleSort("menu_category.name")}
+            >
+              Category{" "}
+              {sortConfig.key === "menu_category.name" &&
+                (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </th>
+            <th className={thCSS} onClick={() => handleSort("price")}>
+              Price{" "}
+              {sortConfig.key === "price" &&
+                (sortConfig.direction === "asc" ? "↑" : "↓")}
+            </th>
           </tr>
         </thead>
         <tbody>
-          {menuItems.map((menuItem) => (
+          {sortedMenuItems.map((menuItem) => (
             <tr key={menuItem.id} className="hover:bg-gray-50">
               <td className={tdCSS}>{menuItem.name}</td>
               <td className={tdCSS}>{menuItem.secondary_name}</td>

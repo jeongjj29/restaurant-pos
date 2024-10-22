@@ -1,12 +1,39 @@
-import React from "react";
-import MenuLayout from "../../features/menu/MenuLayout";
+import React, { useState } from "react";
+// import MenuLayout from "../../features/menu/MenuLayout";
 import MenuItemTable from "../../features/menu/MenuItemTable";
+import MenuItemForm from "../../features/menu/MenuItemForm";
 
 function MenuManagementPage() {
+  const [editFormHidden, setEditFormHidden] = useState(true);
+  const [menuItemToEdit, setMenuItemToEdit] = useState(null);
+
   return (
-    <div>
-      <MenuLayout />
-      <MenuItemTable />
+    <div className="flex flex-row">
+      <div>
+        <button
+          onClick={() => {
+            setMenuItemToEdit(null);
+            setEditFormHidden(false);
+          }}
+        >
+          Add New Menu Item
+        </button>
+      </div>
+
+      {/* Menu Items Table */}
+      <MenuItemTable
+        setMenuItemToEdit={setMenuItemToEdit}
+        setEditFormHidden={setEditFormHidden}
+      />
+
+      {/* Menu Item Form */}
+      {!editFormHidden && (
+        <MenuItemForm
+          menuItemToEdit={menuItemToEdit}
+          setMenuItemToEdit={setMenuItemToEdit}
+          setEditFormHidden={setEditFormHidden}
+        />
+      )}
     </div>
   );
 }

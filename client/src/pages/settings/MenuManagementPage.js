@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import MenuItemTable from "../../features/menu/MenuItemTable";
 import MenuItemForm from "../../features/menu/MenuItemForm";
 import MenuCategoriesTable from "../../features/menu/MenuCategoriesTable";
+import MenuCategoryForm from "../../features/menu/MenuCategoryForm";
 
 function MenuManagementPage() {
   const [menuItemFormHidden, setMenuItemFormHidden] = useState(true);
@@ -29,6 +30,13 @@ function MenuManagementPage() {
           menuItemToEdit={menuItemToEdit}
           setMenuItemToEdit={setMenuItemToEdit}
           setMenuItemFormHidden={setMenuItemFormHidden}
+        />
+      )}
+      {!menuCategoryFormHidden && (
+        <MenuCategoryForm
+          menuCategoryToEdit={menuCategoryToEdit}
+          setMenuCategoryToEdit={setMenuCategoryToEdit}
+          setMenuCategoryFormHidden={setMenuCategoryFormHidden}
         />
       )}
     </div>

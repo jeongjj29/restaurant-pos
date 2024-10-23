@@ -8,10 +8,11 @@ function AllOrdersPage() {
   const navigate = useNavigate();
   const orders = useSelector((state) => state.orders.orders);
   const [clickedOrder, setClickedOrder] = useState(null);
+  const openOrders = orders.filter((order) => order.status === "open");
 
   return (
     <div className="flex flex-row">
-      <AllOrdersTable setClickedOrder={setClickedOrder} orders={orders} />
+      <AllOrdersTable setClickedOrder={setClickedOrder} orders={openOrders} />
       <OrderDetails order={clickedOrder} />
       {clickedOrder && (
         <div className="flex flex-col justify-center items-center">

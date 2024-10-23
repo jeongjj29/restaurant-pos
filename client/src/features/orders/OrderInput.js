@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchMenuCategories } from "../menu/menuCategoriesSlice";
-import { addOrder } from "./ordersSlice";
+import { addOrder, fetchOrders } from "./ordersSlice";
 import { addOrderItem } from "./orderItemsSlice";
 import { TAX_RATE } from "../../constants";
 import axios from "axios";
@@ -82,6 +82,7 @@ function OrderInput({ tableId }) {
             })
             .finally(() => {
               setPendingOrderItems([]);
+              dispatch(fetchOrders());
             });
         });
       })

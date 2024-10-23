@@ -1,29 +1,10 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchOrders } from "./ordersSlice";
-
-function AllOrdersTable({ setClickedOrder }) {
-  const dispatch = useDispatch();
-  const orders = useSelector((state) => state.orders.orders);
-  const loading = useSelector((state) => state.orders.loading);
-  const error = useSelector((state) => state.orders.error);
-
-  useEffect(() => {
-    dispatch(fetchOrders());
-  }, [dispatch]);
-
-  if (error) return <p className="text-red-500">Error: {error}</p>;
-
+function AllOrdersTable({ setClickedOrder, orders }) {
   if (orders.length === 0) {
     return <p className="text-gray-600">No Orders Available</p>;
   }
 
-  if (loading) {
-    return <p className="text-gray-600">Loading orders...</p>;
-  }
-
   return (
-    <div className="overflow-x-auto w-1/2 m-8">
+    <div className="overflow-x-auto w-fit m-8">
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead>
           <tr className="bg-gray-800 text-white">

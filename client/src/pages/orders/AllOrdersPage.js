@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AllOrdersTable from "../../features/orders/AllOrdersTable";
 import OrderDetails from "../../features/orders/OrderDetails";
+import { useSelector } from "react-redux";
 
 function AllOrdersPage() {
   const navigate = useNavigate();
-  const [clickedOrder, setClickedOrder] = React.useState(null);
+  const orders = useSelector((state) => state.orders.orders);
+  const [clickedOrder, setClickedOrder] = useState(null);
 
   return (
     <div className="flex flex-row">
-      <AllOrdersTable setClickedOrder={setClickedOrder} />
+      <AllOrdersTable setClickedOrder={setClickedOrder} orders={orders} />
       <OrderDetails order={clickedOrder} />
       {clickedOrder && (
         <div className="flex flex-col justify-center items-center">

@@ -54,7 +54,9 @@ class Login(Resource):
 
         if user and user.authenticate(password):
             access_token = create_access_token(identity=user.id)
-            return make_response({"access_token": access_token}, 200)
+            return make_response(
+                {"access_token": access_token, "user": user.to_dict()}, 200
+            )
 
         else:
             return make_response({"message": "Invalid credentials"}, 401)

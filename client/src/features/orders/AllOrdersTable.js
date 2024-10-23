@@ -20,7 +20,12 @@ function AllOrdersTable({ setClickedOrder, orders }) {
             <tr
               key={order.id}
               className={index % 2 === 0 ? "bg-gray-100" : "bg-gray-50"}
-              onClick={() => setClickedOrder(order)}
+              onClick={() => {
+                if (order.status === "closed") {
+                  return;
+                }
+                setClickedOrder(order);
+              }}
             >
               <td className="py-2 px-4">{order.id}</td>
               <td className="py-2 px-4">

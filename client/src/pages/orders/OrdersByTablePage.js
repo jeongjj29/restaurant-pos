@@ -17,6 +17,7 @@ function OrdersByTablePage() {
     <div className="">
       {orders.map((order) => (
         <OrderItemsDisplay
+          key={order.id}
           table={order.table}
           orderItems={order.order_items}
           orderId={order.id}

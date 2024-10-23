@@ -9,9 +9,6 @@ function Home() {
   const user = useSelector((state) => state.auth.user);
   const userOrders = orders.filter((order) => order.user_id === user.id);
 
-  console.log(user);
-  console.log(userOrders);
-
   const handleOrderClick = (order) => {
     navigate("/orders/payment", { state: { order } });
   };

@@ -98,13 +98,13 @@ function NavBar() {
               <span>Tables</span>
             </NavLink>
 
-            <NavLink
+            {/* <NavLink
               to="/settings/reports"
               className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
             >
               <AssessmentIcon className="text-gray-500" />
               <span>Reports</span>
-            </NavLink>
+            </NavLink> */}
           </div>
         )}
       </nav>

@@ -8,13 +8,17 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { logout } from "../features/auth/authSlice";
+import { useDispatch } from "react-redux";
 
 function NavBar() {
+  const dispatch = useDispatch();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [ordersOpen, setOrdersOpen] = useState(false);
 
   return (
-    <div className="h-full w-48 bg-gray-200 p-4 shadow-md">
+    <div className="h-full w-48 bg-gray-200 p-4 shadow-md flex flex-col">
       <nav className="flex flex-col space-y-4">
         <NavLink
           to="/"
@@ -94,16 +98,27 @@ function NavBar() {
               <span>Tables</span>
             </NavLink>
 
-            <NavLink
+            {/* <NavLink
               to="/settings/reports"
               className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
             >
               <AssessmentIcon className="text-gray-500" />
               <span>Reports</span>
-            </NavLink>
+            </NavLink> */}
           </div>
         )}
       </nav>
+      <div className="mt-auto align-self-end mb-4">
+        <button
+          onClick={() => {
+            dispatch(logout());
+          }}
+          className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+        >
+          <LogoutIcon className="text-gray-500" />
+          <span>Logout</span>
+        </button>
+      </div>
     </div>
   );
 }

@@ -32,7 +32,7 @@ export const updateOrder = createAsyncThunk(
   "orders/updateOrder",
   async (updatedOrder, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
+      const response = await axios.patch(
         `/orders/${updatedOrder.id}`,
         updatedOrder
       );

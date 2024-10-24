@@ -10,7 +10,7 @@ from config import db, bcrypt
 
 ORDER_STATUS = ["open", "closed"]
 ORDER_TYPE = ["dine_in", "take_out"]
-PAYMENT_TYPE = ["cash", "card"]
+PAYMENT_TYPE = ["cash", "visa", "mastercard", "amex", "discover"]
 ACCESS_LEVEL = [1, 2, 3, 4]
 
 
@@ -32,7 +32,13 @@ class User(db.Model, SerializerMixin):
     role = db.relationship("Role", back_populates="users")
     orders = db.relationship("Order", back_populates="user")
 
-    serialize_rules = ("-orders.table", "-orders.user", "-role.users", "-tables.user")
+    serialize_rules = (
+        "-orders.table",
+        "-orders.user",
+        "-role.users",
+        "-tables.user",
+        "-_password_hash",
+    )
 
     @validates("username")
     def validate_username(self, key, username):

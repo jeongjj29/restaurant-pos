@@ -29,7 +29,10 @@ export const updateMenuItem = createAsyncThunk(
   "menuItems/updateMenuItem",
   async (menuItemData, { rejectWithValue }) => {
     try {
-      const response = await axios.put("/menu_items", menuItemData);
+      const response = await axios.patch(
+        `/menu_items/${menuItemData.id}`,
+        menuItemData
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

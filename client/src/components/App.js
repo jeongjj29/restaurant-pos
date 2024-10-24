@@ -7,6 +7,9 @@ import { fetchOrders } from "../features/orders/ordersSlice";
 import { fetchEmployees } from "../features/employees/employeesSlice";
 import { fetchMenuItems } from "../features/menu/menuItemsSlice";
 import { fetchMenuCategories } from "../features/menu/menuCategoriesSlice";
+import { fetchPayments } from "../features/payments/paymentsSlice";
+import { fetchOrderItems } from "../features/orders/orderItemsSlice";
+import { fetchRoles } from "../features/employees/rolesSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -17,6 +20,9 @@ function App() {
     dispatch(fetchEmployees());
     dispatch(fetchMenuItems());
     dispatch(fetchMenuCategories());
+    dispatch(fetchPayments());
+    dispatch(fetchOrderItems());
+    dispatch(fetchRoles());
   }, [dispatch]);
 
   return (
@@ -25,7 +31,7 @@ function App() {
       <NavBar className="w-64 h-full bg-gray-800 shadow-lg" />
 
       {/* Outlet to take the remaining space */}
-      <div className="flex-1 h-full p-6 bg-white shadow-inner">
+      <div className="flex-1 h-full p-6 bg-white shadow-inner overflow-y-auto">
         <Outlet />
       </div>
     </div>

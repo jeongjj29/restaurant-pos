@@ -17,7 +17,11 @@ function Table({ isTable, tableId, number, orders }) {
             }
           });
         }}
-        className="text-2xl flex items-center justify-center w-24 h-24 border-2 rounded-lg text-white cursor-pointer bg-slate-400"
+        className={`text-2xl flex items-center justify-center w-24 h-24 border-2 rounded-lg text-white cursor-pointer ${
+          orders.length > 0
+            ? "bg-blue-500 hover:bg-blue-600"
+            : "bg-gray-300 hover:bg-gray-400"
+        }`}
       >
         {number}
       </div>

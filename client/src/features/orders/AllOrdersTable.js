@@ -4,7 +4,7 @@ function AllOrdersTable({ setClickedOrder, orders }) {
   }
 
   return (
-    <div className="overflow-x-auto w-fit m-8">
+    <div className="overflow-x-auto w-fit m-4">
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead>
           <tr className="bg-gray-800 text-white">
@@ -20,7 +20,12 @@ function AllOrdersTable({ setClickedOrder, orders }) {
             <tr
               key={order.id}
               className={index % 2 === 0 ? "bg-gray-100" : "bg-gray-50"}
-              onClick={() => setClickedOrder(order)}
+              onClick={() => {
+                if (order.status === "closed") {
+                  return;
+                }
+                setClickedOrder(order);
+              }}
             >
               <td className="py-2 px-4">{order.id}</td>
               <td className="py-2 px-4">

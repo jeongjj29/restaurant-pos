@@ -8,6 +8,8 @@ import { fetchEmployees } from "../features/employees/employeesSlice";
 import { fetchMenuItems } from "../features/menu/menuItemsSlice";
 import { fetchMenuCategories } from "../features/menu/menuCategoriesSlice";
 import { fetchPayments } from "../features/payments/paymentsSlice";
+import { fetchOrderItems } from "../features/orders/orderItemsSlice";
+import { fetchRoles } from "../features/employees/rolesSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -19,6 +21,8 @@ function App() {
     dispatch(fetchMenuItems());
     dispatch(fetchMenuCategories());
     dispatch(fetchPayments());
+    dispatch(fetchOrderItems());
+    dispatch(fetchRoles());
   }, [dispatch]);
 
   return (

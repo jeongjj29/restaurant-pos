@@ -23,7 +23,7 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
   });
 
   return (
-    <div className="bg-white/5 p-6 rounded-md shadow-md mb-6">
+    <div className="bg-white/5 p-6 mx-10 rounded-md shadow-md">
       <Formik
         initialValues={{
           number: tableToEdit?.number || "",

@@ -72,7 +72,7 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
             <div className="mb-4">
               <label
                 htmlFor="number"
-                className="block text-sm font-medium mb-1"
+                className="block text-base font-medium mb-1"
               >
                 Table Number
               </label>
@@ -84,14 +84,14 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
               <ErrorMessage
                 name="number"
                 component="div"
-                className="text-red-600 text-sm mt-1"
+                className="text-red-600 text-base mt-1"
               />
             </div>
 
             <div className="mb-4">
               <label
                 htmlFor="capacity"
-                className="block text-sm font-medium mb-1"
+                className="block text-base font-medium mb-1"
               >
                 Capacity
               </label>
@@ -103,7 +103,7 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
               <ErrorMessage
                 name="capacity"
                 component="div"
-                className="text-red-600 text-sm mt-1"
+                className="text-red-600 text-base mt-1"
               />
             </div>
 

@@ -3,6 +3,8 @@ import { useDispatch } from "react-redux";
 import { deleteTable } from "./tablesSlice";
 import TableForm from "./TableForm";
 import DraggableTable from "./DraggableTable";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function TableList({ tables }) {
   const dispatch = useDispatch();
@@ -58,7 +60,7 @@ function TableList({ tables }) {
                   setTableToEdit(table);
                 }}
               >
-                Edit
+                <EditIcon />
               </button>
 
               <button
@@ -74,7 +76,7 @@ function TableList({ tables }) {
                     });
                 }}
               >
-                Delete
+                <DeleteIcon />
               </button>
             </div>
           </li>

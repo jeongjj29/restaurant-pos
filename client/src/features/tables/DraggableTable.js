@@ -17,7 +17,7 @@ function DraggableTable({ tableId, number, capacity }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="w-36 h-24 text-lg font-semibold flex flex-col justify-center items-center bg-slate-200 p-4 mr-4 rounded-lg shadow-md hover:bg-gray-50 transition duration-200"
+      className="text-lg font-semibold flex flex-col justify-center items-center rounded-md mr-2 px-2 py-4 hover:bg-white/10 transition duration-200"
     >
       <p>Table: {number}</p>
       <p>Seats: {capacity}</p>

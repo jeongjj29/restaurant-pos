@@ -8,7 +8,7 @@ import routes from "./routes";
 
 const router = createBrowserRouter(routes);
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
       <RouterProvider router={router} />

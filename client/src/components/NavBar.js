@@ -102,9 +102,7 @@ function NavBar() {
             </NavLink> */}
           </div>
         )}
-        <div className="block h-atuo w-full grow rounded-md bg-white/5 "></div>
-      </div>
-      <div className="mt-auto align-self-end mb-4">
+        <div className="block h-auto w-full grow rounded-md bg-white/5 "></div>
         <button
           onClick={() => {
             dispatch(logout());

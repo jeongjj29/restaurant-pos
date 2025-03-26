@@ -42,7 +42,7 @@ function TableList({ tables }) {
         {sortedTables.map((table) => (
           <div
             key={table.id}
-            className="bg-white p-4 rounded-md shadow-md flex justify-between items-center"
+            className="bg-white/5 h-fit p-2 rounded-md shadow-md flex items-center"
           >
             {/* Table Information */}
             <DraggableTable

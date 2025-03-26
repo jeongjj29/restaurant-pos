@@ -33,7 +33,9 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
         enableReinitialize={true}
         onSubmit={(values, { setSubmitting, resetForm }) => {
           if (tableToEdit) {
-            dispatch(updateTable({ ...values, id: tableToEdit.id }))
+            dispatch(
+              updateTable({ tableId: tableToEdit.id, updatedData: values })
+            )
               .unwrap()
               .then((res) => {
                 console.log("Table updated successfully:", res);

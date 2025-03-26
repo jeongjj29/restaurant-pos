@@ -38,9 +38,9 @@ function TableList({ tables }) {
       )}
 
       {/* Table List */}
-      <ul className="list-none space-y-4 max-h-screen relative">
+      <div className="flex flex-col flex-wrap gap-4 max-h-full">
         {sortedTables.map((table) => (
-          <li
+          <div
             key={table.id}
             className="bg-white p-4 rounded-md shadow-md flex justify-between items-center"
           >
@@ -79,9 +79,9 @@ function TableList({ tables }) {
                 <DeleteIcon />
               </button>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

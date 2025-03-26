@@ -20,7 +20,7 @@ function DraggableTable({ tableId, number, capacity }) {
       className="w-36 h-24 text-lg font-semibold flex flex-col justify-center items-center bg-slate-200 p-4 mr-4 rounded-lg shadow-md hover:bg-gray-50 transition duration-200"
     >
       <p>Table: {number}</p>
-      <p>Capacity: {capacity}</p>
+      <p>Seats: {capacity}</p>
     </div>
   );
 }

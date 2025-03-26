@@ -16,4 +16,13 @@ export default defineConfig({
       "@utils": path.resolve(__dirname, "src/utils.js"),
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:5555",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
 });

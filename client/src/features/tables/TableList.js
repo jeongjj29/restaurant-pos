@@ -52,9 +52,9 @@ function TableList({ tables }) {
             />
 
             {/* Edit and Delete Buttons */}
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2">
               <button
-                className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded"
+                className="bg-green-800 hover:bg-green-800 text-white font-bold py-2 px-2 rounded"
                 onClick={() => {
                   setEditFormHidden(false);
                   setTableToEdit(table);
@@ -64,7 +64,7 @@ function TableList({ tables }) {
               </button>
 
               <button
-                className="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded"
+                className="bg-red-800 hover:bg-red-800 text-white font-bold py-2 px-2 rounded"
                 onClick={() => {
                   dispatch(deleteTable(table.id)) // Pass just the table ID
                     .unwrap() // Unwrap the result to handle the actual promise

@@ -50,7 +50,7 @@ function TableManagementPage() {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="w-full bg-white/5 flex gap-4 rounded-md overflow-visible">
+      <div className="w-full h-full flex gap-4 rounded-md overflow-visible">
         {/* Grid Layout */}
         <TableLayout tables={tables} />
 

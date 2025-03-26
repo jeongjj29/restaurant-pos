@@ -10,6 +10,7 @@ module.exports = {
           primary: "#E5E7EB",
           secondary: "#9CA3AF",
         },
+        border: "#374151",
       },
       width: {
         iconw: "100px",

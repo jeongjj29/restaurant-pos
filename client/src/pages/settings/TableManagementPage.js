@@ -54,7 +54,6 @@ function TableManagementPage() {
         {/* Grid Layout */}
         <TableLayout tables={tables} />
 
-        {/* TableList (Scrollable) */}
         <TableList tables={tables} />
       </div>
     </DndContext>

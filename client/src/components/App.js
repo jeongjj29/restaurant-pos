@@ -31,7 +31,7 @@ function App() {
         <NavBar />
       </div>
 
-      <div className="flex-1 h-full p-6 shadow-inner overflow-y-auto">
+      <div className="flex-grow p-4 overflow-y-auto">
         <Outlet />
       </div>
     </div>

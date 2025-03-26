@@ -27,7 +27,7 @@ function App() {
 
   return (
     <div className="flex h-screen flex-row bg-background text-text-primary">
-      <div className="w-48 flex-none">
+      <div className="w-64 flex-none">
         <NavBar />
       </div>
 

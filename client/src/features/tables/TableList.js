@@ -29,59 +29,63 @@ function TableList({ tables }) {
 
       {/* Form Section for Add/Edit */}
       {!editFormHidden && (
-        <TableForm
-          tableToEdit={tableToEdit}
-          setEditFormHidden={setEditFormHidden}
-          setTableToEdit={setTableToEdit}
-          tables={tables}
-        />
+        <div className="flex h-full items-center justify-center">
+          <TableForm
+            tableToEdit={tableToEdit}
+            setEditFormHidden={setEditFormHidden}
+            setTableToEdit={setTableToEdit}
+            tables={tables}
+          />
+        </div>
       )}
 
       {/* Table List */}
-      <div className="flex flex-col flex-wrap gap-4 max-h-full">
-        {sortedTables.map((table) => (
-          <div
-            key={table.id}
-            className="bg-white/5 h-fit p-2 rounded-md shadow-md flex items-center"
-          >
-            {/* Table Information */}
-            <DraggableTable
-              tableId={table.id}
-              number={table.number}
-              capacity={table.capacity}
-            />
+      {editFormHidden && (
+        <div className="flex flex-col flex-wrap gap-4 max-h-full">
+          {sortedTables.map((table) => (
+            <div
+              key={table.id}
+              className="bg-white/5 h-fit p-2 rounded-md shadow-md flex items-center"
+            >
+              {/* Table Information */}
+              <DraggableTable
+                tableId={table.id}
+                number={table.number}
+                capacity={table.capacity}
+              />
 
-            {/* Edit and Delete Buttons */}
-            <div className="flex flex-col gap-2">
-              <button
-                className="bg-green-800 hover:bg-green-800 text-white font-bold py-2 px-2 rounded"
-                onClick={() => {
-                  setEditFormHidden(false);
-                  setTableToEdit(table);
-                }}
-              >
-                <EditIcon />
-              </button>
+              {/* Edit and Delete Buttons */}
+              <div className="flex flex-col gap-2">
+                <button
+                  className="bg-green-800 hover:bg-green-800 text-white font-bold py-2 px-2 rounded"
+                  onClick={() => {
+                    setEditFormHidden(false);
+                    setTableToEdit(table);
+                  }}
+                >
+                  <EditIcon />
+                </button>
 
-              <button
-                className="bg-red-800 hover:bg-red-800 text-white font-bold py-2 px-2 rounded"
-                onClick={() => {
-                  dispatch(deleteTable(table.id)) // Pass just the table ID
-                    .unwrap() // Unwrap the result to handle the actual promise
-                    .then((res) => {
-                      console.log("Table deleted successfully:", res);
-                    })
-                    .catch((err) => {
-                      console.error("Error deleting table:", err);
-                    });
-                }}
-              >
-                <DeleteIcon />
-              </button>
+                <button
+                  className="bg-red-800 hover:bg-red-800 text-white font-bold py-2 px-2 rounded"
+                  onClick={() => {
+                    dispatch(deleteTable(table.id)) // Pass just the table ID
+                      .unwrap() // Unwrap the result to handle the actual promise
+                      .then((res) => {
+                        console.log("Table deleted successfully:", res);
+                      })
+                      .catch((err) => {
+                        console.error("Error deleting table:", err);
+                      });
+                  }}
+                >
+                  <DeleteIcon />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

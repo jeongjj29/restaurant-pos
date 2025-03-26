@@ -43,7 +43,7 @@ function AllOrdersPage() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="border border-gray-300 p-2 rounded"
+              className="border text-text-primary bg-white/5 border-border p-2 rounded"
             />
           </div>
           <div className="flex flex-col">
@@ -52,7 +52,7 @@ function AllOrdersPage() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="border border-gray-300 p-2 rounded"
+              className="border text-text-primary bg-white/5 border-border p-2 rounded"
             />
           </div>
 
@@ -62,11 +62,17 @@ function AllOrdersPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="border border-gray-300 p-2 rounded"
+              className="border text-text-primary bg-white/5 border-border p-2 rounded"
             >
-              <option value="all">All Orders</option>
-              <option value="open">Open Orders</option>
-              <option value="closed">Closed Orders</option>
+              <option value="all" className="bg-surface">
+                All Orders
+              </option>
+              <option value="open" className="bg-surface">
+                Open Orders
+              </option>
+              <option value="closed" className="bg-surface">
+                Closed Orders
+              </option>
             </select>
           </div>
         </div>

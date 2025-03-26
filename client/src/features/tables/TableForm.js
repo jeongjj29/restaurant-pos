@@ -20,7 +20,7 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
   });
 
   return (
-    <div className="bg-white p-6 rounded-md shadow-md mb-6">
+    <div className="bg-white/5 p-6 rounded-md shadow-md mb-6">
       <Formik
         initialValues={{
           number: tableToEdit?.number || "",
@@ -67,14 +67,14 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
             <div className="mb-4">
               <label
                 htmlFor="number"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium mb-1"
               >
                 Table Number
               </label>
               <Field
                 name="number"
                 type="number"
-                className="border border-gray-300 rounded-md w-full p-2"
+                className="border border-border bg-white/10 rounded-md w-full p-2"
               />
               <ErrorMessage
                 name="number"
@@ -86,14 +86,14 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
             <div className="mb-4">
               <label
                 htmlFor="capacity"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium mb-1"
               >
                 Capacity
               </label>
               <Field
                 name="capacity"
                 type="number"
-                className="border border-gray-300 rounded-md w-full p-2"
+                className="border border-border bg-white/10 rounded-md w-full p-2"
               />
               <ErrorMessage
                 name="capacity"

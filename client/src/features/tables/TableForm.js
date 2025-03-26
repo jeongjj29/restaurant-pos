@@ -11,6 +11,9 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
       .number()
       .required("Number is required")
       .test("unique-number", "Table number already exists", function (value) {
+        if (tableToEdit && tableToEdit.number === value) {
+          return true;
+        }
         return !tables.some((table) => table.number === value);
       }),
     capacity: yup
@@ -20,7 +23,7 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
   });
 
   return (
-    <div className="bg-white p-6 rounded-md shadow-md mb-6">
+    <div className="bg-white/5 p-6 mx-10 rounded-md shadow-md">
       <Formik
         initialValues={{
           number: tableToEdit?.number || "",
@@ -30,7 +33,9 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
         enableReinitialize={true}
         onSubmit={(values, { setSubmitting, resetForm }) => {
           if (tableToEdit) {
-            dispatch(updateTable({ ...values, id: tableToEdit.id }))
+            dispatch(
+              updateTable({ tableId: tableToEdit.id, updatedData: values })
+            )
               .unwrap()
               .then((res) => {
                 console.log("Table updated successfully:", res);
@@ -67,38 +72,38 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
             <div className="mb-4">
               <label
                 htmlFor="number"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-base font-medium mb-1"
               >
                 Table Number
               </label>
               <Field
                 name="number"
                 type="number"
-                className="border border-gray-300 rounded-md w-full p-2"
+                className="border border-border bg-white/10 rounded-md w-full p-2"
               />
               <ErrorMessage
                 name="number"
                 component="div"
-                className="text-red-600 text-sm mt-1"
+                className="text-red-600 text-base mt-1"
               />
             </div>
 
             <div className="mb-4">
               <label
                 htmlFor="capacity"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-base font-medium mb-1"
               >
                 Capacity
               </label>
               <Field
                 name="capacity"
                 type="number"
-                className="border border-gray-300 rounded-md w-full p-2"
+                className="border border-border bg-white/10 rounded-md w-full p-2"
               />
               <ErrorMessage
                 name="capacity"
                 component="div"
-                className="text-red-600 text-sm mt-1"
+                className="text-red-600 text-base mt-1"
               />
             </div>
 

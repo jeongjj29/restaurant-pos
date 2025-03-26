@@ -9,6 +9,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
 import LogoutIcon from "@mui/icons-material/Logout";
+import logo from "../assets/sikgaek-logo.png";
 import { logout } from "../features/auth/authSlice";
 import { useDispatch } from "react-redux";
 
@@ -17,105 +18,98 @@ function NavBar() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [ordersOpen, setOrdersOpen] = useState(false);
 
+  const LINK_STYLE =
+    "flex items-center gap-3 rounded-md bg-white/5 py-2 px-3 text-base font-medium hover:bg-white/15";
+
+  const SUB_LINK_STYLE =
+    "flex items-center gap-3 rounded-md bg-white/5 py-2 px-3 text-base font-medium hover:bg-white/15 ml-8";
+
   return (
-    <div className="h-full w-48 bg-gray-200 p-4 shadow-md flex flex-col">
-      <nav className="flex flex-col space-y-4">
-        <NavLink
-          to="/"
-          className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
-        >
-          <HomeIcon className="text-gray-500" />
+    <div className="flex flex-col h-full p-4 shadow-md">
+      <NavLink
+        to="/"
+        className="flex mb-2 h-36 items-center justify-center rounded-md bg-white/5 p-4 md:h-40"
+      >
+        <div className="w-32">
+          <h1 className="text-3xl font-bold text-center mb-2">Sik Gaek</h1>
+          <img src={logo} alt="Sik Gaek Logo" className="w-80 block" />
+        </div>
+      </NavLink>
+      <div className="flex grow flex-col space-x-0 space-y-2">
+        <NavLink to="/" className={LINK_STYLE}>
+          <HomeIcon />
           <span>Home</span>
         </NavLink>
 
         <button
-          className="flex items-center space-x-2 text-left text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+          className={LINK_STYLE}
           onClick={() => setOrdersOpen(!ordersOpen)}
         >
-          <AssignmentIcon className="text-gray-500" />
+          <AssignmentIcon />
           <span>Orders</span>
         </button>
 
         {/* Orders Dropdown */}
         {ordersOpen && (
           <div className="flex flex-col space-y-2 ml-4">
-            <NavLink
-              to="/orders/all"
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
-            >
-              <AssignmentIcon className="text-gray-500" />
+            <NavLink to="/orders/all" className={SUB_LINK_STYLE}>
+              <AssignmentIcon />
               <span>All Orders</span>
             </NavLink>
-            <NavLink
-              to="/orders/dinein"
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
-            >
-              <TableRestaurantIcon className="text-gray-500" />
+            <NavLink to="/orders/dinein" className={SUB_LINK_STYLE}>
+              <TableRestaurantIcon />
               <span>Dine-In</span>
             </NavLink>
-            <NavLink
-              to="/orders/takeout"
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
-            >
-              <TakeoutDiningIcon className="text-gray-500" />
+            <NavLink to="/orders/takeout" className={SUB_LINK_STYLE}>
+              <TakeoutDiningIcon />
               <span>Take-Out</span>
             </NavLink>
           </div>
         )}
 
         <button
-          className="flex items-center space-x-2 text-left text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+          className={LINK_STYLE}
           onClick={() => setSettingsOpen(!settingsOpen)}
         >
-          <SettingsIcon className="text-gray-500" />
+          <SettingsIcon />
           <span>Settings</span>
         </button>
 
         {/* Settings Dropdown */}
         {settingsOpen && (
           <div className="flex flex-col space-y-2 ml-4">
-            <NavLink
-              to="/settings/employees"
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
-            >
-              <GroupIcon className="text-gray-500" />
+            <NavLink to="/settings/employees" className={SUB_LINK_STYLE}>
+              <GroupIcon />
               <span>Employees</span>
             </NavLink>
 
-            <NavLink
-              to="/settings/menu"
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
-            >
-              <MenuBookIcon className="text-gray-500" />
+            <NavLink to="/settings/menu" className={SUB_LINK_STYLE}>
+              <MenuBookIcon />
               <span>Menu</span>
             </NavLink>
 
-            <NavLink
-              to="/settings/tables"
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
-            >
-              <TableRestaurantIcon className="text-gray-500" />
+            <NavLink to="/settings/tables" className={SUB_LINK_STYLE}>
+              <TableRestaurantIcon />
               <span>Tables</span>
             </NavLink>
 
             {/* <NavLink
               to="/settings/reports"
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+              className={LINK_STYLE}
             >
-              <AssessmentIcon className="text-gray-500" />
+              <AssessmentIcon />
               <span>Reports</span>
             </NavLink> */}
           </div>
         )}
-      </nav>
-      <div className="mt-auto align-self-end mb-4">
+        <div className="block h-auto w-full grow rounded-md bg-white/5 "></div>
         <button
           onClick={() => {
             dispatch(logout());
           }}
-          className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
+          className={LINK_STYLE}
         >
-          <LogoutIcon className="text-gray-500" />
+          <LogoutIcon />
           <span>Logout</span>
         </button>
       </div>

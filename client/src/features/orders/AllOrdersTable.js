@@ -1,6 +1,6 @@
 function AllOrdersTable({ setClickedOrder, orders }) {
   if (orders.length === 0) {
-    return <p className="text-gray-600">No Orders Available</p>;
+    return <h1 className="mt-8 text-3xl">No Orders Available</h1>;
   }
 
   return (

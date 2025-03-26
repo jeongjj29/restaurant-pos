@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { TABLES_LAYOUT_WIDTH, TABLES_LAYOUT_HEIGHT } from "../../constants";
+import { TABLES_LAYOUT_WIDTH, TABLES_LAYOUT_HEIGHT } from "../../../constants";
 import axios from "axios";
 
 // Fetch tables action

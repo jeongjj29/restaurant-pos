@@ -1,15 +1,15 @@
 import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import NavBar from "./NavBar";
+import NavBar from "./layout/NavBar";
 import { useDispatch } from "react-redux";
-import { fetchTables } from "../features/tables/tablesSlice";
-import { fetchOrders } from "../features/orders/ordersSlice";
-import { fetchEmployees } from "../features/employees/employeesSlice";
-import { fetchMenuItems } from "../features/menu/menuItemsSlice";
-import { fetchMenuCategories } from "../features/menu/menuCategoriesSlice";
-import { fetchPayments } from "../features/payments/paymentsSlice";
-import { fetchOrderItems } from "../features/orders/orderItemsSlice";
-import { fetchRoles } from "../features/employees/rolesSlice";
+import { fetchTables } from "../features/tables/slices/tablesSlice";
+import { fetchOrders } from "../features/orders/slices/ordersSlice";
+import { fetchEmployees } from "../features/employees/slices/employeesSlice";
+import { fetchMenuItems } from "../features/menu/slices/menuItemsSlice";
+import { fetchMenuCategories } from "../features/menu/slices/menuCategoriesSlice";
+import { fetchPayments } from "../features/payments/slices/paymentsSlice";
+import { fetchOrderItems } from "../features/orders/slices/orderItemsSlice";
+import { fetchRoles } from "../features/employees/slices/rolesSlice";
 
 function App() {
   const dispatch = useDispatch();

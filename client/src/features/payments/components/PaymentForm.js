@@ -1,8 +1,8 @@
 import { ErrorMessage, Formik, Field, Form } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
-import { addPayment } from "./paymentsSlice";
-import { updateOrder } from "../orders/ordersSlice"; // Import your new action
+import { addPayment } from "../slices/paymentsSlice";
+import { updateOrder } from "../orders/ordersSlice";
 import { useNavigate } from "react-router-dom";
 
 const PaymentSchema = yup.object().shape({

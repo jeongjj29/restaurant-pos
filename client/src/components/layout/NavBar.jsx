@@ -1,5 +1,9 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
+import logo from "@assets/sikgaek-logo.png";
+import { logout } from "@features/auth/authSlice";
+
 import HomeIcon from "@mui/icons-material/Home";
 import GroupIcon from "@mui/icons-material/Group";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
@@ -9,9 +13,6 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
 import LogoutIcon from "@mui/icons-material/Logout";
-import logo from "../assets/sikgaek-logo.png";
-import { logout } from "../features/auth/authSlice";
-import { useDispatch } from "react-redux";
 
 function NavBar() {
   const dispatch = useDispatch();

@@ -1,5 +1,5 @@
 import React from "react";
-import { toTitleCase } from "../../utils";
+import { toTitleCase } from "../../../utils";
 
 function Employee({ employee, setSelectedEmployee }) {
   return (

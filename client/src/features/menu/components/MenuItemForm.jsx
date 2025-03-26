@@ -1,7 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { updateMenuItem, addMenuItem } from "./menuItemsSlice";
+import { updateMenuItem, addMenuItem } from "../slices/menuItemsSlice";
 
 function MenuItemForm({
   menuItemToEdit,

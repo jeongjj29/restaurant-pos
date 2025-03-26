@@ -1,5 +1,4 @@
-import React from "react";
-import { TAX_RATE } from "../../../constants";
+import { TAX_RATE } from "@constants";
 
 function OrderDetails({ order }) {
   if (!order) {

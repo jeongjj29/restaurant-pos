@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import EmployeeTable from "../../features/employees/EmployeesTable";
-import EmployeeForm from "../../features/employees/EmployeeForm";
+import { useState } from "react";
+import EmployeeTable from "@features/employees/components/EmployeesTable";
+import EmployeeForm from "@features/employees/components/EmployeeForm";
 
 function EmployeeManagementPage() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);

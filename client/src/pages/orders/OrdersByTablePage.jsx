@@ -1,7 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import OrderItemsDisplay from "../../features/orders/OrderItemsDisplay";
+import OrderItemsDisplay from "@features/orders/components/OrderItemsDisplay";
 
 function OrdersByTablePage() {
   const tableId = useParams().tableId;

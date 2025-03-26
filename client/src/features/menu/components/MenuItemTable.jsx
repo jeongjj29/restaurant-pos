@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMenuItems } from "./menuItemsSlice";
-import { fetchMenuCategories } from "./menuCategoriesSlice";
+import { fetchMenuItems } from "../slices/menuItemsSlice";
+import { fetchMenuCategories } from "../slices/menuCategoriesSlice";
 import AddIcon from "@mui/icons-material/Add";
 
 function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchMenuCategories } from "../../menu/slices/menuCategoriesSlice";
-import { addOrder, fetchOrders } from "./ordersSlice";
-import { addOrderItem } from "./orderItemsSlice";
-import { TAX_RATE } from "../../../constants";
+import { fetchMenuCategories } from "@features/menu/slices/menuCategoriesSlice";
+import { addOrder, fetchOrders } from "../slices/ordersSlice";
+import { addOrderItem } from "../slices/orderItemsSlice";
+import { TAX_RATE } from "@constants";
 import axios from "axios";
 
 function OrderInput({ tableId }) {

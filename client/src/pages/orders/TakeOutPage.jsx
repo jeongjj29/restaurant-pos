@@ -1,5 +1,4 @@
-import React from "react";
-import OrderInput from "../../features/orders/OrderInput";
+import OrderInput from "@features/orders/components/OrderInput";
 
 function TakeOutPage() {
   return (

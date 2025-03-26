@@ -1,6 +1,5 @@
-import React from "react";
-import OrderInput from "../../features/orders/OrderInput";
 import { useParams } from "react-router-dom";
+import OrderInput from "@features/orders/components/OrderInput";
 
 function DineInOrderInputPage() {
   const tableId = useParams().tableId;

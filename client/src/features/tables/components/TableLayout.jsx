@@ -1,7 +1,6 @@
-import React from "react";
 import DroppableTable from "./DroppableTable";
 import { useSelector } from "react-redux";
-import { TABLES_LAYOUT_HEIGHT } from "../../../constants";
+import { TABLES_LAYOUT_HEIGHT } from "@constants";
 
 function TablesLayout({ tables }) {
   const layout = useSelector((state) => state.tables.tableLayout);

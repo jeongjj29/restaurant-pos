@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-// import MenuLayout from "../../features/menu/MenuLayout";
-import MenuItemTable from "../../features/menu/MenuItemTable";
-import MenuItemForm from "../../features/menu/MenuItemForm";
-import MenuCategoriesTable from "../../features/menu/MenuCategoriesTable";
-import MenuCategoryForm from "../../features/menu/MenuCategoryForm";
+import { useState } from "react";
+// import MenuLayout from @features/menu/MenuLayout";
+import MenuItemTable from "@features/menu/components/MenuItemTable";
+import MenuItemForm from "@features/menu/components/MenuItemForm";
+import MenuCategoriesTable from "@features/menu/components/MenuCategoriesTable";
+import MenuCategoryForm from "@features/menu/components/MenuCategoryForm";
 
 function MenuManagementPage() {
   const [menuItemFormHidden, setMenuItemFormHidden] = useState(true);

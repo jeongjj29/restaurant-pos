@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEmployees } from "./employeesSlice";
+import { fetchEmployees } from "../slices/employeesSlice";
 import Employee from "./Employee";
 
 function EmployeeTable({ setSelectedEmployee }) {

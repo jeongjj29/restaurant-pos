@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteTable } from "./tablesSlice";
+import { deleteTable } from "../slices/tablesSlice";
 import TableForm from "./TableForm";
 import DraggableTable from "./DraggableTable";
 import EditIcon from "@mui/icons-material/Edit";

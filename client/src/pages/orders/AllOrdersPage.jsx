@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AllOrdersTable from "../../features/orders/AllOrdersTable";
-import OrderDetails from "../../features/orders/OrderDetails";
 import { useSelector } from "react-redux";
 import { format, parseISO } from "date-fns";
+import AllOrdersTable from "@features/orders/components/AllOrdersTable";
+import OrderDetails from "@features/orders/components/OrderDetails";
 
 function AllOrdersPage() {
   const navigate = useNavigate();

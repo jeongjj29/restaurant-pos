@@ -1,7 +1,10 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
-import { updateMenuCategory, addMenuCategory } from "./menuCategoriesSlice";
+import {
+  updateMenuCategory,
+  addMenuCategory,
+} from "../slices/menuCategoriesSlice";
 
 function MenuCategoryForm({
   menuCategoryToEdit,

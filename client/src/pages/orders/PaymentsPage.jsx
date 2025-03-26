@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import OrderDetails from "../../features/orders/OrderDetails";
-import { PaymentIcon } from "react-svg-credit-card-payment-icons";
-import PaymentForm from "../../features/payments/PaymentForm";
+import OrderDetails from "@features/orders/components/OrderDetails";
+import PaymentForm from "@features/payments/components/PaymentForm";
 
 function PaymentsPage() {
   const location = useLocation();
@@ -17,18 +16,10 @@ function PaymentsPage() {
       </div>
       <div className="flex flex-row">
         <div className="flex flex-col gap-4">
-          <button onClick={() => setPaymentType("visa")}>
-            <PaymentIcon type="visa" format="flatRounded" width={100} />
-          </button>
-          <button onClick={() => setPaymentType("mastercard")}>
-            <PaymentIcon type="mastercard" format="flatRounded" width={100} />
-          </button>
-          <button onClick={() => setPaymentType("amex")}>
-            <PaymentIcon type="amex" format="flatRounded" width={100} />
-          </button>
-          <button onClick={() => setPaymentType("discover")}>
-            <PaymentIcon type="discover" format="flatRounded" width={100} />
-          </button>
+          <button onClick={() => setPaymentType("visa")}></button>
+          <button onClick={() => setPaymentType("mastercard")}></button>
+          <button onClick={() => setPaymentType("amex")}></button>
+          <button onClick={() => setPaymentType("discover")}></button>
           <button onClick={() => setPaymentType("cash")}>
             <div className="flex items-center justify-center bg-zinc-200 w-iconw py-3 h-18 border-2 rounded-lg p-0">
               <span className="text-3xl font-semibold">CASH</span>

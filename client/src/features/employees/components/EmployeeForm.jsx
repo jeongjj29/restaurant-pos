@@ -1,11 +1,10 @@
-import React, { useEffect } from "react";
+import * as yup from "yup";
+import { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { updateEmployee, addEmployee } from "./employeesSlice";
-import { fetchRoles } from "./rolesSlice";
-import * as yup from "yup";
+import { updateEmployee, addEmployee } from "../slices/employeesSlice";
+import { fetchRoles } from "../slices/rolesSlice";
 
-// Employee form validation schema
 const employeeSchema = yup.object().shape({
   first_name: yup.string().required("First name is required"),
   last_name: yup.string().required("Last name is required"),

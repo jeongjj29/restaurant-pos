@@ -1,5 +1,4 @@
-import React from "react";
-import { subtotalPrice, taxPrice, totalPriceWithTax } from "../../../utils";
+import { subtotalPrice, taxPrice, totalPriceWithTax } from "@utils";
 
 function OrderItemsDisplay({ table, orderItems, orderId }) {
   return (

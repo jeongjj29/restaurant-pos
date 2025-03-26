@@ -9,6 +9,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
 import LogoutIcon from "@mui/icons-material/Logout";
+import logo from "../assets/sikgaek-logo.png";
 import { logout } from "../features/auth/authSlice";
 import { useDispatch } from "react-redux";
 
@@ -18,8 +19,16 @@ function NavBar() {
   const [ordersOpen, setOrdersOpen] = useState(false);
 
   return (
-    <div className="h-full w-48 bg-gray-200 p-4 shadow-md flex flex-col">
-      <nav className="flex flex-col space-y-4">
+    <div className="flex flex-col h-full p-4 shadow-md">
+      <NavLink
+        to="/"
+        className="flex mb-2 h-20 items-end justify-start rounded-md bg-white/5 p-4 md:h-40"
+      >
+        <div className="w-32">
+          <img src={logo} alt="Sik Gaek Logo" className="w-100 block" />
+        </div>
+      </NavLink>
+      <div className="flex flex-col space-y-4">
         <NavLink
           to="/"
           className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 hover:bg-gray-200 p-2 rounded transition"
@@ -107,7 +116,7 @@ function NavBar() {
             </NavLink> */}
           </div>
         )}
-      </nav>
+      </div>
       <div className="mt-auto align-self-end mb-4">
         <button
           onClick={() => {

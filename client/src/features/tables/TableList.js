@@ -11,7 +11,7 @@ function TableList({ tables }) {
   const sortedTables = [...tables].sort((a, b) => a.number - b.number);
 
   return (
-    <div className=" relative w-160 max-h-screen bg-white p-4 rounded-md shadow-lg">
+    <div className="w-160 max-h-screen bg-white/5 p-4 rounded-md shadow-lg">
       {/* Add New Table Button */}
       {editFormHidden && (
         <button

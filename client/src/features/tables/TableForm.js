@@ -11,6 +11,9 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
       .number()
       .required("Number is required")
       .test("unique-number", "Table number already exists", function (value) {
+        if (tableToEdit && tableToEdit.number === value) {
+          return true;
+        }
         return !tables.some((table) => table.number === value);
       }),
     capacity: yup

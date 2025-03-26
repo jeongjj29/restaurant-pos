@@ -26,12 +26,12 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="h-screen w-screen flex flex-row bg-gray-100">
-      {/* NavBar with fixed width and full height */}
-      <NavBar className="w-64 h-full bg-gray-800 shadow-lg" />
+    <div className="flex h-screen flex-row bg-background text-text-primary">
+      <div className="w-48 flex-none">
+        <NavBar />
+      </div>
 
-      {/* Outlet to take the remaining space */}
-      <div className="flex-1 h-full p-6 bg-white shadow-inner overflow-y-auto">
+      <div className="flex-1 h-full p-6 shadow-inner overflow-y-auto">
         <Outlet />
       </div>
     </div>

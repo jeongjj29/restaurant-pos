@@ -2,19 +2,19 @@ import App from "@components/App";
 import Home from "@pages/HomePage";
 import LoginPage from "@pages/LoginPage";
 import ErrorPage from "@pages/ErrorPage";
-import SettingsPage from "@pages/settings/SettingsPage";
-import MenuManagementPage from "@pages/settings/MenuManagementPage";
-import EmployeeManagementPage from "@pages/settings/EmployeeManagementPage";
-import TableManagementPage from "@pages/settings/TableManagementPage";
-import SalesReportsPage from "@pages/settings/SalesReportPage";
-import OrdersManagementPage from "@pages/orders/OrdersManagementPage";
-import DineInPage from "@pages/orders/DineInPage";
-import TakeOutPage from "@pages/orders/TakeOutPage";
-import AllOrdersPage from "@pages/orders/AllOrdersPage";
-import PaymentsPage from "@pages/orders/PaymentsPage";
+import SettingsPage from "@pages/SettingsPage";
+import MenuManagementPage from "@features/menu/pages/MenuManagementPage";
+import EmployeeManagementPage from "@features/employees/pages/EmployeeManagementPage";
+import TableManagementPage from "@features/tables/pages/TableManagementPage";
+import SalesReportsPage from "@pages/SalesReportPage";
+import OrdersManagementPage from "@features/orders/pages/OrdersManagementPage";
+import DineInPage from "@features/orders/pages/DineInPage";
+import TakeOutPage from "@features/orders/pages/TakeOutPage";
+import AllOrdersPage from "@features/orders/pages/AllOrdersPage";
+import PaymentsPage from "@features/orders/pages/PaymentsPage";
 import ProtectedRoute from "@features/auth/ProtectedRoute";
-import OrdersByTablePage from "@pages/orders/OrdersByTablePage";
-import DineInOrderInputPage from "@pages/orders/DineInOrderInputPage";
+import OrdersByTablePage from "@features/orders/pages/OrdersByTablePage";
+import DineInOrderInputPage from "@features/orders/pages/DineInOrderInputPage";
 
 const routes = [
   {

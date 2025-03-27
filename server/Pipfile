@@ -13,6 +13,7 @@ flask-bcrypt = "*"
 flask-sqlalchemy = "*"
 werkzeug = "*"
 sqlalchemy-serializer = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

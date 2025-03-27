@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTables, updateTable } from "@features/tables/slices/tablesSlice";
-import DndMonitor from "@features/tables/DndMonitor";
-import TableLayout from "@features/tables/components/TableLayout";
-import TableList from "@features/tables/components/TableList";
+import { fetchTables, updateTable } from "@tables/slices/tablesSlice";
+import DndMonitor from "@tables/DndMonitor";
+import TableLayout from "@tables/components/TableLayout";
+import TableList from "@tables/components/TableList";
 
 function TableManagementPage() {
   const dispatch = useDispatch();

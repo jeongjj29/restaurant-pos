@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import OrderDetails from "@features/orders/components/OrderDetails";
-import PaymentForm from "@features/payments/components/PaymentForm";
+import OrderDetails from "@orders/components/OrderDetails";
+import PaymentForm from "@payments/components/PaymentForm";
 
 function PaymentsPage() {
   const location = useLocation();

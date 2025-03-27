@@ -2,14 +2,14 @@ import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import NavBar from "./layout/NavBar";
 import { useDispatch } from "react-redux";
-import { fetchTables } from "../features/tables/slices/tablesSlice";
-import { fetchOrders } from "../features/orders/slices/ordersSlice";
-import { fetchEmployees } from "../features/employees/slices/employeesSlice";
-import { fetchMenuItems } from "../features/menu/slices/menuItemsSlice";
-import { fetchMenuCategories } from "../features/menu/slices/menuCategoriesSlice";
-import { fetchPayments } from "../features/payments/slices/paymentsSlice";
-import { fetchOrderItems } from "../features/orders/slices/orderItemsSlice";
-import { fetchRoles } from "../features/employees/slices/rolesSlice";
+import { fetchTables } from "@tables/slices/tablesSlice";
+import { fetchOrders } from "@orders/slices/ordersSlice";
+import { fetchEmployees } from "@employees/slices/employeesSlice";
+import { fetchMenuItems } from "@menu/slices/menuItemsSlice";
+import { fetchMenuCategories } from "@menu/slices/menuCategoriesSlice";
+import { fetchPayments } from "@payments/slices/paymentsSlice";
+import { fetchOrderItems } from "@orders/slices/orderItemsSlice";
+import { fetchRoles } from "@employees/slices/rolesSlice";
 
 function App() {
   const dispatch = useDispatch();

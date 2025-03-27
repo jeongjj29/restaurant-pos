@@ -3,18 +3,18 @@ import Home from "@pages/HomePage";
 import LoginPage from "@pages/LoginPage";
 import ErrorPage from "@pages/ErrorPage";
 import SettingsPage from "@pages/SettingsPage";
-import MenuManagementPage from "@features/menu/pages/MenuManagementPage";
-import EmployeeManagementPage from "@features/employees/pages/EmployeeManagementPage";
-import TableManagementPage from "@features/tables/pages/TableManagementPage";
+import MenuManagementPage from "@menu/pages/MenuManagementPage";
+import EmployeeManagementPage from "@employees/pages/EmployeeManagementPage";
+import TableManagementPage from "@tables/pages/TableManagementPage";
 import SalesReportsPage from "@pages/SalesReportPage";
-import OrdersManagementPage from "@features/orders/pages/OrdersManagementPage";
-import DineInPage from "@features/orders/pages/DineInPage";
-import TakeOutPage from "@features/orders/pages/TakeOutPage";
-import AllOrdersPage from "@features/orders/pages/AllOrdersPage";
-import PaymentsPage from "@features/orders/pages/PaymentsPage";
-import ProtectedRoute from "@features/auth/ProtectedRoute";
-import OrdersByTablePage from "@features/orders/pages/OrdersByTablePage";
-import DineInOrderInputPage from "@features/orders/pages/DineInOrderInputPage";
+import OrdersManagementPage from "@orders/pages/OrdersManagementPage";
+import DineInPage from "@orders/pages/DineInPage";
+import TakeOutPage from "@orders/pages/TakeOutPage";
+import AllOrdersPage from "@orders/pages/AllOrdersPage";
+import PaymentsPage from "@orders/pages/PaymentsPage";
+import ProtectedRoute from "@auth/ProtectedRoute";
+import OrdersByTablePage from "@orders/pages/OrdersByTablePage";
+import DineInOrderInputPage from "@orders/pages/DineInOrderInputPage";
 
 const routes = [
   {

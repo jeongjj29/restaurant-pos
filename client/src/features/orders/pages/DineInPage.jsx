@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import Table from "@features/tables/components/Table";
+import Table from "@tables/components/Table";
 
 function DineInPage() {
   const layout = useSelector((state) => state.tables.tableLayout);

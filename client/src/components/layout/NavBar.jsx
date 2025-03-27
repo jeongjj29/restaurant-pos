@@ -2,13 +2,12 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import logo from "@assets/sikgaek-logo.png";
-import { logout } from "@features/auth/authSlice";
-
+import { logout } from "@auth/authSlice";
 import HomeIcon from "@mui/icons-material/Home";
 import GroupIcon from "@mui/icons-material/Group";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
-import AssessmentIcon from "@mui/icons-material/Assessment";
+// import AssessmentIcon from "@mui/icons-material/Assessment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";

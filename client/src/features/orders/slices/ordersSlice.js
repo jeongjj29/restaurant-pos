@@ -1,12 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Fetch all orders
 export const fetchOrders = createAsyncThunk(
   "orders/fetchOrders",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/orders");
+      const response = await axios.get("/api/orders");
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -14,12 +13,11 @@ export const fetchOrders = createAsyncThunk(
   }
 );
 
-// Add a new order
 export const addOrder = createAsyncThunk(
   "orders/addOrder",
   async (newOrder, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/orders", newOrder);
+      const response = await axios.post("/api/orders", newOrder);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -27,13 +25,12 @@ export const addOrder = createAsyncThunk(
   }
 );
 
-// Update an existing order
 export const updateOrder = createAsyncThunk(
   "orders/updateOrder",
   async (updatedOrder, { rejectWithValue }) => {
     try {
       const response = await axios.patch(
-        `/orders/${updatedOrder.id}`,
+        `/api/orders/${updatedOrder.id}`,
         updatedOrder
       );
       return response.data;
@@ -59,7 +56,6 @@ const ordersSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch orders
       .addCase(fetchOrders.pending, (state) => {
         state.loading = true;
       })
@@ -72,20 +68,18 @@ const ordersSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Add a new order
       .addCase(addOrder.pending, (state) => {
         state.loading = true;
       })
       .addCase(addOrder.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders.push(action.payload); // Add the new order to the orders array
+        state.orders.push(action.payload);
       })
       .addCase(addOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // Update an existing order
       .addCase(updateOrder.pending, (state) => {
         state.loading = true;
       })
@@ -95,7 +89,7 @@ const ordersSlice = createSlice({
           (order) => order.id === action.payload.id
         );
         if (index !== -1) {
-          state.orders[index] = action.payload; // Update the order in the orders array
+          state.orders[index] = action.payload;
         }
       })
       .addCase(updateOrder.rejected, (state, action) => {

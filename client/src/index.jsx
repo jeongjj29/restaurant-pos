@@ -6,7 +6,12 @@ import { store } from "./store";
 import "./index.css";
 import routes from "./routes";
 
-const router = createBrowserRouter(routes);
+const router = createBrowserRouter(routes, {
+  future: {
+    v7_relativeSplatPath: true,
+    v7_startTransition: true,
+  },
+});
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>

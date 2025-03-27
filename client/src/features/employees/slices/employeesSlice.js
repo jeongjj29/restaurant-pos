@@ -5,7 +5,7 @@ export const fetchEmployees = createAsyncThunk(
   "employees/fetchEmployees",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/users");
+      const response = await axios.get("/api/users");
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -17,7 +17,7 @@ export const addEmployee = createAsyncThunk(
   "employees/addEmployee",
   async (employeeData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/users", {
+      const response = await axios.post("/api/users", {
         first_name: employeeData.first_name,
         last_name: employeeData.last_name,
         email: employeeData.email,
@@ -36,7 +36,7 @@ export const updateEmployee = createAsyncThunk(
   "employees/updateEmployee",
   async (employeeData, { rejectWithValue }) => {
     try {
-      const response = await axios.patch(`/users/${employeeData.id}`, {
+      const response = await axios.patch(`/api/users/${employeeData.id}`, {
         first_name: employeeData.first_name,
         last_name: employeeData.last_name,
         email: employeeData.email,

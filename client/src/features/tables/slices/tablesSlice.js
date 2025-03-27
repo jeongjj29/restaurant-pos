@@ -2,12 +2,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { TABLES_LAYOUT_WIDTH, TABLES_LAYOUT_HEIGHT } from "../../../constants";
 import axios from "axios";
 
-// Fetch tables action
 export const fetchTables = createAsyncThunk(
   "tables/fetchTables",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/tables");
+      const response = await axios.get("/api/tables");
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -15,12 +14,11 @@ export const fetchTables = createAsyncThunk(
   }
 );
 
-// Add a new table action
 export const addNewTable = createAsyncThunk(
   "tables/addNewTable",
   async (tableData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/tables", tableData);
+      const response = await axios.post("/api/tables", tableData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -28,12 +26,11 @@ export const addNewTable = createAsyncThunk(
   }
 );
 
-// Update an existing table action
 export const updateTable = createAsyncThunk(
   "tables/updateTable",
   async ({ tableId, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await axios.patch(`/tables/${tableId}`, updatedData);
+      const response = await axios.patch(`/api/tables/${tableId}`, updatedData);
       return response.data; // Return the updated table
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -45,7 +42,7 @@ export const deleteTable = createAsyncThunk(
   "tables/deleteTable",
   async (tableId, { rejectWithValue }) => {
     try {
-      await axios.delete(`/tables/${tableId}`);
+      await axios.delete(`/api/tables/${tableId}`);
       return tableId;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -100,7 +97,7 @@ const tablesSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(addNewTable.fulfilled, (state, action) => {
-        state.tables.push(action.payload); // Add new table to tables
+        state.tables.push(action.payload);
 
         state.tableLayout = createTableLayout(state.tables);
       })
@@ -112,7 +109,7 @@ const tablesSlice = createSlice({
           (table) => table.id === action.payload.id
         );
         if (index !== -1) {
-          state.tables[index] = action.payload; // Update table in tables array
+          state.tables[index] = action.payload;
         }
 
         state.tableLayout = createTableLayout(state.tables);

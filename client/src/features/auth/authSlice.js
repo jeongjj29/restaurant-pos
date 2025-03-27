@@ -1,19 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Async thunk for logging in
 export const login = createAsyncThunk(
   "auth/login",
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/login", { username, password });
-      const { access_token, user } = response.data; // Assuming you also get user data
+      const response = await axios.post("/api/auth/login", {
+        username,
+        password,
+      });
+      const { access_token, user } = response.data;
 
       localStorage.setItem("token", access_token);
-      localStorage.setItem("user", JSON.stringify(user)); // Store user data
-      return { token: access_token, user }; // Return both token and user data
+      localStorage.setItem("user", JSON.stringify(user));
+      return { token: access_token, user };
     } catch (error) {
-      return rejectWithValue(error.response.data); // Pass error message to rejected case
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -22,12 +24,8 @@ export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      // Make a POST request to the logout route
-      // await axios.post("/logout", {});
-
-      // Clear token from localStorage after successful logout
       localStorage.removeItem("token");
-      localStorage.removeItem("user"); // Clear user data
+      localStorage.removeItem("user");
     } catch (error) {
       console.error("Logout error:", error);
       return rejectWithValue(error.response.data);
@@ -41,7 +39,7 @@ const userFromStorage = JSON.parse(localStorage.getItem("user"));
 const initialState = {
   isAuthenticated: !!tokenFromStorage,
   token: tokenFromStorage || null,
-  user: userFromStorage || null, // Initialize user data from localStorage
+  user: userFromStorage || null,
   loading: false,
   error: null,
 };

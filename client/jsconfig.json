@@ -9,7 +9,13 @@
       "@constants": ["constants.js"],
       "@routes": ["routes.js"],
       "@store": ["store.js"],
-      "@utils": ["utils.js"]
+      "@utils": ["utils.js"],
+      "@auth": ["features/auth/*"],
+      "@employees": ["features/employees/*"],
+      "@menu": ["features/menu/*"],
+      "@orders": ["features/orders/*"],
+      "@payments": ["features/payments/*"],
+      "@tables": ["features/tables/*"]
     }
   },
   "include": ["src"]

@@ -5,7 +5,7 @@ export const fetchRoles = createAsyncThunk(
   "roles/fetchRoles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/roles");
+      const response = await axios.get("/api/roles");
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -17,7 +17,7 @@ export const addRole = createAsyncThunk(
   "roles/addRole",
   async (roleData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/roles", roleData);
+      const response = await axios.post("/api/roles", roleData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -29,7 +29,7 @@ export const updateRole = createAsyncThunk(
   "roles/updateRole",
   async (roleData, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`/roles/${roleData.id}`, roleData);
+      const response = await axios.put(`/api/roles/${roleData.id}`, roleData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

@@ -5,7 +5,7 @@ export const fetchMenuItems = createAsyncThunk(
   "menuItems/fetchMenuItems",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/menu_items");
+      const response = await axios.get("/api/menu_items");
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -17,7 +17,7 @@ export const addMenuItem = createAsyncThunk(
   "menuItems/addMenuItem",
   async (menuItemData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/menu_items", menuItemData);
+      const response = await axios.post("/api/menu_items", menuItemData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -30,7 +30,7 @@ export const updateMenuItem = createAsyncThunk(
   async (menuItemData, { rejectWithValue }) => {
     try {
       const response = await axios.patch(
-        `/menu_items/${menuItemData.id}`,
+        `/api/menu_items/${menuItemData.id}`,
         menuItemData
       );
       return response.data;

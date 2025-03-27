@@ -4,6 +4,7 @@ from flask_restful import Api
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from sqlalchemy import MetaData
+from flask_jwt_extended import JWTManager
 
 metadata = MetaData(
     naming_convention={
@@ -16,3 +17,4 @@ migrate = Migrate()
 api = Api(prefix="/api")
 bcrypt = Bcrypt()
 cors = CORS
+jwt = JWTManager()

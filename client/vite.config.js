@@ -1,28 +1,28 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import path from "path";
+import { defineConfig } from "vite";
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@assets": path.resolve(__dirname, "src/assets"),
-      "@components": path.resolve(__dirname, "src/components"),
-      "@features": path.resolve(__dirname, "src/features"),
-      "@pages": path.resolve(__dirname, "src/pages"),
-      "@constants": path.resolve(__dirname, "src/constants.js"),
-      "@routes": path.resolve(__dirname, "src/routes.js"),
-      "@store": path.resolve(__dirname, "src/store.js"),
-      "@utils": path.resolve(__dirname, "src/utils.js"),
+      "@assets": resolve(__dirname, "src/assets"),
+      "@components": resolve(__dirname, "src/components"),
+      "@features": resolve(__dirname, "src/features"),
+      "@pages": resolve(__dirname, "src/pages"),
+      "@constants": resolve(__dirname, "src/constants.js"),
+      "@routes": resolve(__dirname, "src/routes.js"),
+      "@store": resolve(__dirname, "src/store.js"),
+      "@utils": resolve(__dirname, "src/utils.js"),
     },
   },
   server: {
     proxy: {
-      "/api": {
-        target: "http://localhost:5555",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      },
+      "/api": "http://localhost:5555",
     },
   },
 });

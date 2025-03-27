@@ -16,5 +16,5 @@ db = SQLAlchemy(metadata=metadata)
 migrate = Migrate()
 api = Api(prefix="/api")
 bcrypt = Bcrypt()
-cors = CORS
+cors = CORS()
 jwt = JWTManager()

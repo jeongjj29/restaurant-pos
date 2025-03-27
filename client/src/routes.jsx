@@ -23,7 +23,7 @@ const routes = [
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "",
+        index: true,
         element: (
           <ProtectedRoute>
             <Home />

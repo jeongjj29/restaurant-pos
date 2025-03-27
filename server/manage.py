@@ -8,7 +8,7 @@ app = create_app()
 @click.command("seed")
 @with_appcontext
 def seed():
-    from seed import seed_data  # <- make sure seed.py has a seed_data() function
+    from seed import seed_data  
     seed_data()
     click.echo("🌱 Seeded the database.")
 
@@ -26,4 +26,4 @@ app.cli.add_command(seed)
 app.cli.add_command(dropdb)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=5555, debug=True)

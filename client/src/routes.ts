@@ -1,3 +1,5 @@
+import { RouteObject } from "react-router-dom";
+
 import App from "@components/App";
 import Home from "@pages/HomePage";
 import LoginPage from "@pages/LoginPage";
@@ -42,30 +44,12 @@ const routes = [
           </ProtectedRoute>
         ),
         children: [
-          {
-            path: "dinein",
-            element: <DineInPage />,
-          },
-          {
-            path: "table/:tableId",
-            element: <OrdersByTablePage />,
-          },
-          {
-            path: "table/:tableId/new",
-            element: <DineInOrderInputPage />,
-          },
-          {
-            path: "takeout",
-            element: <TakeOutPage />,
-          },
-          {
-            path: "all",
-            element: <AllOrdersPage />,
-          },
-          {
-            path: "payment",
-            element: <PaymentsPage />,
-          },
+          { path: "dinein", element: <DineInPage /> },
+          { path: "table/:tableId", element: <OrdersByTablePage /> },
+          { path: "table/:tableId/new", element: <DineInOrderInputPage /> },
+          { path: "takeout", element: <TakeOutPage /> },
+          { path: "all", element: <AllOrdersPage /> },
+          { path: "payment", element: <PaymentsPage /> },
         ],
       },
       {
@@ -76,22 +60,10 @@ const routes = [
           </ProtectedRoute>
         ),
         children: [
-          {
-            path: "menu",
-            element: <MenuManagementPage />,
-          },
-          {
-            path: "employees",
-            element: <EmployeeManagementPage />,
-          },
-          {
-            path: "tables",
-            element: <TableManagementPage />,
-          },
-          {
-            path: "reports",
-            element: <SalesReportsPage />,
-          },
+          { path: "menu", element: <MenuManagementPage /> },
+          { path: "employees", element: <EmployeeManagementPage /> },
+          { path: "tables", element: <TableManagementPage /> },
+          { path: "reports", element: <SalesReportsPage /> },
         ],
       },
     ],

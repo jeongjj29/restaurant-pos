@@ -1,4 +1,4 @@
-import react from "@vitejs/plugin-react";
+import react from "@vitets/plugin-react";
 import { defineConfig } from "vite";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
@@ -14,10 +14,10 @@ export default defineConfig({
       "@components": resolve(__dirname, "src/components"),
       "@features": resolve(__dirname, "src/features"),
       "@pages": resolve(__dirname, "src/pages"),
-      "@constants": resolve(__dirname, "src/constants.js"),
-      "@routes": resolve(__dirname, "src/routes.js"),
-      "@store": resolve(__dirname, "src/store.js"),
-      "@utils": resolve(__dirname, "src/utils.js"),
+      "@constants": resolve(__dirname, "src/constants.ts"),
+      "@routes": resolve(__dirname, "src/routes.ts"),
+      "@store": resolve(__dirname, "src/store.ts"),
+      "@utils": resolve(__dirname, "src/utils.ts"),
       "@auth": resolve(__dirname, "src/features/auth"),
       "@employees": resolve(__dirname, "src/features/employees"),
       "@menu": resolve(__dirname, "src/features/menu"),

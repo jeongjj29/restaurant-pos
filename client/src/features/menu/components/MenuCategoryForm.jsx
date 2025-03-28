@@ -58,7 +58,7 @@ function MenuCategoryForm({
                 name="name"
                 type="text"
                 placeholder="Enter category name"
-                className="w-full p-2 rounded-md bg-white/10 border border-border text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
+                className="w-full p-2 rounded-md bg-white/10 border border-border text-text-primary placeholder-text-secondary focus:outline-hidden focus:ring-2 focus:ring-accent"
               />
               <ErrorMessage
                 name="name"
@@ -79,7 +79,7 @@ function MenuCategoryForm({
                 name="secondary_name"
                 type="text"
                 placeholder="Optional"
-                className="w-full p-2 rounded-md bg-white/10 border border-border text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
+                className="w-full p-2 rounded-md bg-white/10 border border-border text-text-primary placeholder-text-secondary focus:outline-hidden focus:ring-2 focus:ring-accent"
               />
               <ErrorMessage
                 name="secondary_name"

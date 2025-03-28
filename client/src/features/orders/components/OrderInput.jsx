@@ -111,7 +111,7 @@ function OrderInput({ tableId }) {
             <button
               key={menuCategory.id}
               onClick={() => handleCategoryButtonClick(menuCategory.id)}
-              className="w-full bg-green-300 hover:bg-green-400 text-white text-2xl font-bold py-2 px-4 rounded mb-2"
+              className="w-full bg-green-300 hover:bg-green-400 text-white text-2xl font-bold py-2 px-4 rounded-sm mb-2"
             >
               {menuCategory.name}
             </button>
@@ -200,7 +200,7 @@ function OrderInput({ tableId }) {
       <div className="flex justify-center items-center w-full mt-4 p-4 bg-gray-100">
         <button
           onClick={handleOrderSubmit}
-          className="bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 rounded"
+          className="bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 rounded-sm"
         >
           Submit
         </button>

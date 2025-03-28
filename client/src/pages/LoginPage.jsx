@@ -49,7 +49,7 @@ function LoginPage() {
                   type="text"
                   name="username"
                   placeholder="Enter your username"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
                 />
                 <ErrorMessage
                   name="username"
@@ -69,7 +69,7 @@ function LoginPage() {
                   type="password"
                   name="password"
                   placeholder="Enter your password"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
                 />
                 <ErrorMessage
                   name="password"
@@ -92,7 +92,7 @@ function LoginPage() {
                     isSubmitting
                       ? "bg-gray-400"
                       : "bg-blue-600 hover:bg-blue-700"
-                  } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  } focus:outline-hidden focus:ring-2 focus:ring-blue-500`}
                 >
                   {isSubmitting ? "Logging in..." : "Login"}
                 </button>

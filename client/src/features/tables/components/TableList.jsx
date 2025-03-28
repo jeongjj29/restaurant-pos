@@ -17,7 +17,7 @@ function TableList({ tables }) {
       {/* Add New Table Button */}
       {editFormHidden && (
         <button
-          className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded mb-4"
+          className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-sm mb-4"
           onClick={() => {
             setEditFormHidden(false);
             setTableToEdit(null);
@@ -57,7 +57,7 @@ function TableList({ tables }) {
               {/* Edit and Delete Buttons */}
               <div className="flex flex-col gap-2">
                 <button
-                  className="bg-green-800 hover:bg-green-800 text-white font-bold py-2 px-2 rounded"
+                  className="bg-green-800 hover:bg-green-800 text-white font-bold py-2 px-2 rounded-sm"
                   onClick={() => {
                     setEditFormHidden(false);
                     setTableToEdit(table);
@@ -67,7 +67,7 @@ function TableList({ tables }) {
                 </button>
 
                 <button
-                  className="bg-red-800 hover:bg-red-800 text-white font-bold py-2 px-2 rounded"
+                  className="bg-red-800 hover:bg-red-800 text-white font-bold py-2 px-2 rounded-sm"
                   onClick={() => {
                     dispatch(deleteTable(table.id)) // Pass just the table ID
                       .unwrap() // Unwrap the result to handle the actual promise

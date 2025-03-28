@@ -63,7 +63,7 @@ function MenuItemForm({
               <Field
                 name="name"
                 type="text"
-                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-none focus:ring-2 focus:ring-accent"
+                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-hidden focus:ring-2 focus:ring-accent"
               />
               <ErrorMessage
                 name="name"
@@ -83,7 +83,7 @@ function MenuItemForm({
               <Field
                 name="secondary_name"
                 type="text"
-                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-none focus:ring-2 focus:ring-accent"
+                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-hidden focus:ring-2 focus:ring-accent"
               />
               <ErrorMessage
                 name="secondary_name"
@@ -103,7 +103,7 @@ function MenuItemForm({
               <Field
                 name="price"
                 type="number"
-                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-none focus:ring-2 focus:ring-accent"
+                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-hidden focus:ring-2 focus:ring-accent"
               />
               <ErrorMessage
                 name="price"
@@ -123,7 +123,7 @@ function MenuItemForm({
               <Field
                 as="select"
                 name="category_id"
-                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-none focus:ring-2 focus:ring-accent"
+                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-hidden focus:ring-2 focus:ring-accent"
               >
                 <option value="">Select Category</option>
                 {menuCategories.map((category) => (

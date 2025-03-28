@@ -24,11 +24,11 @@ function Employee({ employee, setSelectedEmployee }) {
           onClick={() => {
             setSelectedEmployee(employee);
           }}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-hidden"
         >
           Edit
         </button>
-        {/* <button className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none">
+        {/* <button className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-hidden">
           Hide
         </button> */}
       </div>

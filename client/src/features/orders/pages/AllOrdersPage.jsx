@@ -43,7 +43,7 @@ function AllOrdersPage() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="border text-text-primary bg-white/5 border-border p-2 rounded"
+              className="border text-text-primary bg-white/5 border-border p-2 rounded-sm"
             />
           </div>
           <div className="flex flex-col">
@@ -52,7 +52,7 @@ function AllOrdersPage() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="border text-text-primary bg-white/5 border-border p-2 rounded"
+              className="border text-text-primary bg-white/5 border-border p-2 rounded-sm"
             />
           </div>
 
@@ -62,7 +62,7 @@ function AllOrdersPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="border text-text-primary bg-white/5 border-border p-2 rounded"
+              className="border text-text-primary bg-white/5 border-border p-2 rounded-sm"
             >
               <option value="all" className="bg-surface">
                 All Orders
@@ -87,7 +87,7 @@ function AllOrdersPage() {
         <OrderDetails order={clickedOrder} />
         {clickedOrder && (
           <div className="flex flex-col justify-center items-center">
-            <button className="bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 m-4 rounded">
+            <button className="bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 m-4 rounded-sm">
               Print
             </button>
             <button
@@ -95,7 +95,7 @@ function AllOrdersPage() {
                 const order = { ...clickedOrder };
                 navigate("/orders/payment", { state: { order } });
               }}
-              className="bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 m-4 rounded"
+              className="bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 m-4 rounded-sm"
             >
               Settle
             </button>

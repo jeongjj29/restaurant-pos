@@ -77,7 +77,7 @@ function PaymentForm({ order, type }) {
       enableReinitialize
     >
       {({ isSubmitting }) => (
-        <Form className="p-4 space-y-4 bg-white shadow-md rounded">
+        <Form className="p-4 space-y-4 bg-white shadow-md rounded-sm">
           {/* Order ID (Read-Only) */}
           <div>
             <label htmlFor="order_id">Order ID:</label>
@@ -85,7 +85,7 @@ function PaymentForm({ order, type }) {
               name="order_id"
               type="text"
               readOnly
-              className="w-full border border-gray-300 p-2 rounded mt-1"
+              className="w-full border border-gray-300 p-2 rounded-sm mt-1"
             />
           </div>
 
@@ -96,7 +96,7 @@ function PaymentForm({ order, type }) {
               name="type"
               type="text"
               readOnly
-              className="w-full border border-gray-300 p-2 rounded mt-1"
+              className="w-full border border-gray-300 p-2 rounded-sm mt-1"
             />
           </div>
 
@@ -107,7 +107,7 @@ function PaymentForm({ order, type }) {
               name="amount"
               type="number"
               placeholder="Enter amount"
-              className="w-full border border-gray-300 p-2 rounded mt-1"
+              className="w-full border border-gray-300 p-2 rounded-sm mt-1"
             />
             <ErrorMessage
               name="amount"
@@ -121,7 +121,7 @@ function PaymentForm({ order, type }) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-sm"
             >
               {isSubmitting ? "Submitting..." : "Submit Payment"}
             </button>

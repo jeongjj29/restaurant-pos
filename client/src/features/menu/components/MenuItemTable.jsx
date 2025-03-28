@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchMenuItems } from "../slices/menuItemsSlice";
 import { fetchMenuCategories } from "../slices/menuCategoriesSlice";
 import AddIcon from "@mui/icons-material/Add";
+import EditButton from "@components/buttons/EditButton";
+import CreateButton from "@components/buttons/CreateButton";
 
 function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
   const dispatch = useDispatch();
@@ -13,7 +15,6 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
     key: "name",
     direction: "asc",
   });
-  // "sticky top-0 px-4 py-2 bg-surface text-left text-sm font-semibold text-text-primary border-b border-border z-10"
   const thCSS =
     "sticky top-0 px-4 py-2 text-left text-sm font-semibold text-text-primary bg-surface border-b border-border cursor-pointer";
   const tdCSS =
@@ -83,15 +84,12 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
                   (sortConfig.direction === "asc" ? "↑" : "↓")}
               </th>
               <th className={thCSS}>
-                <button
-                  className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-3 rounded-md"
+                <CreateButton
                   onClick={() => {
                     setMenuItemToEdit(null);
                     setMenuItemFormHidden(false);
                   }}
-                >
-                  <AddIcon fontSize="small" />
-                </button>
+                />
               </th>
             </tr>
           </thead>
@@ -101,7 +99,7 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
                 key={menuItem.id}
                 className={
                   index % 2 === 0
-                    ? "bg-white/5 hover:bg-white/10"
+                    ? "bg-white/5 hover:bg-white/20"
                     : "bg-white/10 hover:bg-white/20"
                 }
               >
@@ -110,15 +108,12 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
                 <td className={tdCSS}>{menuItem.menu_category.name}</td>
                 <td className={tdCSS}>${menuItem.price.toFixed(2)}</td>
                 <td className={tdCSS}>
-                  <button
+                  <EditButton
                     onClick={() => {
                       setMenuItemToEdit(menuItem);
                       setMenuItemFormHidden(false);
                     }}
-                    className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-3 rounded-md"
-                  >
-                    Edit
-                  </button>
+                  />
                 </td>
               </tr>
             ))}

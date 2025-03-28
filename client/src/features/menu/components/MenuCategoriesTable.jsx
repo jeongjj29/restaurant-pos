@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import AddIcon from "@mui/icons-material/Add";
+import CreateButton from "@components/buttons/CreateButton";
+import EditButton from "@components/buttons/EditButton";
 
 function MenuCategoriesTable({
   setMenuCategoryToEdit,
@@ -19,35 +20,33 @@ function MenuCategoriesTable({
   });
 
   const thCSS =
-    "border border-gray-300 p-3 text-left text-sm font-semibold text-gray-700 cursor-pointer";
-  const tdCSS = "border border-gray-300 p-3 text-left text-sm text-gray-700";
+    "px-4 py-2 text-left text-sm font-semibold text-text-primary bg-surface border-b border-border cursor-pointer";
+  const tdCSS =
+    "px-4 py-2 text-left text-sm text-text-secondary border-b border-border";
 
   const sortedMenuCategories = [...menuCategories].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
+    if (a[sortConfig.key] < b[sortConfig.key])
       return sortConfig.direction === "asc" ? -1 : 1;
-    }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
+    if (a[sortConfig.key] > b[sortConfig.key])
       return sortConfig.direction === "asc" ? 1 : -1;
-    }
     return 0;
   });
 
   const handleSort = (key) => {
     let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
+    if (sortConfig.key === key && sortConfig.direction === "asc")
       direction = "desc";
-    }
     setSortConfig({ key, direction });
   };
 
   if (menuCategoriesError) {
-    return <p className="text-red-500">Error: {menuCategoriesError}</p>;
+    return <p className="text-error">Error: {menuCategoriesError}</p>;
   }
 
   return (
-    <div className="max-w-3xl ml-4 overflow-x-auto shadow-md rounded-lg">
-      <table className="min-w-full bg-white border border-gray-300">
-        <thead className="bg-gray-100">
+    <div className="max-w-2xl overflow-x-auto rounded-md shadow-md border border-border">
+      <table className="min-w-full bg-surface rounded-md">
+        <thead>
           <tr>
             <th className={thCSS} onClick={() => handleSort("name")}>
               Name{" "}
@@ -60,33 +59,34 @@ function MenuCategoriesTable({
                 (sortConfig.direction === "asc" ? "↑" : "↓")}
             </th>
             <th className={thCSS}>
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              <CreateButton
                 onClick={() => {
                   setMenuCategoryFormHidden(false);
                   setMenuCategoryToEdit(null);
                 }}
-              >
-                <AddIcon />
-              </button>
+              />
             </th>
           </tr>
         </thead>
         <tbody>
-          {sortedMenuCategories.map((menuCategory) => (
-            <tr key={menuCategory.id}>
+          {sortedMenuCategories.map((menuCategory, index) => (
+            <tr
+              key={menuCategory.id}
+              className={
+                index % 2 === 0
+                  ? "bg-white/5 hover:bg-white/20"
+                  : "bg-white/10 hover:bg-white/20"
+              }
+            >
               <td className={tdCSS}>{menuCategory.name}</td>
               <td className={tdCSS}>{menuCategory.secondary_name}</td>
               <td className={tdCSS}>
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                <EditButton
                   onClick={() => {
                     setMenuCategoryToEdit(menuCategory);
                     setMenuCategoryFormHidden(false);
                   }}
-                >
-                  Edit
-                </button>
+                />
               </td>
             </tr>
           ))}

@@ -2,9 +2,9 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
-import { store } from "@store";
-import "./index.css";
+import { store } from "@app/store";
 import routes from "@routes";
+import "./index.css";
 
 const router = createBrowserRouter(routes, {
   future: {

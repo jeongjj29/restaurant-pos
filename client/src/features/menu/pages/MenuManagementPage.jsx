@@ -22,9 +22,9 @@ function MenuManagementPage() {
     <div className="flex flex-col h-full w-full bg-surface text-text-primary p-6 rounded-md shadow-md">
       <NavBar tab={tab} setTab={handleClick} />
 
-      <div className="flex gap-4">
+      <div className="flex items-start gap-4">
         {/* Table Section */}
-        <div className="flex-1">
+        <div className="flex-grow max-w-[750px]">
           {tab === "items" && (
             <MenuItemTable
               setMenuItemToEdit={setMenuItemToEdit}
@@ -40,7 +40,7 @@ function MenuManagementPage() {
         </div>
 
         {/* Form Section */}
-        <div className="w-[350px]">
+        <div className="w-[350px] shrink-0">
           {!menuItemFormHidden && tab === "items" && (
             <MenuItemForm
               menuItemToEdit={menuItemToEdit}

@@ -4,6 +4,12 @@ export interface Role {
   access_level: number;
 }
 
+export interface RolesState {
+  roles: Role[];
+  loading: boolean;
+  error: string | null;
+}
+
 export interface Employee {
   id: number;
   username: string;

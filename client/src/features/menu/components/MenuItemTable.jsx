@@ -13,9 +13,9 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
     key: "name",
     direction: "asc",
   });
-
+  // "sticky top-0 px-4 py-2 bg-surface text-left text-sm font-semibold text-text-primary border-b border-border z-10"
   const thCSS =
-    "px-4 py-2 text-left text-sm font-semibold text-text-primary bg-surface border-b border-border cursor-pointer";
+    "sticky top-0 px-4 py-2 text-left text-sm font-semibold text-text-primary bg-surface border-b border-border cursor-pointer";
   const tdCSS =
     "px-4 py-2 text-left text-sm text-text-secondary border-b border-border";
 
@@ -51,75 +51,80 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
   }
 
   return (
-    <div className="max-w-4xl overflow-x-auto rounded-md shadow-md border border-border">
-      <table className="min-w-full bg-surface rounded-md">
-        <thead>
-          <tr>
-            <th className={thCSS} onClick={() => handleSort("name")}>
-              Name{" "}
-              {sortConfig.key === "name" &&
-                (sortConfig.direction === "asc" ? "↑" : "↓")}
-            </th>
-            <th className={thCSS} onClick={() => handleSort("secondary_name")}>
-              Secondary Name{" "}
-              {sortConfig.key === "secondary_name" &&
-                (sortConfig.direction === "asc" ? "↑" : "↓")}
-            </th>
-            <th
-              className={thCSS}
-              onClick={() => handleSort("menu_category.name")}
-            >
-              Category{" "}
-              {sortConfig.key === "menu_category.name" &&
-                (sortConfig.direction === "asc" ? "↑" : "↓")}
-            </th>
-            <th className={thCSS} onClick={() => handleSort("price")}>
-              Price{" "}
-              {sortConfig.key === "price" &&
-                (sortConfig.direction === "asc" ? "↑" : "↓")}
-            </th>
-            <th className={thCSS}>
-              <button
-                className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-3 rounded-md"
-                onClick={() => {
-                  setMenuItemToEdit(null);
-                  setMenuItemFormHidden(false);
-                }}
+    <div className="max-w-4xl border border-border rounded-md shadow-md">
+      <div className="max-h-[85vh] overflow-y-auto rounded-md">
+        <table className="min-w-full bg-surface rounded-md">
+          <thead className="bg-surface z-10">
+            <tr>
+              <th className={thCSS} onClick={() => handleSort("name")}>
+                Name{" "}
+                {sortConfig.key === "name" &&
+                  (sortConfig.direction === "asc" ? "↑" : "↓")}
+              </th>
+              <th
+                className={thCSS}
+                onClick={() => handleSort("secondary_name")}
               >
-                <AddIcon fontSize="small" />
-              </button>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedMenuItems.map((menuItem, index) => (
-            <tr
-              key={menuItem.id}
-              className={
-                index % 2 === 0
-                  ? "bg-white/5 hover:bg-white/10"
-                  : "bg-white/10 hover:bg-white/20"
-              }
-            >
-              <td className={tdCSS}>{menuItem.name}</td>
-              <td className={tdCSS}>{menuItem.secondary_name}</td>
-              <td className={tdCSS}>{menuItem.menu_category.name}</td>
-              <td className={tdCSS}>${menuItem.price.toFixed(2)}</td>
-              <td className={tdCSS}>
+                Secondary Name{" "}
+                {sortConfig.key === "secondary_name" &&
+                  (sortConfig.direction === "asc" ? "↑" : "↓")}
+              </th>
+              <th
+                className={thCSS}
+                onClick={() => handleSort("menu_category.name")}
+              >
+                Category{" "}
+                {sortConfig.key === "menu_category.name" &&
+                  (sortConfig.direction === "asc" ? "↑" : "↓")}
+              </th>
+              <th className={thCSS} onClick={() => handleSort("price")}>
+                Price{" "}
+                {sortConfig.key === "price" &&
+                  (sortConfig.direction === "asc" ? "↑" : "↓")}
+              </th>
+              <th className={thCSS}>
                 <button
+                  className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-3 rounded-md"
                   onClick={() => {
-                    setMenuItemToEdit(menuItem);
+                    setMenuItemToEdit(null);
                     setMenuItemFormHidden(false);
                   }}
-                  className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-3 rounded-md"
                 >
-                  Edit
+                  <AddIcon fontSize="small" />
                 </button>
-              </td>
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sortedMenuItems.map((menuItem, index) => (
+              <tr
+                key={menuItem.id}
+                className={
+                  index % 2 === 0
+                    ? "bg-white/5 hover:bg-white/10"
+                    : "bg-white/10 hover:bg-white/20"
+                }
+              >
+                <td className={tdCSS}>{menuItem.name}</td>
+                <td className={tdCSS}>{menuItem.secondary_name}</td>
+                <td className={tdCSS}>{menuItem.menu_category.name}</td>
+                <td className={tdCSS}>${menuItem.price.toFixed(2)}</td>
+                <td className={tdCSS}>
+                  <button
+                    onClick={() => {
+                      setMenuItemToEdit(menuItem);
+                      setMenuItemFormHidden(false);
+                    }}
+                    className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-3 rounded-md"
+                  >
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

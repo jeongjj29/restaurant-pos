@@ -22,9 +22,9 @@ function MenuManagementPage() {
     <div className="flex flex-col h-full w-full bg-surface text-text-primary p-6 rounded-md shadow-md">
       <NavBar tab={tab} setTab={handleClick} />
 
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-8">
         {/* Table Section */}
-        <div className="flex-grow max-w-[750px]">
+        <div className="w-fit max-w-[750px]">
           {tab === "items" && (
             <MenuItemTable
               setMenuItemToEdit={setMenuItemToEdit}

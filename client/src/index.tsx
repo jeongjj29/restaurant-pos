@@ -2,18 +2,21 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
-import { store } from "./store";
+import { store } from "@store";
 import "./index.css";
-import routes from "./routes";
+import routes from "@routes";
 
 const router = createBrowserRouter(routes, {
   future: {
     v7_relativeSplatPath: true,
     v7_startTransition: true,
-  },
+  } as any,
 });
 
-createRoot(document.getElementById("root")).render(
+const container = document.getElementById("root");
+if (!container) throw new Error("Root container not found");
+
+createRoot(container).render(
   <React.StrictMode>
     <Provider store={store}>
       <RouterProvider router={router} />

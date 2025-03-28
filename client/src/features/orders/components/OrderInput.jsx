@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchMenuCategories } from "@features/menu/slices/menuCategoriesSlice";
+import { fetchMenuCategories } from "@menu/slices/menuCategoriesSlice";
 import { addOrder, fetchOrders } from "../slices/ordersSlice";
 import { addOrderItem } from "../slices/orderItemsSlice";
 import { TAX_RATE } from "@constants";

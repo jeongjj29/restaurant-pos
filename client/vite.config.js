@@ -18,6 +18,12 @@ export default defineConfig({
       "@routes": resolve(__dirname, "src/routes.js"),
       "@store": resolve(__dirname, "src/store.js"),
       "@utils": resolve(__dirname, "src/utils.js"),
+      "@auth": resolve(__dirname, "src/features/auth"),
+      "@employees": resolve(__dirname, "src/features/employees"),
+      "@menu": resolve(__dirname, "src/features/menu"),
+      "@orders": resolve(__dirname, "src/features/orders"),
+      "@payments": resolve(__dirname, "src/features/payments"),
+      "@tables": resolve(__dirname, "src/features/tables"),
     },
   },
   server: {

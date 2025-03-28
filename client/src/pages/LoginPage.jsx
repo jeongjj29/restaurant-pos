@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "@features/auth/authSlice";
+import { login } from "@auth/authSlice";
 
 function LoginPage() {
   const dispatch = useDispatch();

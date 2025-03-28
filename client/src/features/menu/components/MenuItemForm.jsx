@@ -1,7 +1,7 @@
-import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { updateMenuItem, addMenuItem } from "../slices/menuItemsSlice";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { updateMenuItem, addMenuItem } from "@menu/slices/menuItemsSlice";
 
 function MenuItemForm({
   menuItemToEdit,
@@ -24,7 +24,7 @@ function MenuItemForm({
   });
 
   return (
-    <div className="bg-white p-6 rounded-md shadow-md mb-6">
+    <div className="bg-surface p-6 rounded-md shadow-md mb-6 border border-border">
       <Formik
         initialValues={{
           name: menuItemToEdit?.name || "",
@@ -35,36 +35,19 @@ function MenuItemForm({
         validationSchema={menuItemSchema}
         enableReinitialize={true}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          if (menuItemToEdit) {
-            dispatch(updateMenuItem({ ...values, id: menuItemToEdit.id }))
-              .unwrap()
-              .then((res) => {
-                console.log("Menu item updated successfully:", res);
-                resetForm();
-              })
-              .catch((err) => {
-                console.error("Error updating menu item:", err);
-              })
-              .finally(() => {
-                setSubmitting(false);
-                setMenuItemFormHidden(true);
-                setMenuItemToEdit(null);
-              });
-          } else {
-            dispatch(addMenuItem(values))
-              .unwrap()
-              .then((res) => {
-                console.log("Menu item added successfully:", res);
-                resetForm();
-              })
-              .catch((err) => {
-                console.error("Error adding menu item:", err);
-              })
-              .finally(() => {
-                setSubmitting(false);
-                setMenuItemFormHidden(true);
-              });
-          }
+          const action = menuItemToEdit
+            ? updateMenuItem({ ...values, id: menuItemToEdit.id })
+            : addMenuItem(values);
+
+          dispatch(action)
+            .unwrap()
+            .then(() => resetForm())
+            .catch((err) => console.error("Error submitting menu item:", err))
+            .finally(() => {
+              setSubmitting(false);
+              setMenuItemFormHidden(true);
+              setMenuItemToEdit(null);
+            });
         }}
       >
         {({ isSubmitting }) => (
@@ -73,19 +56,19 @@ function MenuItemForm({
             <div className="mb-4">
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-text-secondary mb-1"
               >
                 Name
               </label>
               <Field
                 name="name"
                 type="text"
-                className="border border-gray-300 rounded-md w-full p-2"
+                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-none focus:ring-2 focus:ring-accent"
               />
               <ErrorMessage
                 name="name"
                 component="div"
-                className="text-red-600 text-sm mt-1"
+                className="text-error text-sm mt-1"
               />
             </div>
 
@@ -93,19 +76,19 @@ function MenuItemForm({
             <div className="mb-4">
               <label
                 htmlFor="secondary_name"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-text-secondary mb-1"
               >
                 Secondary Name
               </label>
               <Field
                 name="secondary_name"
                 type="text"
-                className="border border-gray-300 rounded-md w-full p-2"
+                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-none focus:ring-2 focus:ring-accent"
               />
               <ErrorMessage
                 name="secondary_name"
                 component="div"
-                className="text-red-600 text-sm mt-1"
+                className="text-error text-sm mt-1"
               />
             </div>
 
@@ -113,34 +96,34 @@ function MenuItemForm({
             <div className="mb-4">
               <label
                 htmlFor="price"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-text-secondary mb-1"
               >
                 Price
               </label>
               <Field
                 name="price"
                 type="number"
-                className="border border-gray-300 rounded-md w-full p-2"
+                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-none focus:ring-2 focus:ring-accent"
               />
               <ErrorMessage
                 name="price"
                 component="div"
-                className="text-red-600 text-sm mt-1"
+                className="text-error text-sm mt-1"
               />
             </div>
 
             {/* Category Field */}
-            <div className="mb-4">
+            <div className="mb-6">
               <label
                 htmlFor="category_id"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-text-secondary mb-1"
               >
                 Category
               </label>
               <Field
                 as="select"
                 name="category_id"
-                className="border border-gray-300 rounded-md w-full p-2"
+                className="border border-border bg-white/5 text-text-primary rounded-md w-full p-2 focus:outline-none focus:ring-2 focus:ring-accent"
               >
                 <option value="">Select Category</option>
                 {menuCategories.map((category) => (
@@ -152,30 +135,30 @@ function MenuItemForm({
               <ErrorMessage
                 name="category_id"
                 component="div"
-                className="text-red-600 text-sm mt-1"
+                className="text-error text-sm mt-1"
               />
             </div>
 
-            {/* Submit Button */}
+            {/* Buttons */}
             <div className="flex space-x-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
                 className={`${
-                  menuItemToEdit ? "bg-green-600" : "bg-blue-600"
-                } hover:bg-opacity-90 text-white font-bold py-2 px-4 rounded`}
+                  menuItemToEdit
+                    ? "bg-green-600 hover:bg-green-500"
+                    : "bg-blue-600 hover:bg-blue-500"
+                } text-white font-bold py-2 px-4 rounded-md transition-colors duration-200`}
               >
                 {menuItemToEdit ? "Update Menu Item" : "Add Menu Item"}
               </button>
-
-              {/* Cancel Button */}
               <button
                 type="button"
                 onClick={() => {
                   setMenuItemFormHidden(true);
                   setMenuItemToEdit(null);
                 }}
-                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-white/10 hover:bg-white/20 text-text-secondary hover:text-text-primary font-bold py-2 px-4 rounded-md transition-colors duration-200"
               >
                 Cancel
               </button>

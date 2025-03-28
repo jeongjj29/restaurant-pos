@@ -2,19 +2,19 @@ import App from "@components/App";
 import Home from "@pages/HomePage";
 import LoginPage from "@pages/LoginPage";
 import ErrorPage from "@pages/ErrorPage";
-import SettingsPage from "@pages/settings/SettingsPage";
-import MenuManagementPage from "@pages/settings/MenuManagementPage";
-import EmployeeManagementPage from "@pages/settings/EmployeeManagementPage";
-import TableManagementPage from "@pages/settings/TableManagementPage";
-import SalesReportsPage from "@pages/settings/SalesReportPage";
-import OrdersManagementPage from "@pages/orders/OrdersManagementPage";
-import DineInPage from "@pages/orders/DineInPage";
-import TakeOutPage from "@pages/orders/TakeOutPage";
-import AllOrdersPage from "@pages/orders/AllOrdersPage";
-import PaymentsPage from "@pages/orders/PaymentsPage";
-import ProtectedRoute from "@features/auth/ProtectedRoute";
-import OrdersByTablePage from "@pages/orders/OrdersByTablePage";
-import DineInOrderInputPage from "@pages/orders/DineInOrderInputPage";
+import SettingsPage from "@pages/SettingsPage";
+import MenuManagementPage from "@menu/pages/MenuManagementPage";
+import EmployeeManagementPage from "@employees/pages/EmployeeManagementPage";
+import TableManagementPage from "@tables/pages/TableManagementPage";
+import SalesReportsPage from "@pages/SalesReportPage";
+import OrdersManagementPage from "@orders/pages/OrdersManagementPage";
+import DineInPage from "@orders/pages/DineInPage";
+import TakeOutPage from "@orders/pages/TakeOutPage";
+import AllOrdersPage from "@orders/pages/AllOrdersPage";
+import PaymentsPage from "@orders/pages/PaymentsPage";
+import ProtectedRoute from "@auth/ProtectedRoute";
+import OrdersByTablePage from "@orders/pages/OrdersByTablePage";
+import DineInOrderInputPage from "@orders/pages/DineInOrderInputPage";
 
 const routes = [
   {
@@ -23,7 +23,7 @@ const routes = [
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "",
+        index: true,
         element: (
           <ProtectedRoute>
             <Home />
@@ -44,51 +44,27 @@ const routes = [
         children: [
           {
             path: "dinein",
-            element: (
-              <ProtectedRoute>
-                <DineInPage />
-              </ProtectedRoute>
-            ),
+            element: <DineInPage />,
           },
           {
             path: "table/:tableId",
-            element: (
-              <ProtectedRoute>
-                <OrdersByTablePage />
-              </ProtectedRoute>
-            ),
+            element: <OrdersByTablePage />,
           },
           {
             path: "table/:tableId/new",
-            element: (
-              <ProtectedRoute>
-                <DineInOrderInputPage />
-              </ProtectedRoute>
-            ),
+            element: <DineInOrderInputPage />,
           },
           {
             path: "takeout",
-            element: (
-              <ProtectedRoute>
-                <TakeOutPage />
-              </ProtectedRoute>
-            ),
+            element: <TakeOutPage />,
           },
           {
             path: "all",
-            element: (
-              <ProtectedRoute>
-                <AllOrdersPage />
-              </ProtectedRoute>
-            ),
+            element: <AllOrdersPage />,
           },
           {
             path: "payment",
-            element: (
-              <ProtectedRoute>
-                <PaymentsPage />
-              </ProtectedRoute>
-            ),
+            element: <PaymentsPage />,
           },
         ],
       },
@@ -102,35 +78,19 @@ const routes = [
         children: [
           {
             path: "menu",
-            element: (
-              <ProtectedRoute>
-                <MenuManagementPage />
-              </ProtectedRoute>
-            ),
+            element: <MenuManagementPage />,
           },
           {
             path: "employees",
-            element: (
-              <ProtectedRoute>
-                <EmployeeManagementPage />
-              </ProtectedRoute>
-            ),
+            element: <EmployeeManagementPage />,
           },
           {
             path: "tables",
-            element: (
-              <ProtectedRoute>
-                <TableManagementPage />
-              </ProtectedRoute>
-            ),
+            element: <TableManagementPage />,
           },
           {
             path: "reports",
-            element: (
-              <ProtectedRoute>
-                <SalesReportsPage />
-              </ProtectedRoute>
-            ),
+            element: <SalesReportsPage />,
           },
         ],
       },

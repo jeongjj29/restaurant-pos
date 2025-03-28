@@ -2,13 +2,12 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import logo from "@assets/sikgaek-logo.png";
-import { logout } from "@features/auth/authSlice";
-
+import { logout } from "@auth/authSlice";
 import HomeIcon from "@mui/icons-material/Home";
 import GroupIcon from "@mui/icons-material/Group";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
-import AssessmentIcon from "@mui/icons-material/Assessment";
+// import AssessmentIcon from "@mui/icons-material/Assessment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
@@ -29,7 +28,7 @@ function NavBar() {
     <div className="flex flex-col h-full p-4 shadow-md">
       <NavLink
         to="/"
-        className="flex mb-2 h-36 items-center justify-center rounded-md bg-white/5 p-4 md:h-40"
+        className="flex mb-2 h-36 items-center justify-center rounded-md bg-white/5 p-4"
       >
         <div className="w-32">
           <h1 className="text-3xl font-bold text-center mb-2">Sik Gaek</h1>

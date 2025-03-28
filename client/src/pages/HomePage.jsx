@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import AllOrdersTable from "@features/orders/components/AllOrdersTable";
+import AllOrdersTable from "@orders/components/AllOrdersTable";
 
 function Home() {
   const navigate = useNavigate();

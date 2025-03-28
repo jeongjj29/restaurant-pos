@@ -1,4 +1,4 @@
-import OrderInput from "@features/orders/components/OrderInput";
+import OrderInput from "@orders/components/OrderInput";
 
 function TakeOutPage() {
   return (

@@ -12,9 +12,15 @@ function MenuManagementPage() {
   const [menuCategoryFormHidden, setMenuCategoryFormHidden] = useState(true);
   const [menuCategoryToEdit, setMenuCategoryToEdit] = useState(null);
 
+  const handleClick = (field) => {
+    setTab(field);
+    setMenuItemFormHidden(true);
+    setMenuCategoryFormHidden(true);
+  };
+
   return (
     <div className="flex flex-col h-full w-full bg-surface text-text-primary p-6 rounded-md shadow-md">
-      <NavBar tab={tab} setTab={setTab} />
+      <NavBar tab={tab} setTab={handleClick} />
 
       <div className="flex gap-4">
         {/* Table Section */}
@@ -35,14 +41,14 @@ function MenuManagementPage() {
 
         {/* Form Section */}
         <div className="w-[350px]">
-          {!menuItemFormHidden && (
+          {!menuItemFormHidden && tab === "items" && (
             <MenuItemForm
               menuItemToEdit={menuItemToEdit}
               setMenuItemToEdit={setMenuItemToEdit}
               setMenuItemFormHidden={setMenuItemFormHidden}
             />
           )}
-          {!menuCategoryFormHidden && (
+          {!menuCategoryFormHidden && tab === "categories" && (
             <MenuCategoryForm
               menuCategoryToEdit={menuCategoryToEdit}
               setMenuCategoryToEdit={setMenuCategoryToEdit}

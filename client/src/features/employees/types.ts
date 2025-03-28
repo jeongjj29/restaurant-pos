@@ -14,3 +14,9 @@ export interface Employee {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface EmployeesState {
+  employees: Employee[];
+  loading: boolean;
+  error: string | null;
+}

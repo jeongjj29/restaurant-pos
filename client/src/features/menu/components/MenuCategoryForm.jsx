@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import {
   updateMenuCategory,
   addMenuCategory,
-} from "../slices/menuCategoriesSlice";
+} from "@menu/slices/menuCategoriesSlice";
 
 function MenuCategoryForm({
   menuCategoryToEdit,
@@ -19,7 +19,7 @@ function MenuCategoryForm({
   });
 
   return (
-    <div className="bg-white p-6 rounded-md shadow-md mb-6">
+    <div className="bg-surface p-4 rounded-md shadow-md text-text-primary border border-border">
       <Formik
         initialValues={{
           name: menuCategoryToEdit?.name || "",
@@ -49,55 +49,55 @@ function MenuCategoryForm({
       >
         {({ isSubmitting }) => (
           <Form>
+            {/* Name Field */}
             <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="name"
-              >
+              <label htmlFor="name" className="block text-sm font-medium mb-1">
                 Name
               </label>
               <Field
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="name"
                 name="name"
                 type="text"
                 placeholder="Enter category name"
+                className="w-full p-2 rounded-md bg-white/10 border border-border text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
               />
               <ErrorMessage
                 name="name"
                 component="div"
-                className="text-red-500 text-xs italic"
+                className="text-error text-sm mt-1"
               />
             </div>
+
+            {/* Secondary Name Field */}
             <div className="mb-4">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2"
                 htmlFor="secondary_name"
+                className="block text-sm font-medium mb-1"
               >
                 Secondary Name
               </label>
               <Field
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="secondary_name"
                 name="secondary_name"
                 type="text"
-                placeholder="Enter secondary name (optional)"
+                placeholder="Optional"
+                className="w-full p-2 rounded-md bg-white/10 border border-border text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
               />
               <ErrorMessage
                 name="secondary_name"
                 component="div"
-                className="text-red-500 text-xs italic"
+                className="text-error text-sm mt-1"
               />
             </div>
-            <div className="flex items-center justify-between">
+
+            {/* Buttons */}
+            <div className="flex space-x-4">
               <button
-                className={`${
-                  isSubmitting ? "bg-blue-300" : "bg-blue-500"
-                } hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
                 type="submit"
                 disabled={isSubmitting}
+                className={`bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-md transition duration-200 ${
+                  isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
-                {menuCategoryToEdit ? "Update" : "Save"}
+                {menuCategoryToEdit ? "Update" : "Add"}
               </button>
               <button
                 type="button"
@@ -105,7 +105,7 @@ function MenuCategoryForm({
                   setMenuCategoryFormHidden(true);
                   setMenuCategoryToEdit(null);
                 }}
-                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-gray-600 hover:bg-gray-500 text-white font-semibold px-4 py-2 rounded-md transition duration-200"
               >
                 Cancel
               </button>

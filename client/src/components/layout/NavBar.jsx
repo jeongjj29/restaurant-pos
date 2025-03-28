@@ -28,7 +28,7 @@ function NavBar() {
     <div className="flex flex-col h-full p-4 shadow-md">
       <NavLink
         to="/"
-        className="flex mb-2 h-36 items-center justify-center rounded-md bg-white/5 p-4 md:h-40"
+        className="flex mb-2 h-36 items-center justify-center rounded-md bg-white/5 p-4"
       >
         <div className="w-32">
           <h1 className="text-3xl font-bold text-center mb-2">Sik Gaek</h1>

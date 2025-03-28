@@ -1,22 +1,25 @@
 function NavBar({ tab, setTab }) {
-  const BASE_STYLE =
-    "px-4 py-2 font-semibold rounded-md transition-colors duration-200";
-  const ACTIVE_STYLE = "bg-white text-background";
-  const INACTIVE_STYLE = "bg-white/10 hover:bg-white/20 text-text-secondary";
+  const tabs = ["items", "categories", "layout"];
 
   return (
-    <div className="flex space-x-2 text-sm md:text-base lg:text-lg  mb-2">
-      {["items", "categories", "layout"].map((key) => (
-        <button
-          key={key}
-          onClick={() => setTab(key)}
-          className={`${BASE_STYLE} ${
-            tab === key ? ACTIVE_STYLE : INACTIVE_STYLE
-          }`}
-        >
-          {key.charAt(0).toUpperCase() + key.slice(1)}
-        </button>
-      ))}
+    <div className="flex border-b border-border space-x-6 text-sm md:text-base lg:text-lg mb-4">
+      {tabs.map((key) => {
+        const isActive = tab === key;
+        return (
+          <button
+            key={key}
+            onClick={() => setTab(key)}
+            className={`pb-2 transition-colors duration-200 font-medium border-b-2 
+              ${
+                isActive
+                  ? "border-accent text-text-primary"
+                  : "border-transparent text-text-secondary hover:text-text-primary"
+              }`}
+          >
+            {key.charAt(0).toUpperCase() + key.slice(1)}
+          </button>
+        );
+      })}
     </div>
   );
 }

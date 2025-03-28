@@ -15,15 +15,15 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
   });
 
   const thCSS =
-    "border border-gray-300 p-3 text-left text-sm font-semibold text-gray-700 cursor-pointer";
-  const tdCSS = "border border-gray-300 p-3 text-left text-sm text-gray-700";
+    "px-4 py-2 text-left text-sm font-semibold text-text-primary bg-surface border-b border-border cursor-pointer";
+  const tdCSS =
+    "px-4 py-2 text-left text-sm text-text-secondary border-b border-border";
 
   useEffect(() => {
     dispatch(fetchMenuItems());
     dispatch(fetchMenuCategories());
   }, [dispatch]);
 
-  // Sorting function
   const sortedMenuItems = [...menuItems].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
       return sortConfig.direction === "asc" ? -1 : 1;
@@ -34,7 +34,6 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
     return 0;
   });
 
-  // Function to handle column sorting
   const handleSort = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -43,18 +42,18 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
     setSortConfig({ key, direction });
   };
 
-  // Loading state handling
   if (menuItems.length === 0 && !menuItemsError) {
-    return <p className="text-gray-600">Loading menu items...</p>;
+    return <p className="text-text-secondary">Loading menu items...</p>;
   }
 
-  if (menuItemsError)
+  if (menuItemsError) {
     return <p className="text-red-600">Error: {menuItemsError}</p>;
+  }
 
   return (
-    <div className="max-w-3xl overflow-x-auto shadow-md rounded-lg">
-      <table className="min-w-full bg-white border border-gray-300">
-        <thead className="bg-gray-100">
+    <div className="max-w-4xl overflow-x-auto rounded-md shadow-md border border-border">
+      <table className="min-w-full bg-surface rounded-md">
+        <thead>
           <tr>
             <th className={thCSS} onClick={() => handleSort("name")}>
               Name{" "}
@@ -81,31 +80,38 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
             </th>
             <th className={thCSS}>
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-3 rounded-md"
                 onClick={() => {
                   setMenuItemToEdit(null);
                   setMenuItemFormHidden(false);
                 }}
               >
-                <AddIcon />
+                <AddIcon fontSize="small" />
               </button>
             </th>
           </tr>
         </thead>
         <tbody>
-          {sortedMenuItems.map((menuItem) => (
-            <tr key={menuItem.id} className="hover:bg-gray-50">
+          {sortedMenuItems.map((menuItem, index) => (
+            <tr
+              key={menuItem.id}
+              className={
+                index % 2 === 0
+                  ? "bg-white/5 hover:bg-white/10"
+                  : "bg-white/10 hover:bg-white/20"
+              }
+            >
               <td className={tdCSS}>{menuItem.name}</td>
               <td className={tdCSS}>{menuItem.secondary_name}</td>
               <td className={tdCSS}>{menuItem.menu_category.name}</td>
-              <td className={tdCSS}>{menuItem.price}</td>
+              <td className={tdCSS}>${menuItem.price.toFixed(2)}</td>
               <td className={tdCSS}>
                 <button
                   onClick={() => {
                     setMenuItemToEdit(menuItem);
                     setMenuItemFormHidden(false);
                   }}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-3 rounded-md"
                 >
                   Edit
                 </button>

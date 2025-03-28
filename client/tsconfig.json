@@ -9,22 +9,25 @@
       "@components/*": ["components/*"],
       "@features/*": ["features/*"],
       "@pages/*": ["pages/*"],
+      "@app/*": ["app/*"],
       "@constants": ["constants.ts"],
       "@routes": ["routes.ts"],
-      "@store": ["store.ts"],
       "@utils": ["utils.ts"],
-      "@auth": ["features/auth/*"],
-      "@employees": ["features/employees/*"],
-      "@menu": ["features/menu/*"],
-      "@orders": ["features/orders/*"],
-      "@payments": ["features/payments/*"],
-      "@tables": ["features/tables/*"]
+      "@auth/*": ["features/auth/*"],
+      "@employees/*": ["features/employees/*"],
+      "@menu/*": ["features/menu/*"],
+      "@orders/*": ["features/orders/*"],
+      "@payments/*": ["features/payments/*"],
+      "@tables/*": ["features/tables/*"]
     },
     "strict": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "noEmit": true
   },
   "include": ["src"]
 }

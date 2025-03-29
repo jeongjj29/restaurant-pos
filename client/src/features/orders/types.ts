@@ -11,6 +11,12 @@ export interface Order {
   closed_at: Date;
 }
 
+export interface OrdersState {
+  orders: Order[];
+  loading: boolean;
+  error: string | null;
+}
+
 export interface OrderItem {
   id: number;
   quantity: number;
@@ -18,4 +24,10 @@ export interface OrderItem {
   discount_id: number;
   order_id: number;
   menu_item_id: number;
+}
+
+export interface OrderItemsState {
+  orderItems: OrderItem[];
+  loading: boolean;
+  error: string | null;
 }

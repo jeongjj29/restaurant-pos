@@ -13,7 +13,7 @@ export default defineConfig({
       "@constants": path.resolve(__dirname, "src/constants.ts"),
       "@routes": path.resolve(__dirname, "src/routes.ts"),
       "@app": path.resolve(__dirname, "src/app"),
-      "@utils": path.resolve(__dirname, "src/utils.ts"),
+      "@utils": path.resolve(__dirname, "src/utils"),
       "@auth": path.resolve(__dirname, "src/features/auth"),
       "@employees": path.resolve(__dirname, "src/features/employees"),
       "@menu": path.resolve(__dirname, "src/features/menu"),

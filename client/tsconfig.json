@@ -12,7 +12,7 @@
       "@app/*": ["app/*"],
       "@constants": ["constants.ts"],
       "@routes": ["routes.ts"],
-      "@utils": ["utils.ts"],
+      "@utils/*": ["utils/*"],
       "@auth/*": ["features/auth/*"],
       "@employees/*": ["features/employees/*"],
       "@menu/*": ["features/menu/*"],

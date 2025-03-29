@@ -1,11 +1,5 @@
 import { TAX } from "@constants";
-import { OrderItem } from "@orders/types/orderTypes";
-
-export const toTitleCase = (str: string): string => {
-  return str.replace(/\w\S*/g, (txt) => {
-    return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
-  });
-};
+import { OrderItem } from "@orders/types";
 
 export const subtotalPrice = (items: OrderItem[]): number =>
   items.reduce((acc, item) => acc + item.price * item.quantity, 0);

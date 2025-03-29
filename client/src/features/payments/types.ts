@@ -4,3 +4,9 @@ export interface Payment {
   order_id: number;
   type: string;
 }
+
+export interface PaymentsState {
+  payments: Payment[];
+  loading: boolean;
+  error: string | null;
+}

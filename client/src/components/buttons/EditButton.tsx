@@ -1,6 +1,7 @@
 import EditIcon from "@mui/icons-material/Edit";
+import { ButtonProps } from "@app/types";
 
-export default function EditButton({ onClick }) {
+const EditButton: React.FC<ButtonProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
@@ -10,4 +11,6 @@ export default function EditButton({ onClick }) {
       <EditIcon fontSize="small" />
     </button>
   );
-}
+};
+
+export default EditButton;

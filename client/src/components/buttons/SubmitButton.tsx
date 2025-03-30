@@ -1,4 +1,9 @@
-export default function SubmitButton({ label = "Submit", disabled = false }) {
+interface SubmitButtonProps {
+  label?: string;
+  disabled?: boolean;
+}
+
+const SubmitButton: React.FC<SubmitButtonProps> = ({ label = "Submit", disabled = false }) {
   return (
     <button
       type="submit"
@@ -11,3 +16,5 @@ export default function SubmitButton({ label = "Submit", disabled = false }) {
     </button>
   );
 }
+
+export default SubmitButton;

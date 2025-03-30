@@ -1,6 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
+import { ButtonProps } from "@app/types";
 
-export default function DeleteButton({ onClick }) {
+const DeleteButton: React.FC<ButtonProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
@@ -10,4 +11,6 @@ export default function DeleteButton({ onClick }) {
       <DeleteIcon fontSize="small" />
     </button>
   );
-}
+};
+
+export default DeleteButton;

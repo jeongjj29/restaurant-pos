@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import NavBar from "./layout/NavBar";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "@app/hooks";
 import { fetchTables } from "@tables/slices/tablesSlice";
 import { fetchOrders } from "@orders/slices/ordersSlice";
 import { fetchEmployees } from "@employees/slices/employeesSlice";
@@ -12,7 +12,7 @@ import { fetchOrderItems } from "@orders/slices/orderItemsSlice";
 import { fetchRoles } from "@employees/slices/rolesSlice";
 
 function App() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchTables());

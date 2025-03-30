@@ -11,7 +11,7 @@
       "@pages/*": ["pages/*"],
       "@app/*": ["app/*"],
       "@constants": ["constants.ts"],
-      "@routes": ["routes.ts"],
+      "@routes": ["routes.tsx"],
       "@utils/*": ["utils/*"],
       "@auth/*": ["features/auth/*"],
       "@employees/*": ["features/employees/*"],

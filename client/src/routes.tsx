@@ -1,8 +1,8 @@
-import { RouteObject } from "react-router-dom";
+import { createBrowserRouter, RouteObject } from "react-router-dom";
 
 import App from "@components/App";
 import Home from "@pages/HomePage";
-import LoginPage from "@pages/LoginPage";
+import LoginPage from "@auth/LoginPage";
 import ErrorPage from "@pages/ErrorPage";
 import SettingsPage from "@pages/SettingsPage";
 import MenuManagementPage from "@menu/pages/MenuManagementPage";
@@ -14,11 +14,11 @@ import DineInPage from "@orders/pages/DineInPage";
 import TakeOutPage from "@orders/pages/TakeOutPage";
 import AllOrdersPage from "@orders/pages/AllOrdersPage";
 import PaymentsPage from "@orders/pages/PaymentsPage";
-import ProtectedRoute from "@auth/ProtectedRoute";
 import OrdersByTablePage from "@orders/pages/OrdersByTablePage";
 import DineInOrderInputPage from "@orders/pages/DineInOrderInputPage";
+import ProtectedRoute from "@auth/ProtectedRoute";
 
-const routes = [
+const routes: RouteObject[] = [
   {
     path: "/",
     element: <App />,
@@ -26,11 +26,7 @@ const routes = [
     children: [
       {
         index: true,
-        element: (
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        ),
+        element: <Home />,
       },
       {
         path: "login",
@@ -70,4 +66,4 @@ const routes = [
   },
 ];
 
-export default routes;
+export const router = createBrowserRouter(routes);

@@ -1,4 +1,8 @@
-import { subtotalPrice, taxPrice, totalPriceWithTax } from "@utils";
+import {
+  subtotalPrice,
+  taxPrice,
+  totalPriceWithTax,
+} from "@utils/pricingUtils";
 
 function OrderItemsDisplay({ table, orderItems, orderId }) {
   return (

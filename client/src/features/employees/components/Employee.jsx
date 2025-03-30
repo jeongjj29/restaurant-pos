@@ -1,4 +1,4 @@
-import { toTitleCase } from "@utils";
+import { toTitleCase } from "@utils/stringUtils";
 
 function Employee({ employee, setSelectedEmployee }) {
   return (

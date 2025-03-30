@@ -175,3 +175,5 @@ const menuCategoriesSlice = createSlice({
       );
   },
 });
+
+export default menuCategoriesSlice.reducer;

@@ -1,6 +1,6 @@
 import DroppableTable from "./DroppableTable";
 import { useSelector } from "react-redux";
-import { TABLES_LAYOUT_HEIGHT } from "@constants";
+import { TABLE_LAYOUT } from "@constants";
 
 function TablesLayout({ tables }) {
   const layout = useSelector((state) => state.tables.tableLayout);
@@ -10,7 +10,7 @@ function TablesLayout({ tables }) {
       <div
         className="grid gap-2"
         style={{
-          gridTemplateColumns: `repeat(${TABLES_LAYOUT_HEIGHT}, minmax(0, 1fr))`,
+          gridTemplateColumns: `repeat(${TABLE_LAYOUT.HEIGHT}, minmax(0, 1fr))`,
         }}
       >
         {layout.flatMap((row, i) =>

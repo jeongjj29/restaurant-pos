@@ -12,3 +12,8 @@ export type AuthState = {
   loading: boolean;
   error: string | null;
 };
+
+export type LoginFormValues = {
+  username: string;
+  password: string;
+};

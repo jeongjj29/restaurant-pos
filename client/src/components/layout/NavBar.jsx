@@ -7,7 +7,6 @@ import HomeIcon from "@mui/icons-material/Home";
 import GroupIcon from "@mui/icons-material/Group";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
-// import AssessmentIcon from "@mui/icons-material/Assessment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
@@ -49,7 +48,6 @@ function NavBar() {
           <span>Orders</span>
         </button>
 
-        {/* Orders Dropdown */}
         {ordersOpen && (
           <div className="flex flex-col space-y-2 ml-4">
             <NavLink to="/orders/all" className={SUB_LINK_STYLE}>
@@ -75,7 +73,6 @@ function NavBar() {
           <span>Settings</span>
         </button>
 
-        {/* Settings Dropdown */}
         {settingsOpen && (
           <div className="flex flex-col space-y-2 ml-4">
             <NavLink to="/settings/employees" className={SUB_LINK_STYLE}>
@@ -92,14 +89,6 @@ function NavBar() {
               <TableRestaurantIcon />
               <span>Tables</span>
             </NavLink>
-
-            {/* <NavLink
-              to="/settings/reports"
-              className={LINK_STYLE}
-            >
-              <AssessmentIcon />
-              <span>Reports</span>
-            </NavLink> */}
           </div>
         )}
         <div className="block h-auto w-full grow rounded-md bg-white/5 "></div>

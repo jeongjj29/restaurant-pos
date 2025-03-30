@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import logo from "@assets/sikgaek-logo.png";
 import { logout } from "@auth/authSlice";
@@ -11,11 +10,12 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useAppDispatch } from "@app/hooks";
 
 function NavBar() {
-  const dispatch = useDispatch();
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [ordersOpen, setOrdersOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+  const [ordersOpen, setOrdersOpen] = useState<boolean>(false);
 
   const LINK_STYLE =
     "flex items-center gap-3 rounded-md bg-white/5 py-2 px-3 text-base font-medium hover:bg-white/15";
@@ -94,7 +94,7 @@ function NavBar() {
         <div className="block h-auto w-full grow rounded-md bg-white/5 "></div>
         <button
           onClick={() => {
-            dispatch(logout());
+            dispatch(logout()); // Ensure logout is typed correctly
           }}
           className={LINK_STYLE}
         >

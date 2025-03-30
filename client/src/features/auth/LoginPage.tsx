@@ -1,14 +1,15 @@
 import * as yup from "yup";
 import { useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useDispatch } from "react-redux";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import { useNavigate } from "react-router-dom";
 import { login } from "@auth/authSlice";
+import { useAppDispatch } from "@app/hooks";
+import { LoginFormValues } from "./types";
 
 function LoginPage() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [loginError, setLoginError] = useState(null); // State for error message
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const loginSchema = yup.object().shape({
     username: yup.string().required("Username is required"),
@@ -22,16 +23,19 @@ function LoginPage() {
         <Formik
           initialValues={{ username: "", password: "" }}
           validationSchema={loginSchema}
-          onSubmit={(values, { setSubmitting, resetForm }) => {
+          onSubmit={(
+            values: LoginFormValues,
+            { setSubmitting, resetForm }: FormikHelpers<LoginFormValues>
+          ) => {
             dispatch(login(values))
               .unwrap()
               .then(() => {
-                resetForm(); // Reset form on successful login
-                setLoginError(null); // Clear any previous errors
+                resetForm();
+                setLoginError(null);
                 navigate("/");
               })
               .catch((err) => {
-                setLoginError("Invalid username or password"); // Set error message
+                setLoginError("Invalid username or password");
                 setSubmitting(false);
               });
           }}

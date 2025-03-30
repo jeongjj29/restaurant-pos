@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { updateTable, addNewTable } from "../slices/tablesSlice";
+import { updateTable, addTable } from "../slices/tablesSlice";
 
 function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
   const dispatch = useDispatch();

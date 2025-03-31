@@ -23,3 +23,8 @@ export interface TableGridCell {
 export interface TablesLayoutProps {
   tables: Table[];
 }
+
+export interface UpdateTablePayload {
+  tableId: number;
+  updatedData: Partial<Table>;
+}

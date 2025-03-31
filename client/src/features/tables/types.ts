@@ -19,3 +19,7 @@ export interface TableGridCell {
   location_x?: number | null;
   location_y?: number | null;
 }
+
+export interface TablesLayoutProps {
+  tables: Table[];
+}

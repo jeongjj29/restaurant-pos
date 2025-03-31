@@ -11,3 +11,11 @@ export interface TablesState {
   loading: boolean;
   error: string | null;
 }
+
+export interface TableGridCell {
+  isTable: boolean;
+  number?: number;
+  id?: number;
+  location_x?: number | null;
+  location_y?: number | null;
+}

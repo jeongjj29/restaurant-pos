@@ -1,9 +1,10 @@
 import DroppableTable from "./DroppableTable";
-import { useSelector } from "react-redux";
+import { TablesLayoutProps } from "@tables/types";
 import { TABLE_LAYOUT } from "@constants";
+import { createTableLayout } from "@utils/tableLayoutUtils";
 
-function TablesLayout({ tables }) {
-  const layout = useSelector((state) => state.tables.tableLayout);
+function TablesLayout({ tables }: TablesLayoutProps) {
+  const layout = createTableLayout(tables);
 
   return (
     <div className="flex-1 h-full flex items-center justify-center bg-white/5 p-4 rounded-md">

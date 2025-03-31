@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Table, TablesState } from "@tables/types";
+import { Table, TablesState, UpdateTablePayload } from "@tables/types";
 import {
   handlePendingState,
   handleFulfilledState,
@@ -44,24 +44,24 @@ export const addTable = createAsyncThunk<Table, Table, { rejectValue: string }>(
 
 export const updateTable = createAsyncThunk<
   Table,
-  Table,
+  UpdateTablePayload,
   { rejectValue: string }
->("tables/updateTable", async (updatedTable, { rejectWithValue }) => {
-  try {
-    const response = await axios.put(
-      `/api/tables/${updatedTable.id}`,
-      updatedTable
-    );
-    return response.data;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to update table"
-      );
+>(
+  "tables/updateTable",
+  async ({ tableId, updatedData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`/api/tables/${tableId}`, updatedData);
+      return response.data;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data?.message || "Failed to update table"
+        );
+      }
+      return rejectWithValue("An unknown error occurred");
     }
-    return rejectWithValue("An unknown error occurred");
   }
-});
+);
 
 export const deleteTable = createAsyncThunk<
   Table,

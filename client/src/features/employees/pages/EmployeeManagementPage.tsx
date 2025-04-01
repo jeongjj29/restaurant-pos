@@ -1,10 +1,13 @@
 import { useState } from "react";
 import EmployeeTable from "@employees/components/EmployeesTable";
 import EmployeeForm from "@employees/components/EmployeeForm";
+import { Employee } from "@employees/types";
 
 function EmployeeManagementPage() {
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [formHidden, setFormHidden] = useState(true);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null
+  );
+  const [formHidden, setFormHidden] = useState<boolean>(true);
 
   return (
     <div className="flex flex-row">

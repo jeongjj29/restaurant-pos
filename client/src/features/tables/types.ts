@@ -28,3 +28,8 @@ export interface UpdateTablePayload {
   tableId: number;
   updatedData: Partial<Table>;
 }
+
+export interface AddTablePayload {
+  number: number;
+  capacity: number;
+}

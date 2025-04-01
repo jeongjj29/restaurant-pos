@@ -1,9 +1,14 @@
 import { toTitleCase } from "@utils/stringUtils";
+import { Employee as EmployeeType } from "@employees/types";
 
-function Employee({ employee, setSelectedEmployee }) {
+interface EmployeeProps {
+  employee: EmployeeType;
+  setSelectedEmployee: (employee: EmployeeType) => void;
+}
+
+function Employee({ employee, setSelectedEmployee }: EmployeeProps) {
   return (
     <div className="w-1/3 flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-lg shadow-md mb-4 hover:bg-gray-50 transition duration-200">
-      {/* Employee Info */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
         <div>
           <h2 className="text-lg font-semibold">
@@ -18,19 +23,13 @@ function Employee({ employee, setSelectedEmployee }) {
         </div>
       </div>
 
-      {/* Buttons */}
       <div className="flex space-x-2 mt-4 sm:mt-0">
         <button
-          onClick={() => {
-            setSelectedEmployee(employee);
-          }}
+          onClick={() => setSelectedEmployee(employee)}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-hidden"
         >
           Edit
         </button>
-        {/* <button className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-hidden">
-          Hide
-        </button> */}
       </div>
     </div>
   );

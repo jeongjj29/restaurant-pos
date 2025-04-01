@@ -1,4 +1,15 @@
-function AllOrdersTable({ setClickedOrder, orders }) {
+import { Order } from "@orders/types"; // Make sure this type exists
+import { FC } from "react";
+
+interface AllOrdersTableProps {
+  orders: Order[];
+  setClickedOrder: (order: Order) => void;
+}
+
+const AllOrdersTable: FC<AllOrdersTableProps> = ({
+  orders,
+  setClickedOrder,
+}) => {
   if (orders.length === 0) {
     return <h1 className="mt-8 text-3xl">No Orders Available</h1>;
   }
@@ -21,9 +32,7 @@ function AllOrdersTable({ setClickedOrder, orders }) {
               key={order.id}
               className={index % 2 === 0 ? "bg-gray-100" : "bg-gray-50"}
               onClick={() => {
-                if (order.status === "closed") {
-                  return;
-                }
+                if (order.status === "closed") return;
                 setClickedOrder(order);
               }}
             >
@@ -42,6 +51,6 @@ function AllOrdersTable({ setClickedOrder, orders }) {
       </table>
     </div>
   );
-}
+};
 
 export default AllOrdersTable;

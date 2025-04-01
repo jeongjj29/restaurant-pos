@@ -3,14 +3,21 @@ import {
   taxPrice,
   totalPriceWithTax,
 } from "@utils/pricingUtils";
+import { OrderItem } from "@orders/types";
+import { Table } from "@tables/types";
 
-function OrderItemsDisplay({ table, orderItems, orderId }) {
+interface Props {
+  table: Table | null;
+  orderItems: OrderItem[];
+  orderId: number;
+}
+
+function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
   return (
     <div className="w-1/3 h-5/6 m-6 border-2 rounded-lg shadow-lg flex flex-col justify-between overflow-hidden">
       <p>Order #{orderId}</p>
       <p>Type: {table ? "Dine-In" : "Take-Out"}</p>
 
-      {/* Scrollable Menu Items */}
       <div className="max-h-96 overflow-y-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-green-300 text-white sticky top-0 z-10">
@@ -39,7 +46,6 @@ function OrderItemsDisplay({ table, orderItems, orderId }) {
         </table>
       </div>
 
-      {/* Footer aligned to bottom-right */}
       <div className="flex justify-end items-end w-full mt-4 p-4 bg-gray-100">
         <table className="w-auto">
           <tfoot>

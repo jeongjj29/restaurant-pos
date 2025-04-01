@@ -1,9 +1,12 @@
 import { TAX_RATE } from "@constants";
+import { OrderItem, Order } from "@orders/types"; // Update this path as needed
 
-function OrderDetails({ order }) {
-  if (!order) {
-    return null;
-  }
+interface OrderDetailsProps {
+  order: Order | null;
+}
+
+function OrderDetails({ order }: OrderDetailsProps) {
+  if (!order) return null;
 
   const subtotal = order.order_items.reduce(
     (acc, item) => acc + item.menu_item.price * item.quantity,
@@ -13,7 +16,7 @@ function OrderDetails({ order }) {
   const total = subtotal + tax;
 
   return (
-    <div className=" m-6 flex flex-col justify-between overflow-hidden border-2 rounded-lg shadow-lg">
+    <div className="m-6 flex flex-col justify-between overflow-hidden border-2 rounded-lg shadow-lg">
       <h1 className="text-2xl text-center mt-4 mb-4">Order #{order.id}</h1>
       <p>Type: {order.type === "take_out" ? "TAKE-OUT" : "DINE-IN"}</p>
       <div>

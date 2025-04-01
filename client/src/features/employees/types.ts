@@ -19,6 +19,7 @@ export interface Employee {
   role_id: number;
   created_at: Date;
   updated_at: Date;
+  role: Role;
 }
 
 export interface EmployeesState {

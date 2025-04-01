@@ -14,7 +14,7 @@ function Table({ isTable, tableId, number, orders }: TableProps) {
 
   const handleClick = () => {
     axios
-      .get<Order[]>(`/api/orders/table/${tableId}`)
+      .get<Order[]>(`/api/tables/${tableId}/orders`)
       .then((res) => {
         const orders = res.data;
         if (orders.length > 0) {

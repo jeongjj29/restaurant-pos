@@ -1,3 +1,5 @@
+import { OrderItem } from "@features/orders/types";
+
 export interface MenuItem {
   id: number;
   name: string;
@@ -6,6 +8,8 @@ export interface MenuItem {
   price: number;
   image: string | null;
   category_id: number;
+  order_items: OrderItem[];
+  menu_category: MenuCategory;
 }
 
 export interface MenuItemsState {

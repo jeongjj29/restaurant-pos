@@ -1,6 +1,11 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Employee, EmployeesState } from "@employees/types";
+import {
+  AddEmployeePayload,
+  Employee,
+  EmployeesState,
+  UpdateEmployeePayload,
+} from "@employees/types";
 import {
   handlePendingState,
   handleFulfilledState,
@@ -27,7 +32,7 @@ export const fetchEmployees = createAsyncThunk<
 
 export const addEmployee = createAsyncThunk<
   Employee,
-  Employee,
+  AddEmployeePayload,
   { rejectValue: string }
 >("employees/addEmployee", async (newEmployee, { rejectWithValue }) => {
   try {
@@ -45,7 +50,7 @@ export const addEmployee = createAsyncThunk<
 
 export const updateEmployee = createAsyncThunk<
   Employee,
-  Employee,
+  UpdateEmployeePayload,
   { rejectValue: string }
 >("employees/updateEmployee", async (updatedEmployee, { rejectWithValue }) => {
   try {

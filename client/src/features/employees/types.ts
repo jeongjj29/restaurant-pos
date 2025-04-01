@@ -27,3 +27,21 @@ export interface EmployeesState {
   loading: boolean;
   error: string | null;
 }
+
+export interface AddEmployeePayload {
+  first_name: string;
+  last_name: string;
+  email: string;
+  username: string;
+  role_id: number;
+  password: string;
+}
+
+export interface UpdateEmployeePayload {
+  id: number;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  username: string | null;
+  role_id: number | null;
+}

@@ -4,8 +4,8 @@ import { Order } from "@orders/types";
 
 interface TableProps {
   isTable: boolean;
-  tableId: number;
-  number: number;
+  tableId: number | null;
+  number: number | null;
   orders: Order[];
 }
 

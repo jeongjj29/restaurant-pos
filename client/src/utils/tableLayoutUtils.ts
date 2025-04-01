@@ -1,11 +1,11 @@
 import { TABLE_LAYOUT } from "@constants";
-import { Table, TableGridCell } from "@tables/types";
+import { Table, TableCell } from "@tables/types";
 
-export const createTableLayout = (tables: Table[]): TableGridCell[][] => {
+export const createTableLayout = (tables: Table[]): TableCell[][] => {
   const cols = TABLE_LAYOUT.HEIGHT;
   const rows = TABLE_LAYOUT.WIDTH;
 
-  const layout: TableGridCell[][] = Array.from({ length: rows }, () =>
+  const layout: TableCell[][] = Array.from({ length: rows }, () =>
     Array.from({ length: cols }, () => ({ isTable: false }))
   );
 

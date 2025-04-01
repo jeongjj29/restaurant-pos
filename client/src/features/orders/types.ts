@@ -40,3 +40,10 @@ export interface AddOrderPayload {
   user_id: number;
   table_id: number | null;
 }
+
+export interface AddOrderItemPayload {
+  order_id: number;
+  menu_item_id: number;
+  price: number;
+  quantity: number;
+}

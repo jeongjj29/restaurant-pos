@@ -30,3 +30,29 @@ export interface MenuCategoriesState {
   loading: boolean;
   error: string | null;
 }
+
+export interface AddMenuItemPayload {
+  name: string;
+  secondary_name: string | null;
+  price: number;
+  category_id: number;
+}
+
+export interface UpdateMenuItemPayload {
+  id: number;
+  name: string;
+  secondary_name: string | null;
+  price: number;
+  category_id: number;
+}
+
+export interface AddMenuCategoryPayload {
+  name: string;
+  secondary_name: string | null;
+}
+
+export interface UpdateMenuCategoryPayload {
+  id: number;
+  name: string;
+  secondary_name: string | null;
+}

@@ -1,6 +1,11 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { MenuItem, MenuItemsState } from "@menu/types";
+import {
+  AddMenuItemPayload,
+  MenuItem,
+  MenuItemsState,
+  UpdateMenuItemPayload,
+} from "@menu/types";
 import {
   handlePendingState,
   handleFulfilledState,
@@ -27,7 +32,7 @@ export const fetchMenuItems = createAsyncThunk<
 
 export const addMenuItem = createAsyncThunk<
   MenuItem,
-  MenuItem,
+  AddMenuItemPayload,
   { rejectValue: string }
 >("menuItems/addMenuItem", async (newMenuItem, { rejectWithValue }) => {
   try {
@@ -45,7 +50,7 @@ export const addMenuItem = createAsyncThunk<
 
 export const updateMenuItem = createAsyncThunk<
   MenuItem,
-  MenuItem,
+  UpdateMenuItemPayload,
   { rejectValue: string }
 >("menuItems/updateMenuItem", async (updatedMenuItem, { rejectWithValue }) => {
   try {

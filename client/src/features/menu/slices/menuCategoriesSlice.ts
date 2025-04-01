@@ -1,6 +1,11 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { MenuCategory, MenuCategoriesState } from "@menu/types";
+import {
+  MenuCategory,
+  MenuCategoriesState,
+  AddMenuCategoryPayload,
+  UpdateMenuCategoryPayload,
+} from "@menu/types";
 import {
   handlePendingState,
   handleFulfilledState,
@@ -27,7 +32,7 @@ export const fetchMenuCategories = createAsyncThunk<
 
 export const addMenuCategory = createAsyncThunk<
   MenuCategory,
-  MenuCategory,
+  AddMenuCategoryPayload,
   { rejectValue: string }
 >(
   "menuCategories/addMenuCategory",
@@ -51,7 +56,7 @@ export const addMenuCategory = createAsyncThunk<
 
 export const updateMenuCategory = createAsyncThunk<
   MenuCategory,
-  MenuCategory,
+  UpdateMenuCategoryPayload,
   { rejectValue: string }
 >(
   "menuCategories/updateMenuCategory",

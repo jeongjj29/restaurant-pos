@@ -1,10 +1,28 @@
 import * as yup from "yup";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "@app/hooks";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { updateTable, addTable } from "../slices/tablesSlice";
+import { Table } from "@tables/types";
 
-function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
-  const dispatch = useDispatch();
+interface TableFormProps {
+  tables: Table[];
+  tableToEdit: Table | null;
+  setTableToEdit: (table: Table | null) => void;
+  setEditFormHidden: (value: boolean) => void;
+}
+
+interface TableFormValues {
+  number: number | string;
+  capacity: number | string;
+}
+
+function TableForm({
+  tables,
+  tableToEdit,
+  setTableToEdit,
+  setEditFormHidden,
+}: TableFormProps) {
+  const dispatch = useAppDispatch();
 
   const tableSchema = yup.object().shape({
     number: yup
@@ -24,17 +42,25 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
 
   return (
     <div className="bg-white/5 p-6 mx-10 rounded-md shadow-md">
-      <Formik
+      <Formik<TableFormValues>
         initialValues={{
-          number: tableToEdit?.number || "",
-          capacity: tableToEdit?.capacity || "",
+          number: tableToEdit?.number ?? "",
+          capacity: tableToEdit?.capacity ?? "",
         }}
         validationSchema={tableSchema}
-        enableReinitialize={true}
+        enableReinitialize
         onSubmit={(values, { setSubmitting, resetForm }) => {
+          const parsedValues = {
+            number: Number(values.number),
+            capacity: Number(values.capacity),
+          };
+
           if (tableToEdit) {
             dispatch(
-              updateTable({ tableId: tableToEdit.id, updatedData: values })
+              updateTable({
+                tableId: tableToEdit.id,
+                updatedData: parsedValues,
+              })
             )
               .unwrap()
               .then((res) => {
@@ -50,7 +76,7 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
                 setTableToEdit(null);
               });
           } else {
-            dispatch(addNewTable(values))
+            dispatch(addTable(parsedValues))
               .unwrap()
               .then((res) => {
                 console.log("Table added successfully:", res);
@@ -68,7 +94,6 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
       >
         {({ isSubmitting }) => (
           <Form>
-            {/* Form Fields */}
             <div className="mb-4">
               <label
                 htmlFor="number"
@@ -107,7 +132,6 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
               />
             </div>
 
-            {/* Submit Button */}
             <div className="flex space-x-4">
               <button
                 type="submit"
@@ -119,7 +143,6 @@ function TableForm({ tables, tableToEdit, setTableToEdit, setEditFormHidden }) {
                 {tableToEdit ? "Update Table" : "Add Table"}
               </button>
 
-              {/* Cancel Button */}
               <button
                 type="button"
                 onClick={() => {

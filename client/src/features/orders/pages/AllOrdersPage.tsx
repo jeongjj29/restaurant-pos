@@ -1,28 +1,26 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { RootState } from "@app/store";
+import { Order } from "@orders/types";
 import { format, parseISO } from "date-fns";
 import AllOrdersTable from "@orders/components/AllOrdersTable";
 import OrderDetails from "@orders/components/OrderDetails";
 
 function AllOrdersPage() {
   const navigate = useNavigate();
-  const orders = useSelector((state) => state.orders.orders);
-  const [clickedOrder, setClickedOrder] = useState(null);
+  const orders = useSelector((state: RootState) => state.orders.orders);
+  const [clickedOrder, setClickedOrder] = useState<Order | null>(null);
 
-  // Initialize date filters to today's date
-  const today = new Date();
-  const [startDate, setStartDate] = useState(format(today, "yyyy-MM-dd"));
-  const [endDate, setEndDate] = useState(format(today, "yyyy-MM-dd"));
-  const [statusFilter, setStatusFilter] = useState("open"); // 'all', 'open', 'closed'
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [statusFilter, setStatusFilter] = useState<"all" | "open" | "closed">(
+    "open"
+  );
 
-  // Filter orders based on date range and status
   const filteredOrders = orders.filter((order) => {
-    // Extract only the date from order.created_at and convert to yyyy-MM-dd format
-    const orderDate = format(parseISO(order.created_at), "yyyy-MM-dd");
-
+    const orderDate = order.created_at;
     const isInDateRange = orderDate >= startDate && orderDate <= endDate;
-
     const matchesStatus =
       statusFilter === "all" ||
       (statusFilter === "open" && order.status === "open") ||
@@ -32,17 +30,15 @@ function AllOrdersPage() {
   });
 
   return (
-    <div className="flex flex-row ">
+    <div className="flex flex-row">
       <div className="flex flex-col">
-        {/* Filters */}
         <div className="flex flex-row justify-end gap-4 mr-8">
-          {/* Date Range Filters */}
           <div className="flex flex-col">
             <label>Start Date:</label>
             <input
               type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              value={format(startDate, "yyyy-MM-dd")}
+              onChange={(e) => setStartDate(new Date(e.target.value))}
               className="border text-text-primary bg-white/5 border-border p-2 rounded-sm"
             />
           </div>
@@ -50,18 +46,19 @@ function AllOrdersPage() {
             <label>End Date:</label>
             <input
               type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              value={format(endDate, "yyyy-MM-dd")}
+              onChange={(e) => setEndDate(new Date(e.target.value))}
               className="border text-text-primary bg-white/5 border-border p-2 rounded-sm"
             />
           </div>
 
-          {/* Status Filter */}
           <div className="flex flex-col">
             <label>Status:</label>
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) =>
+                setStatusFilter(e.target.value as "all" | "open" | "closed")
+              }
               className="border text-text-primary bg-white/5 border-border p-2 rounded-sm"
             >
               <option value="all" className="bg-surface">
@@ -76,13 +73,13 @@ function AllOrdersPage() {
             </select>
           </div>
         </div>
+
         <AllOrdersTable
-          setClickedOrder={setClickedOrder}
           orders={filteredOrders}
+          setClickedOrder={setClickedOrder}
         />
       </div>
 
-      {/* Orders Table and Details */}
       <div className="flex flex-row">
         <OrderDetails order={clickedOrder} />
         {clickedOrder && (
@@ -91,10 +88,9 @@ function AllOrdersPage() {
               Print
             </button>
             <button
-              onClick={() => {
-                const order = { ...clickedOrder };
-                navigate("/orders/payment", { state: { order } });
-              }}
+              onClick={() =>
+                navigate("/orders/payment", { state: { order: clickedOrder } })
+              }
               className="bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 m-4 rounded-sm"
             >
               Settle

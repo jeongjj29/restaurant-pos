@@ -1,9 +1,23 @@
 import { ErrorMessage, Formik, Field, Form } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { addPayment } from "../slices/paymentsSlice";
 import { updateOrder } from "@orders/slices/ordersSlice";
-import { useNavigate } from "react-router-dom";
+import { PaymentType } from "../types";
+import { Order } from "@orders/types";
+import { AppDispatch } from "@app/store";
+
+interface Props {
+  order: Order;
+  type: PaymentType;
+}
+
+interface FormValues {
+  amount: number;
+  order_id: number;
+  type: PaymentType;
+}
 
 const PaymentSchema = yup.object().shape({
   amount: yup
@@ -12,8 +26,8 @@ const PaymentSchema = yup.object().shape({
     .positive("Amount must be a positive number"),
 });
 
-function PaymentForm({ order, type }) {
-  const dispatch = useDispatch();
+function PaymentForm({ order, type }: Props) {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const totalPayments = order.payments.reduce(
@@ -22,52 +36,48 @@ function PaymentForm({ order, type }) {
   );
 
   return (
-    <Formik
+    <Formik<FormValues>
       initialValues={{
-        amount: "",
+        amount: 0,
         order_id: order.id,
-        type: type,
+        type,
       }}
       validationSchema={PaymentSchema}
       onSubmit={(values, { setSubmitting, resetForm }) => {
         setSubmitting(true);
 
-        // Parse amount to float and calculate new total payments
-        const paymentAmount = parseFloat(values.amount);
+        const paymentAmount = values.amount;
         const newTotalPayments = totalPayments + paymentAmount;
 
         if (newTotalPayments > order.total_price) {
-          // Handle overpayment scenario if total exceeds order total price
           alert(
-            `Error: The payment exceeds the order balance of ${
+            `Error: The payment exceeds the order balance of $${(
               order.total_price - totalPayments
-            }`
+            ).toFixed(2)}`
           );
           setSubmitting(false);
           return;
         }
 
-        // Dispatch the addPayment action
         dispatch(addPayment(values))
           .unwrap()
           .then(() => {
-            // If the new total payments equals the order total price
             if (newTotalPayments === order.total_price) {
-              // Dispatch the updateOrder action to mark the order as "closed"
               dispatch(updateOrder({ id: order.id, status: "closed" }))
                 .unwrap()
                 .then(() => {
-                  setSubmitting(false);
                   resetForm();
+                  setSubmitting(false);
                   navigate("/");
                 })
                 .catch((err) => {
                   console.error(err);
                   setSubmitting(false);
                 });
+            } else {
+              setSubmitting(false);
+              resetForm();
             }
-            setSubmitting(false);
-            resetForm(); // Optional: Reset the form after successful submission
           })
           .catch((err) => {
             console.error(err);
@@ -78,7 +88,6 @@ function PaymentForm({ order, type }) {
     >
       {({ isSubmitting }) => (
         <Form className="p-4 space-y-4 bg-white shadow-md rounded-sm">
-          {/* Order ID (Read-Only) */}
           <div>
             <label htmlFor="order_id">Order ID:</label>
             <Field
@@ -89,7 +98,6 @@ function PaymentForm({ order, type }) {
             />
           </div>
 
-          {/* Type (Read-Only) */}
           <div>
             <label htmlFor="type">Payment Type:</label>
             <Field
@@ -100,7 +108,6 @@ function PaymentForm({ order, type }) {
             />
           </div>
 
-          {/* Amount (Editable) */}
           <div>
             <label htmlFor="amount">Amount:</label>
             <Field
@@ -116,7 +123,6 @@ function PaymentForm({ order, type }) {
             />
           </div>
 
-          {/* Submit Button */}
           <div className="flex justify-end">
             <button
               type="submit"

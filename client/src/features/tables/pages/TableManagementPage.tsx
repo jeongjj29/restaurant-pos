@@ -14,7 +14,6 @@ function TableManagementPage() {
 
   const tables = useSelector((state: RootState) => state.tables.tables);
   const error = useSelector((state: RootState) => state.tables.error);
-  const loading = useSelector((state: RootState) => state.tables.loading);
 
   const [activeTable, setActiveTable] = useState<Table | null>(null);
 
@@ -51,7 +50,6 @@ function TableManagementPage() {
   }, [dispatch]);
 
   if (error) return <p className="text-red-600">Error: {error}</p>;
-  if (loading) return <p className="text-gray-600">Loading tables...</p>;
 
   return (
     <DndContext onDragEnd={handleDragEnd}>

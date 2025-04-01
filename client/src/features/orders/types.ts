@@ -53,6 +53,16 @@ export interface AddOrderPayload {
   table_id: number | null;
 }
 
+export interface UpdateOrderPayload {
+  id: number;
+  type?: string;
+  total_price?: number;
+  status?: string;
+  sales_tax?: number;
+  user_id?: number;
+  table_id?: number;
+}
+
 export interface AddOrderItemPayload {
   order_id: number;
   menu_item_id: number;

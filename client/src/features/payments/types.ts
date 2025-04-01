@@ -10,3 +10,9 @@ export interface PaymentsState {
   loading: boolean;
   error: string | null;
 }
+
+export interface AddPaymentPayload {
+  amount: number;
+  order_id: number;
+  type: string;
+}

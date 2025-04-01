@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Payment, PaymentsState } from "@payments/types";
+import { AddPaymentPayload, Payment, PaymentsState } from "@payments/types";
 import {
   handlePendingState,
   handleFulfilledState,
@@ -27,7 +27,7 @@ export const fetchPayments = createAsyncThunk<
 
 export const addPayment = createAsyncThunk<
   Payment,
-  Payment,
+  AddPaymentPayload,
   { rejectValue: string }
 >("payments/addPayment", async (newPayment, { rejectWithValue }) => {
   try {

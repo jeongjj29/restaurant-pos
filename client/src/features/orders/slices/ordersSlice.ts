@@ -1,6 +1,11 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { AddOrderPayload, Order, OrdersState } from "@orders/types";
+import {
+  AddOrderPayload,
+  Order,
+  OrdersState,
+  UpdateOrderPayload,
+} from "@orders/types";
 import {
   handlePendingState,
   handleFulfilledState,
@@ -45,7 +50,7 @@ export const addOrder = createAsyncThunk<
 
 export const updateOrder = createAsyncThunk<
   Order,
-  Order,
+  UpdateOrderPayload,
   { rejectValue: string }
 >("orders/updateOrder", async (updatedOrder, { rejectWithValue }) => {
   try {

@@ -5,46 +5,57 @@ import {
   updateMenuCategory,
   addMenuCategory,
 } from "@menu/slices/menuCategoriesSlice";
+import { AppDispatch } from "@app/store";
+import { MenuCategory } from "@menu/types";
+
+interface FormValues {
+  name: string;
+  secondary_name: string;
+}
+
+interface Props {
+  menuCategoryToEdit: MenuCategory | null;
+  setMenuCategoryToEdit: (category: MenuCategory | null) => void;
+  setMenuCategoryFormHidden: (hidden: boolean) => void;
+}
 
 function MenuCategoryForm({
   menuCategoryToEdit,
   setMenuCategoryToEdit,
   setMenuCategoryFormHidden,
-}) {
-  const dispatch = useDispatch();
+}: Props) {
+  const dispatch = useDispatch<AppDispatch>();
 
   const menuCategorySchema = yup.object().shape({
     name: yup.string().required("Name is required"),
-    secondary_name: yup.string(),
+    secondary_name: yup.string().nullable(),
   });
+
+  const initialValues: FormValues = {
+    name: menuCategoryToEdit?.name || "",
+    secondary_name: menuCategoryToEdit?.secondary_name || "",
+  };
 
   return (
     <div className="bg-surface p-4 rounded-md shadow-md text-text-primary border border-border">
       <Formik
-        initialValues={{
-          name: menuCategoryToEdit?.name || "",
-          secondary_name: menuCategoryToEdit?.secondary_name || "",
-        }}
+        initialValues={initialValues}
         validationSchema={menuCategorySchema}
-        enableReinitialize={true}
+        enableReinitialize
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          const submitAction = menuCategoryToEdit
+          const action = menuCategoryToEdit
             ? updateMenuCategory({ ...values, id: menuCategoryToEdit.id })
             : addMenuCategory(values);
 
-          dispatch(submitAction)
+          dispatch(action)
             .unwrap()
             .then(() => {
               resetForm();
               setMenuCategoryToEdit(null);
               setMenuCategoryFormHidden(true);
             })
-            .catch((err) => {
-              console.error(err);
-            })
-            .finally(() => {
-              setSubmitting(false);
-            });
+            .catch((err) => console.error(err))
+            .finally(() => setSubmitting(false));
         }}
       >
         {({ isSubmitting }) => (

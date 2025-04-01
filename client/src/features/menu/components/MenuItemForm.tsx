@@ -2,15 +2,31 @@ import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { updateMenuItem, addMenuItem } from "@menu/slices/menuItemsSlice";
+import { AppDispatch, RootState } from "@app/store";
+import { MenuItem } from "@menu/types";
 
-function MenuItemForm({
+interface FormValues {
+  name: string;
+  secondary_name: string;
+  price: number | string;
+  category_id: number | string;
+}
+
+interface MenuItemFormProps {
+  menuItemToEdit: MenuItem | null;
+  setMenuItemToEdit: (item: MenuItem | null) => void;
+  setMenuItemFormHidden: (hidden: boolean) => void;
+}
+
+const MenuItemForm: React.FC<MenuItemFormProps> = ({
   menuItemToEdit,
   setMenuItemToEdit,
   setMenuItemFormHidden,
-}) {
-  const dispatch = useDispatch();
+}) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const menuCategories = useSelector(
-    (state) => state.menuCategories.menuCategories
+    (state: RootState) => state.menuCategories.menuCategories
   );
 
   const menuItemSchema = yup.object().shape({
@@ -18,26 +34,38 @@ function MenuItemForm({
     secondary_name: yup.string(),
     price: yup
       .number()
+      .typeError("Price must be a number")
       .min(0.01, "Price must be greater than 0")
       .required("Price is required"),
-    category_id: yup.number().required("Category is required"),
+    category_id: yup
+      .number()
+      .typeError("Category is required")
+      .required("Category is required"),
   });
+
+  const initialValues: FormValues = {
+    name: menuItemToEdit?.name || "",
+    secondary_name: menuItemToEdit?.secondary_name || "",
+    price: menuItemToEdit?.price ?? "",
+    category_id: menuItemToEdit?.category_id ?? "",
+  };
 
   return (
     <div className="bg-surface p-6 rounded-md shadow-md mb-6 border border-border">
       <Formik
-        initialValues={{
-          name: menuItemToEdit?.name || "",
-          secondary_name: menuItemToEdit?.secondary_name || "",
-          price: menuItemToEdit?.price || "",
-          category_id: menuItemToEdit?.category_id || "",
-        }}
+        initialValues={initialValues}
         validationSchema={menuItemSchema}
-        enableReinitialize={true}
+        enableReinitialize
         onSubmit={(values, { setSubmitting, resetForm }) => {
+          const formattedValues = {
+            ...values,
+            price: Number(values.price),
+            category_id: Number(values.category_id),
+          };
+
           const action = menuItemToEdit
-            ? updateMenuItem({ ...values, id: menuItemToEdit.id })
-            : addMenuItem(values);
+            ? updateMenuItem({ ...formattedValues, id: menuItemToEdit.id })
+            : addMenuItem(formattedValues);
 
           dispatch(action)
             .unwrap()
@@ -52,7 +80,7 @@ function MenuItemForm({
       >
         {({ isSubmitting }) => (
           <Form>
-            {/* Name Field */}
+            {/* Name */}
             <div className="mb-4">
               <label
                 htmlFor="name"
@@ -72,7 +100,7 @@ function MenuItemForm({
               />
             </div>
 
-            {/* Secondary Name Field */}
+            {/* Secondary Name */}
             <div className="mb-4">
               <label
                 htmlFor="secondary_name"
@@ -92,7 +120,7 @@ function MenuItemForm({
               />
             </div>
 
-            {/* Price Field */}
+            {/* Price */}
             <div className="mb-4">
               <label
                 htmlFor="price"
@@ -112,7 +140,7 @@ function MenuItemForm({
               />
             </div>
 
-            {/* Category Field */}
+            {/* Category */}
             <div className="mb-6">
               <label
                 htmlFor="category_id"
@@ -168,6 +196,6 @@ function MenuItemForm({
       </Formik>
     </div>
   );
-}
+};
 
 export default MenuItemForm;

@@ -1,5 +1,12 @@
-function NavBar({ tab, setTab }) {
-  const tabs = ["items", "categories", "layout"];
+type TabKey = "items" | "categories" | "layout";
+
+interface NavBarProps {
+  tab: TabKey;
+  setTab: (tab: TabKey) => void;
+}
+
+const NavBar: React.FC<NavBarProps> = ({ tab, setTab }) => {
+  const tabs: TabKey[] = ["items", "categories", "layout"];
 
   return (
     <div className="flex border-b border-border space-x-6 text-sm md:text-base lg:text-lg mb-4">
@@ -22,6 +29,6 @@ function NavBar({ tab, setTab }) {
       })}
     </div>
   );
-}
+};
 
 export default NavBar;

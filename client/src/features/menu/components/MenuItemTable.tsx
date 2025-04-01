@@ -2,19 +2,38 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMenuItems } from "../slices/menuItemsSlice";
 import { fetchMenuCategories } from "../slices/menuCategoriesSlice";
-import AddIcon from "@mui/icons-material/Add";
 import EditButton from "@components/buttons/EditButton";
 import CreateButton from "@components/buttons/CreateButton";
+import { RootState, AppDispatch } from "@app/store";
+import { MenuItem } from "../types";
 
-function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
-  const dispatch = useDispatch();
-  const menuItems = useSelector((state) => state.menuItems.menuItems);
-  const menuItemsError = useSelector((state) => state.menuItems.error);
+interface MenuItemTableProps {
+  setMenuItemToEdit: (menuItem: MenuItem | null) => void;
+  setMenuItemFormHidden: (hidden: boolean) => void;
+}
 
-  const [sortConfig, setSortConfig] = useState({
+type SortKey = keyof MenuItem | "menu_category.name";
+
+const MenuItemTable: React.FC<MenuItemTableProps> = ({
+  setMenuItemToEdit,
+  setMenuItemFormHidden,
+}) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const menuItems = useSelector(
+    (state: RootState) => state.menuItems.menuItems
+  );
+  const menuItemsError = useSelector(
+    (state: RootState) => state.menuItems.error
+  );
+
+  const [sortConfig, setSortConfig] = useState<{
+    key: SortKey;
+    direction: "asc" | "desc";
+  }>({
     key: "name",
     direction: "asc",
   });
+
   const thCSS =
     "sticky top-0 px-4 py-2 text-left text-sm font-semibold text-text-primary bg-surface border-b border-border cursor-pointer";
   const tdCSS =
@@ -26,20 +45,23 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
   }, [dispatch]);
 
   const sortedMenuItems = [...menuItems].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === "asc" ? -1 : 1;
-    }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === "asc" ? 1 : -1;
-    }
+    const aVal =
+      sortConfig.key === "menu_category.name"
+        ? a.menu_category.name
+        : (a[sortConfig.key] as string | number);
+    const bVal =
+      sortConfig.key === "menu_category.name"
+        ? b.menu_category.name
+        : (b[sortConfig.key] as string | number);
+
+    if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
+    if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
     return 0;
   });
 
-  const handleSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
+  const handleSort = (key: SortKey) => {
+    const direction =
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
     setSortConfig({ key, direction });
   };
 
@@ -122,6 +144,6 @@ function MenuItemTable({ setMenuItemToEdit, setMenuItemFormHidden }) {
       </div>
     </div>
   );
-}
+};
 
 export default MenuItemTable;

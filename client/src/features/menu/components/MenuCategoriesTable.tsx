@@ -2,19 +2,31 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import CreateButton from "@components/buttons/CreateButton";
 import EditButton from "@components/buttons/EditButton";
+import { RootState } from "@app/store";
+import { MenuCategory } from "@menu/types";
+
+interface MenuCategoriesTableProps {
+  setMenuCategoryToEdit: (category: MenuCategory | null) => void;
+  setMenuCategoryFormHidden: (hidden: boolean) => void;
+}
+
+type SortKey = keyof Pick<MenuCategory, "name" | "secondary_name">;
 
 function MenuCategoriesTable({
   setMenuCategoryToEdit,
   setMenuCategoryFormHidden,
-}) {
+}: MenuCategoriesTableProps) {
   const menuCategories = useSelector(
-    (state) => state.menuCategories.menuCategories
+    (state: RootState) => state.menuCategories.menuCategories
   );
   const menuCategoriesError = useSelector(
-    (state) => state.menuCategories.error
+    (state: RootState) => state.menuCategories.error
   );
 
-  const [sortConfig, setSortConfig] = useState({
+  const [sortConfig, setSortConfig] = useState<{
+    key: SortKey;
+    direction: "asc" | "desc";
+  }>({
     key: "name",
     direction: "asc",
   });
@@ -25,15 +37,15 @@ function MenuCategoriesTable({
     "px-4 py-2 text-left text-sm text-text-secondary border-b border-border";
 
   const sortedMenuCategories = [...menuCategories].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key])
+    if ((a[sortConfig.key] ?? "") < (b[sortConfig.key] ?? ""))
       return sortConfig.direction === "asc" ? -1 : 1;
-    if (a[sortConfig.key] > b[sortConfig.key])
+    if ((a[sortConfig.key] ?? "") > (b[sortConfig.key] ?? ""))
       return sortConfig.direction === "asc" ? 1 : -1;
     return 0;
   });
 
-  const handleSort = (key) => {
-    let direction = "asc";
+  const handleSort = (key: SortKey) => {
+    let direction: "asc" | "desc" = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc")
       direction = "desc";
     setSortConfig({ key, direction });

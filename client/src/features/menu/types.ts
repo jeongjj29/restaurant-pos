@@ -18,6 +18,7 @@ export interface MenuCategory {
   id: number;
   name: string;
   secondary_name: string | null;
+  menu_items: MenuItem[];
 }
 
 export interface MenuCategoriesState {

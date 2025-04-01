@@ -1,10 +1,16 @@
 import { useDndMonitor } from "@dnd-kit/core";
+import { Table } from "@tables/types";
 
-function DndMonitor({ setActiveTable, tables }) {
+interface DndMonitorProps {
+  setActiveTable: (table: Table | null) => void;
+  tables: Table[];
+}
+
+function DndMonitor({ setActiveTable, tables }: DndMonitorProps) {
   useDndMonitor({
     onDragStart(event) {
       const draggedId = event.active.id;
-      const table = tables.find((t) => t.id === draggedId);
+      const table = tables.find((t) => t.id === Number(draggedId));
       if (table) setActiveTable(table);
     },
     onDragEnd() {
@@ -15,7 +21,7 @@ function DndMonitor({ setActiveTable, tables }) {
     },
   });
 
-  return null; // This component doesn't render anything
+  return null;
 }
 
 export default DndMonitor;

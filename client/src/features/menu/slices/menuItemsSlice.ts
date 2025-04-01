@@ -13,7 +13,7 @@ export const fetchMenuItems = createAsyncThunk<
   { rejectValue: string }
 >("menuItems/fetchMenuItems", async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get("/api/menuItems");
+    const response = await axios.get("/api/menu_items");
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -31,7 +31,7 @@ export const addMenuItem = createAsyncThunk<
   { rejectValue: string }
 >("menuItems/addMenuItem", async (newMenuItem, { rejectWithValue }) => {
   try {
-    const response = await axios.post("/api/menuItems", newMenuItem);
+    const response = await axios.post("/api/menu_items", newMenuItem);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -50,7 +50,7 @@ export const updateMenuItem = createAsyncThunk<
 >("menuItems/updateMenuItem", async (updatedMenuItem, { rejectWithValue }) => {
   try {
     const response = await axios.put(
-      `/api/menuItems/${updatedMenuItem.id}`,
+      `/api/menu_items/${updatedMenuItem.id}`,
       updatedMenuItem
     );
     return response.data;
@@ -70,7 +70,7 @@ export const deleteMenuItem = createAsyncThunk<
   { rejectValue: string }
 >("menuItems/deleteMenuItem", async (menuItemId, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`/api/menuItems/${menuItemId}`);
+    const response = await axios.delete(`/api/menu_items/${menuItemId}`);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

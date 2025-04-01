@@ -13,7 +13,7 @@ export const fetchMenuCategories = createAsyncThunk<
   { rejectValue: string }
 >("menuCategories/fetchMenuCategories", async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get("/api/menuCategories");
+    const response = await axios.get("/api/menu_categories");
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -33,7 +33,10 @@ export const addMenuCategory = createAsyncThunk<
   "menuCategories/addMenuCategory",
   async (newMenuCategory, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/menuCategories", newMenuCategory);
+      const response = await axios.post(
+        "/api/menu_categories",
+        newMenuCategory
+      );
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -55,7 +58,7 @@ export const updateMenuCategory = createAsyncThunk<
   async (updatedMenuCategory, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `/api/menuCategories/${updatedMenuCategory.id}`,
+        `/api/menu_categories/${updatedMenuCategory.id}`,
         updatedMenuCategory
       );
       return response.data;
@@ -79,7 +82,7 @@ export const deleteMenuCategory = createAsyncThunk<
   async (menuCategoryId, { rejectWithValue }) => {
     try {
       const response = await axios.delete(
-        `/api/menuCategories/${menuCategoryId}`
+        `/api/menu_categories/${menuCategoryId}`
       );
       return response.data;
     } catch (error: unknown) {

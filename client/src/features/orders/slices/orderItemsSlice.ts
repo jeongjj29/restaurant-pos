@@ -14,7 +14,7 @@ export const fetchOrderItems = createAsyncThunk<
   { rejectValue: string }
 >("orderItems/fetchOrderItems", async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get("/api/orderItems");
+    const response = await axios.get("/api/order_items");
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -32,7 +32,7 @@ export const addOrderItem = createAsyncThunk<
   { rejectValue: string }
 >("orderItems/addOrderItem", async (newOrderItem, { rejectWithValue }) => {
   try {
-    const response = await axios.post("/api/orderItems", newOrderItem);
+    const response = await axios.post("/api/order_items", newOrderItem);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -53,7 +53,7 @@ export const updateOrderItem = createAsyncThunk<
   async (updatedOrderItem, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `/api/orderItems/${updatedOrderItem.id}`,
+        `/api/order_items/${updatedOrderItem.id}`,
         updatedOrderItem
       );
       return response.data;
@@ -74,7 +74,7 @@ export const deleteOrderItem = createAsyncThunk<
   { rejectValue: string }
 >("orderItems/deleteOrderItem", async (orderItemId, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`/api/orderItems/${orderItemId}`);
+    const response = await axios.delete(`/api/order_items/${orderItemId}`);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

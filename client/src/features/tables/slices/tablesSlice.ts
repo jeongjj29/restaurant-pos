@@ -50,7 +50,7 @@ export const updateTable = createAsyncThunk<
   "tables/updateTable",
   async ({ tableId, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`/api/tables/${tableId}`, updatedData);
+      const response = await axios.patch(`/api/tables/${tableId}`, updatedData);
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

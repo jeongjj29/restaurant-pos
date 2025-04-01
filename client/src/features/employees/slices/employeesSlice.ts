@@ -13,7 +13,7 @@ export const fetchEmployees = createAsyncThunk<
   { rejectValue: string }
 >("employees/fetchEmployees", async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get("/api/employees");
+    const response = await axios.get("/api/users");
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -31,7 +31,7 @@ export const addEmployee = createAsyncThunk<
   { rejectValue: string }
 >("employees/addEmployee", async (newEmployee, { rejectWithValue }) => {
   try {
-    const response = await axios.post("/api/employees", newEmployee);
+    const response = await axios.post("/api/users", newEmployee);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -49,8 +49,8 @@ export const updateEmployee = createAsyncThunk<
   { rejectValue: string }
 >("employees/updateEmployee", async (updatedEmployee, { rejectWithValue }) => {
   try {
-    const response = await axios.put(
-      `/api/employees/${updatedEmployee.id}`,
+    const response = await axios.patch(
+      `/api/users/${updatedEmployee.id}`,
       updatedEmployee
     );
     return response.data;
@@ -70,7 +70,7 @@ export const deleteEmployee = createAsyncThunk<
   { rejectValue: string }
 >("employees/deleteEmployee", async (employeeId, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`/api/employees/${employeeId}`);
+    const response = await axios.delete(`/api/users/${employeeId}`);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

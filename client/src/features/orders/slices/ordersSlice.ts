@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Order, OrdersState } from "@orders/types";
+import { AddOrderPayload, Order, OrdersState } from "@orders/types";
 import {
   handlePendingState,
   handleFulfilledState,
@@ -25,22 +25,23 @@ export const fetchOrders = createAsyncThunk<
   }
 });
 
-export const addOrder = createAsyncThunk<Order, Order, { rejectValue: string }>(
-  "orders/addOrder",
-  async (newOrder, { rejectWithValue }) => {
-    try {
-      const response = await axios.post("/api/orders", newOrder);
-      return response.data;
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        return rejectWithValue(
-          error.response?.data?.message || "Failed to add order"
-        );
-      }
-      return rejectWithValue("An unknown error occurred");
+export const addOrder = createAsyncThunk<
+  Order,
+  AddOrderPayload,
+  { rejectValue: string }
+>("orders/addOrder", async (newOrder, { rejectWithValue }) => {
+  try {
+    const response = await axios.post("/api/orders", newOrder);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to add order"
+      );
     }
+    return rejectWithValue("An unknown error occurred");
   }
-);
+});
 
 export const updateOrder = createAsyncThunk<
   Order,

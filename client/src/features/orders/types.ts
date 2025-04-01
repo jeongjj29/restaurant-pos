@@ -31,3 +31,12 @@ export interface OrderItemsState {
   loading: boolean;
   error: string | null;
 }
+
+export interface AddOrderPayload {
+  type: string;
+  total_price: number;
+  status: string;
+  sales_tax: number;
+  user_id: number;
+  table_id: number | null;
+}

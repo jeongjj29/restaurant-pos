@@ -2,10 +2,12 @@ import { useParams } from "react-router-dom";
 import OrderInput from "@orders/components/OrderInput";
 
 function DineInOrderInputPage() {
-  const tableId = useParams().tableId;
+  const { tableId } = useParams<{ tableId: string }>();
+  const numericTableId = tableId ? parseInt(tableId, 10) : undefined;
+
   return (
     <div>
-      <OrderInput tableId={tableId} />
+      <OrderInput tableId={numericTableId} />
     </div>
   );
 }

@@ -3,7 +3,7 @@ import OrderInput from "@orders/components/OrderInput";
 function TakeOutPage() {
   return (
     <div>
-      <OrderInput />
+      <OrderInput tableId={undefined} />
     </div>
   );
 }

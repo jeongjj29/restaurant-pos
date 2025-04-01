@@ -1,4 +1,7 @@
 import { MenuItem } from "@features/menu/types";
+import { Employee } from "@features/employees/types";
+import { Table } from "@features/tables/types";
+import { Payment } from "@features/payments/types";
 
 export interface Order {
   id: number;
@@ -11,6 +14,11 @@ export interface Order {
   table_id: number;
   created_at: Date;
   closed_at: Date;
+
+  user: Employee;
+  table: Table;
+  order_items: OrderItem[];
+  payments: Payment[];
 }
 
 export interface OrdersState {

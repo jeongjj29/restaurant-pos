@@ -1,3 +1,5 @@
+import { MenuItem } from "@features/menu/types";
+
 export interface Order {
   id: number;
   type: string;
@@ -24,6 +26,8 @@ export interface OrderItem {
   discount_id: number;
   order_id: number;
   menu_item_id: number;
+  order: Order;
+  menu_item: MenuItem;
 }
 
 export interface OrderItemsState {

@@ -1,6 +1,11 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Table, TablesState, UpdateTablePayload } from "@tables/types";
+import {
+  Table,
+  TablesState,
+  UpdateTablePayload,
+  AddTablePayload,
+} from "@tables/types";
 import {
   handlePendingState,
   handleFulfilledState,
@@ -25,22 +30,23 @@ export const fetchTables = createAsyncThunk<
   }
 });
 
-export const addTable = createAsyncThunk<Table, Table, { rejectValue: string }>(
-  "tables/addTable",
-  async (newTable, { rejectWithValue }) => {
-    try {
-      const response = await axios.post("/api/tables", newTable);
-      return response.data;
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        return rejectWithValue(
-          error.response?.data?.message || "Failed to add table"
-        );
-      }
-      return rejectWithValue("An unknown error occurred");
+export const addTable = createAsyncThunk<
+  Table,
+  AddTablePayload,
+  { rejectValue: string }
+>("tables/addTable", async (newTable, { rejectWithValue }) => {
+  try {
+    const response = await axios.post("/api/tables", newTable);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to add table"
+      );
     }
+    return rejectWithValue("An unknown error occurred");
   }
-);
+});
 
 export const updateTable = createAsyncThunk<
   Table,

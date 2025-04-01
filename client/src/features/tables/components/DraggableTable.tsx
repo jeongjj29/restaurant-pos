@@ -1,6 +1,12 @@
 import { useDraggable } from "@dnd-kit/core";
 
-function DraggableTable({ tableId, number, capacity }) {
+interface DraggableTableProps {
+  tableId: number;
+  number: number;
+  capacity: number;
+}
+
+function DraggableTable({ tableId, number, capacity }: DraggableTableProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: tableId,
   });

@@ -1,6 +1,18 @@
 import { useDroppable } from "@dnd-kit/core";
 
-function DroppableTable({ xIndex, yIndex, isTable, number }) {
+interface DroppableTableProps {
+  xIndex: number;
+  yIndex: number;
+  isTable: boolean;
+  number?: number;
+}
+
+function DroppableTable({
+  xIndex,
+  yIndex,
+  isTable,
+  number,
+}: DroppableTableProps) {
   const { setNodeRef } = useDroppable({
     id: `${xIndex}-${yIndex}`,
   });

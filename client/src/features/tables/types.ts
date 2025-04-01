@@ -13,7 +13,6 @@ export interface TablesState {
   tables: Table[];
   loading: boolean;
   error: string | null;
-  layout: TableCell[][];
 }
 
 export interface TablesLayoutProps {

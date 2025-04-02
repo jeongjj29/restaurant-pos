@@ -1,11 +1,6 @@
-import { TAX_RATE } from "@constants";
-import { OrderItem } from "@orders/types";
+import { MenuItem } from "@features/menu/types";
+import { OrderItem } from "@features/orders/types";
 
-export const subtotalPrice = (items: OrderItem[]): number =>
-  items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-export const taxPrice = (items: OrderItem[]): number =>
-  subtotalPrice(items) * TAX_RATE;
-
-export const totalPriceWithTax = (items: OrderItem[]): number =>
-  parseFloat((subtotalPrice(items) + taxPrice(items)).toFixed(2));
+export const calculateSubtotal = (
+  items: (MenuItem & { quantity: number })[] | OrderItem[]
+): number => items.reduce((acc, item) => acc + item.price * item.quantity, 0);

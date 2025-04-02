@@ -6,7 +6,7 @@ function DineInOrderInputPage() {
   const numericTableId = tableId ? parseInt(tableId, 10) : undefined;
 
   return (
-    <div>
+    <div className="h-full">
       <OrderInput tableId={numericTableId} />
     </div>
   );

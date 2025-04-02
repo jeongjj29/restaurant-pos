@@ -19,7 +19,7 @@ function TablesLayout({ tables }: TablesLayoutProps) {
             <DroppableTable
               key={`${i}-${j}`}
               isTable={col.isTable}
-              number={col.number}
+              number={col.number || undefined}
               xIndex={j}
               yIndex={i}
             />

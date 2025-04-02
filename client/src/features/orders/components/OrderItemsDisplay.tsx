@@ -1,8 +1,5 @@
-import {
-  subtotalPrice,
-  taxPrice,
-  totalPriceWithTax,
-} from "@utils/pricingUtils";
+import { calculateSubtotal } from "@utils/pricingUtils";
+import { TAX_RATE } from "@constants";
 import { OrderItem } from "@orders/types";
 import { Table } from "@tables/types";
 
@@ -13,6 +10,10 @@ interface Props {
 }
 
 function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
+  const subtotal = calculateSubtotal(orderItems);
+  const tax = subtotal * TAX_RATE;
+  const total = subtotal + tax;
+
   return (
     <div className="w-1/3 h-5/6 m-6 border-2 rounded-lg shadow-lg flex flex-col justify-between overflow-hidden">
       <p>Order #{orderId}</p>
@@ -51,21 +52,15 @@ function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
           <tfoot>
             <tr>
               <td className="py-2 px-4 font-bold text-right">SUBTOTAL</td>
-              <td className="py-2 px-4 font-bold">
-                ${subtotalPrice(orderItems).toFixed(2)}
-              </td>
+              <td className="py-2 px-4 font-bold">${subtotal.toFixed(2)}</td>
             </tr>
             <tr>
               <td className="py-2 px-4 font-bold text-right">TAX</td>
-              <td className="py-2 px-4 font-bold">
-                ${taxPrice(orderItems).toFixed(2)}
-              </td>
+              <td className="py-2 px-4 font-bold">${tax.toFixed(2)}</td>
             </tr>
             <tr>
               <td className="py-2 px-4 font-bold text-right">TOTAL</td>
-              <td className="py-2 px-4 font-bold">
-                ${totalPriceWithTax(orderItems).toFixed(2)}
-              </td>
+              <td className="py-2 px-4 font-bold">${total.toFixed(2)}</td>
             </tr>
           </tfoot>
         </table>

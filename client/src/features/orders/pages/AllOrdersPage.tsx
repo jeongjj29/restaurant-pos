@@ -30,9 +30,9 @@ function AllOrdersPage() {
   });
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row bg-white/5 h-full w-full rounded-md">
       <div className="flex flex-col">
-        <div className="flex flex-row justify-end gap-4 mr-8">
+        <div className="flex flex-row justify-start gap-4 ml-6 mt-4">
           <div className="flex flex-col">
             <label>Start Date:</label>
             <input

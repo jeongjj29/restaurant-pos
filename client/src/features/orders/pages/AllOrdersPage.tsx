@@ -20,7 +20,11 @@ function AllOrdersPage() {
 
   const filteredOrders = orders.filter((order) => {
     const orderDate = new Date(order.created_at);
-    const isInDateRange = orderDate >= startDate && orderDate <= endDate;
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+    const isInDateRange = orderDate >= start && orderDate <= end;
     const matchesStatus =
       statusFilter === "all" ||
       (statusFilter === "open" && order.status === "open") ||

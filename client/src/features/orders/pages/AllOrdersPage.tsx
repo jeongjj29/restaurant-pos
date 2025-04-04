@@ -19,7 +19,7 @@ function AllOrdersPage() {
   );
 
   const filteredOrders = orders.filter((order) => {
-    const orderDate = order.created_at;
+    const orderDate = new Date(order.created_at);
     const isInDateRange = orderDate >= startDate && orderDate <= endDate;
     const matchesStatus =
       statusFilter === "all" ||

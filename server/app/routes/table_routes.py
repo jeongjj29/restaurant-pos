@@ -36,6 +36,7 @@ def handle_table(id):
         return make_response({}, 204)
 
 @table_bp.route("/<int:id>/orders", methods=["GET"])
-def get_table_orders(id):
-    orders = [order.to_dict() for order in Table.query.get_or_404(id).orders]
+def get_open_table_orders(id):
+    table = Table.query.get_or_404(id)
+    orders = [order.to_dict() for order in table.orders if order.status == "open"]
     return make_response(orders, 200)

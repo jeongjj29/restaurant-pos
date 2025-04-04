@@ -1,8 +1,9 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import OrderItemsDisplay from "@orders/components/OrderItemsDisplay";
 import { Order, OrderItem } from "@orders/types"; // Adjust based on your actual types
+import { useAppSelector } from "@app/hooks";
+import { Table } from "@tables/types";
 
 interface OrderWithItems extends Order {
   order_items: OrderItem[];
@@ -10,26 +11,26 @@ interface OrderWithItems extends Order {
 
 function OrdersByTablePage() {
   const { tableId } = useParams<{ tableId: string }>();
-  const [orders, setOrders] = useState<OrderWithItems[]>([]);
+  const tables = useAppSelector((state) => state.tables.tables);
+  const [table, setTable] = useState<Table | undefined>(undefined);
 
   useEffect(() => {
     if (tableId) {
-      axios.get(`/tables/${tableId}/orders`).then((res) => {
-        setOrders(res.data);
-      });
+      setTable(tables.find((table) => table.id === Number(tableId)));
     }
-  }, [tableId]);
+  });
 
   return (
-    <div>
-      {orders.map((order) => (
-        <OrderItemsDisplay
-          key={order.id}
-          table={tableId}
-          orderItems={order.order_items}
-          orderId={order.id}
-        />
-      ))}
+    <div className="flex h-full">
+      {table &&
+        table.orders?.map((order) => (
+          <OrderItemsDisplay
+            key={order.id}
+            table={table}
+            orderItems={order.order_items}
+            orderId={order.id}
+          />
+        ))}
     </div>
   );
 }

@@ -88,12 +88,12 @@ function OrderInput({ tableId }: OrderInputProps) {
     } finally {
       setSubmitting(false);
       dispatch(fetchOrders());
-      navigate("/orders");
+      navigate("/orders/all");
     }
   };
 
   return (
-    <div className="flex flex-row h-full w-full bg-white/5 rounded-md">
+    <div className="flex flex-row h-full w-full bg-white/5 rounded-md justify-between">
       <div className="w-1/8 overflow-y-auto flex flex-col justify-start m-4">
         {menuCategories.map((menuCategory) => (
           <button
@@ -114,6 +114,7 @@ function OrderInput({ tableId }: OrderInputProps) {
         items={selectedCategory?.menu_items || []}
         onClick={handleMenuItemClick}
       />
+
       <OrderSummaryTable
         items={pendingOrderItems}
         table={table}

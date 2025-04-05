@@ -12,6 +12,7 @@ class User(db.Model, SerializerMixin):
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
+    phone_number = db.Column(db.Integer, nullable=True)
     _password_hash = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
@@ -44,6 +45,12 @@ class User(db.Model, SerializerMixin):
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             raise ValueError("Invalid email address")
         return email
+    
+    @validates("phone_number")
+    def validate_phone_number(self, key, phone_number):
+        if len(phone_number) != 10:
+            raise ValueError("Phone number must be 10 digits")
+        return phone_number
 
     @hybrid_property
     def password_hash(self):

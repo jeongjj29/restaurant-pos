@@ -8,7 +8,7 @@ class Discount(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    amount = db.Column(db.Float, nullable=False)
+    amount = db.Column(db.Decimal(precision=10, scale=2), nullable=False)
 
     @validates("name")
     def validate_name(self, key, name):
@@ -18,7 +18,7 @@ class Discount(db.Model, SerializerMixin):
 
     @validates("amount")
     def validate_amount(self, key, amount):
-        if not (0 < amount <= 1):
+        if amount <= 0:
             raise ValueError("Invalid discount amount")
         return amount
 

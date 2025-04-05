@@ -8,7 +8,7 @@ class OrderItem(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     quantity = db.Column(db.Integer, nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Decimal(precision=10, scale=2), nullable=False)
     discount_id = db.Column(db.Integer, db.ForeignKey("discounts.id"), nullable=True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
     menu_item_id = db.Column(db.Integer, db.ForeignKey("menu_items.id"), nullable=False)

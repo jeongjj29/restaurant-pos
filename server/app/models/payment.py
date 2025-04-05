@@ -8,9 +8,9 @@ class Payment(db.Model, SerializerMixin):
     __tablename__ = "payments"
 
     id = db.Column(db.Integer, primary_key=True)
-    amount = db.Column(db.Float, nullable=False)
-    order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
+    amount = db.Column(db.Decimal(precision=10, scale=2), nullable=False)
     type = db.Column(db.String, nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
 
     order = db.relationship("Order", back_populates="payments")
 

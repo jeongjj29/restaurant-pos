@@ -12,12 +12,9 @@ class User(db.Model, SerializerMixin):
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
-    role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
     _password_hash = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
-    updated_at = db.Column(
-        db.DateTime, default=db.func.now(), onupdate=db.func.now(), nullable=True
-    )
+    role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
 
     role = db.relationship("Role", back_populates="users")
     orders = db.relationship("Order", back_populates="user")

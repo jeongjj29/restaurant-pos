@@ -2,13 +2,14 @@ from sqlalchemy.orm import validates
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
 from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy import DECIMAL
 
 class OrderItem(db.Model, SerializerMixin):
     __tablename__ = "order_items"
 
     id = db.Column(db.Integer, primary_key=True)
     quantity = db.Column(db.Integer, nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.DECIMAL(precision=10, scale=2), nullable=False)
     discount_id = db.Column(db.Integer, db.ForeignKey("discounts.id"), nullable=True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
     menu_item_id = db.Column(db.Integer, db.ForeignKey("menu_items.id"), nullable=False)

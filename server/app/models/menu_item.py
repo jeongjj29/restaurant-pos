@@ -2,6 +2,7 @@ from sqlalchemy.orm import validates
 from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
 from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy import DECIMAL
 
 class MenuItem(db.Model, SerializerMixin):
     __tablename__ = "menu_items"
@@ -10,7 +11,7 @@ class MenuItem(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False)
     secondary_name = db.Column(db.String, nullable=True)
     description = db.Column(db.String, nullable=True)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.DECIMAL(precision=10, scale=2), nullable=False)
     image = db.Column(db.String, nullable=True)
     category_id = db.Column(
         db.Integer, db.ForeignKey("menu_categories.id"), nullable=False

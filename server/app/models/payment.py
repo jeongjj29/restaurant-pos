@@ -3,14 +3,15 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
 from sqlalchemy_serializer import SerializerMixin
 from app.constants import PAYMENT_TYPE
+from sqlalchemy import DECIMAL
 
 class Payment(db.Model, SerializerMixin):
     __tablename__ = "payments"
 
     id = db.Column(db.Integer, primary_key=True)
-    amount = db.Column(db.Float, nullable=False)
-    order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
+    amount = db.Column(db.DECIMAL(precision=10, scale=2), nullable=False)
     type = db.Column(db.String, nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
 
     order = db.relationship("Order", back_populates="payments")
 

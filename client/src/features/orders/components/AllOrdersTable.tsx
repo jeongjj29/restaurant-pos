@@ -11,40 +11,60 @@ const AllOrdersTable: FC<AllOrdersTableProps> = ({
   setClickedOrder,
 }) => {
   if (orders.length === 0) {
-    return <h1 className="mt-8 text-3xl">No Orders Available</h1>;
+    return (
+      <h1 className="mt-8 text-3xl text-text-secondary">No Orders Available</h1>
+    );
   }
 
   return (
-    <div className="overflow-x-auto w-fit m-4">
-      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-        <thead>
-          <tr className="bg-gray-800 text-white">
-            <th className="py-2 px-4 text-left">Order Number</th>
-            <th className="py-2 px-4 text-left">Order Date</th>
-            <th className="py-2 px-4 text-left">Order Type</th>
-            <th className="py-2 px-4 text-left">Order Status</th>
-            <th className="py-2 px-4 text-left">Total</th>
+    <div className="overflow-x-auto w-full m-4 ml-6 border-border shadow-lg border rounded-md">
+      <table className="min-w-full bg-surface text-text-primary overflow-hidden">
+        <thead className="bg-white/ text-text-primary">
+          <tr>
+            <th className="py-3 px-6 text-left text-md font-semibold">
+              Order #
+            </th>
+            <th className="py-3 px-6 text-left text-md font-semibold">Date</th>
+            <th className="py-3 px-6 text-left text-md font-semibold">Type</th>
+            <th className="py-3 px-6 text-left text-md font-semibold">
+              Status
+            </th>
+            <th className="py-3 px-6 text-left text-md font-semibold">Total</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-border">
           {orders.map((order, index) => (
             <tr
               key={order.id}
-              className={index % 2 === 0 ? "bg-gray-100" : "bg-gray-50"}
+              className={`${
+                index % 2 === 0 ? "bg-white/10" : "bg-white/5"
+              } hover:bg-surface/60 cursor-pointer transition-colors`}
               onClick={() => {
                 if (order.status === "closed") return;
                 setClickedOrder(order);
               }}
             >
-              <td className="py-2 px-4">{order.id}</td>
-              <td className="py-2 px-4">
+              <td className="py-3 px-6">{order.id}</td>
+              <td className="py-3 px-6">
                 {new Date(order.created_at).toLocaleString()}
               </td>
-              <td className="py-2 px-4">
+              <td className="py-3 px-6">
                 {order.type === "take_out" ? "TAKE-OUT" : "DINE-IN"}
               </td>
-              <td className="py-2 px-4">{order.status.toUpperCase()}</td>
-              <td className="py-2 px-4">${order.total_price.toFixed(2)}</td>
+              <td className="py-3 px-6">
+                <span
+                  className={`${
+                    order.status === "open" ? "bg-green-600" : "bg-red-500"
+                  } text-white py-1 px-3 rounded-full text-sm`}
+                >
+                  {order.status.toUpperCase()}
+                </span>
+              </td>
+              <td className="py-3 px-6">
+                <span className="font-semibold text-lg">
+                  ${order.total_price.toFixed(2)}
+                </span>
+              </td>
             </tr>
           ))}
         </tbody>

@@ -37,10 +37,10 @@ function Table({ isTable, tableId, number, orders }: TableProps) {
   return (
     <div
       onClick={handleClick}
-      className={`text-2xl flex items-center justify-center w-24 h-24 border-2 rounded-lg text-white cursor-pointer ${
+      className={`text-2xl flex items-center justify-center w-24 h-24 border-border rounded-lg text-white cursor-pointer ${
         orders.length > 0
-          ? "bg-blue-500 hover:bg-blue-600"
-          : "bg-gray-300 hover:bg-gray-400"
+          ? "bg-green-600 hover:bg-green-500"
+          : "bg-gray-500 hover:bg-gray-400"
       }`}
     >
       {number}

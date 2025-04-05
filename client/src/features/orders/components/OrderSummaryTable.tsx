@@ -1,30 +1,31 @@
-import { calculateSubtotal } from "@utils/pricingUtils";
+import { MenuItem } from "@menu/types";
+import { Table } from "@tables/types";
 import { TAX_RATE } from "@constants";
-import { OrderItem } from "@orders/types";
-import { Table } from "@features/tables/types";
 
 interface Props {
+  items: (MenuItem & { quantity: number })[];
   table: Table | undefined;
-  orderItems: OrderItem[];
-  orderId: number;
+  subtotal: number;
+  tax: number;
+  total: number;
+  onClick: () => void;
+  submitting: boolean;
 }
 
-function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
-  const subtotal = calculateSubtotal(orderItems);
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax;
-
+function OrderSummaryTable({
+  items,
+  table,
+  subtotal,
+  tax,
+  total,
+  onClick,
+  submitting,
+}: Props) {
   return (
-    <div className="h-full bg-surface p-6 rounded-lg shadow-lg flex flex-col justify-between overflow-hidden h-[85vh] max-w-md">
-      <div className="flex flex-col mb-4">
-        <p className="text-text-primary text-xl font-semibold">
-          Order #{orderId}
-        </p>
-        <p className="text-text-secondary text-md">
-          Type: {table ? "Dine-In" : "Take-Out"}
-        </p>
-        <p>{table ? `Table ${table.number}` : null}</p>
-      </div>
+    <div className="w-auto max-h-full m-4 border border-border rounded-lg shadow-lg flex flex-col bg-surface rounded-xl overflow-hidden">
+      <h1 className="text-xl font-bold text-center mb-2 py-2 border-b border-border">
+        {table ? `Table ${table.number} Order` : "Take-Out Order"}
+      </h1>
 
       <div className="flex-grow overflow-y-auto">
         <table className="min-w-full text-sm text-left text-text-primary">
@@ -37,13 +38,13 @@ function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
             </tr>
           </thead>
           <tbody>
-            {orderItems.map((item, index) => (
+            {items.map((item, index) => (
               <tr
                 key={item.id}
                 className={index % 2 === 0 ? "bg-white/5" : "bg-white/10"}
               >
                 <td className="px-4 py-2">{item.quantity}</td>
-                <td className="px-4 py-2">{item.menu_item.name}</td>
+                <td className="px-4 py-2">{item.name}</td>
                 <td className="px-4 py-2">${item.price.toFixed(2)}</td>
                 <td className="px-4 py-2">
                   ${(item.price * item.quantity).toFixed(2)}
@@ -54,7 +55,7 @@ function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
         </table>
       </div>
 
-      <div className="mt-6 p-4 bg-surface rounded-lg shadow-sm">
+      <div className="p-4 bg-white/5 border-t border-border">
         <table className="text-sm w-auto ml-auto mb-4">
           <tfoot className="text-right">
             <tr>
@@ -79,9 +80,19 @@ function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
             </tr>
           </tfoot>
         </table>
+
+        <button
+          disabled={submitting}
+          onClick={onClick}
+          className={`bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg shadow transition-all w-full ${
+            submitting ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {submitting ? "Submitting..." : "Submit"}
+        </button>
       </div>
     </div>
   );
 }
 
-export default OrderItemsDisplay;
+export default OrderSummaryTable;

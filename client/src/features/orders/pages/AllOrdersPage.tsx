@@ -19,8 +19,12 @@ function AllOrdersPage() {
   );
 
   const filteredOrders = orders.filter((order) => {
-    const orderDate = order.created_at;
-    const isInDateRange = orderDate >= startDate && orderDate <= endDate;
+    const orderDate = new Date(order.created_at);
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+    const isInDateRange = orderDate >= start && orderDate <= end;
     const matchesStatus =
       statusFilter === "all" ||
       (statusFilter === "open" && order.status === "open") ||
@@ -30,9 +34,9 @@ function AllOrdersPage() {
   });
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row bg-white/5 h-full w-full rounded-md">
       <div className="flex flex-col">
-        <div className="flex flex-row justify-end gap-4 mr-8">
+        <div className="flex flex-row justify-start gap-4 ml-6 mt-4">
           <div className="flex flex-col">
             <label>Start Date:</label>
             <input

@@ -2,7 +2,7 @@ import OrderInput from "@orders/components/OrderInput";
 
 function TakeOutPage() {
   return (
-    <div>
+    <div className="h-full">
       <OrderInput tableId={undefined} />
     </div>
   );

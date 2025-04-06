@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "baseUrl": "./src",
+    "paths": {
+      "@assets/*": ["assets/*"],
+      "@components/*": ["components/*"],
+      "@features/*": ["features/*"],
+      "@pages/*": ["pages/*"],
+      "@app/*": ["app/*"],
+      "@constants": ["constants.ts"],
+      "@routes": ["routes.tsx"],
+      "@utils/*": ["utils/*"],
+      "@auth/*": ["features/auth/*"],
+      "@employees/*": ["features/employees/*"],
+      "@menu/*": ["features/menu/*"],
+      "@orders/*": ["features/orders/*"],
+      "@payments/*": ["features/payments/*"],
+      "@tables/*": ["features/tables/*"]
+    },
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "noEmit": true
+  },
+  "include": ["src"]
+}

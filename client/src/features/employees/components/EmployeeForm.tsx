@@ -59,7 +59,7 @@ function EmployeeForm({
   };
 
   return (
-    <div className="max-w-md mx-auto bg-surface p-8 rounded-lg shadow-md">
+    <div className="max-w-md mx-auto bg-surface p-8 rounded-lg shadow-md border border-border ">
       <h2 className="text-lg font-bold mb-4 text-text-primary">
         {employee ? "Update Employee" : "Create New Employee"}
       </h2>
@@ -190,21 +190,23 @@ function EmployeeForm({
               />
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-semibold mb-2 text-text-primary">
-                Password
-              </label>
-              <Field
-                type="password"
-                name="password"
-                className="w-full p-3 border border-border bg-background text-text-primary rounded-md"
-              />
-              <ErrorMessage
-                name="password"
-                component="div"
-                className="text-red-600 text-xs mt-1"
-              />
-            </div>
+            {!employee && (
+              <div className="mb-4">
+                <label className="block text-sm font-semibold mb-2 text-text-primary">
+                  Password
+                </label>
+                <Field
+                  type="password"
+                  name="password"
+                  className="w-full p-3 border border-border bg-background text-text-primary rounded-md"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-600 text-xs mt-1"
+                />
+              </div>
+            )}
 
             <div className="flex justify-between items-center mt-6">
               <button

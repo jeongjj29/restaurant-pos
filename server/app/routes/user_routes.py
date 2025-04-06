@@ -1,3 +1,4 @@
+import bcrypt
 from flask import Blueprint, request, make_response
 from app.models import User
 from app.extensions import db
@@ -12,6 +13,10 @@ def get_users():
 @user_bp.route("/", methods=["POST"])
 def create_user():
     data = request.get_json()
+    password = data.pop("password")
+    if password:
+        password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        data["password_hash"] = password_hash.decode("utf-8")
     user = User(**data)
     db.session.add(user)
     db.session.commit()

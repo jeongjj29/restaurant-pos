@@ -45,7 +45,7 @@ function OrderSummaryTable({
               >
                 <td className="px-4 py-2">{item.quantity}</td>
                 <td className="px-4 py-2">{item.name}</td>
-                <td className="px-4 py-2">${item.price.toFixed(2)}</td>
+                <td className="px-4 py-2">${item.price}</td>
                 <td className="px-4 py-2">
                   ${(item.price * item.quantity).toFixed(2)}
                 </td>

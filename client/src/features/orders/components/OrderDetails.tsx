@@ -37,9 +37,7 @@ function OrderDetails({ order }: OrderDetailsProps) {
               >
                 <td className="py-2 px-4">{item.quantity}</td>
                 <td className="py-2 px-4">{item.menu_item.name}</td>
-                <td className="py-2 px-4">
-                  ${item.menu_item.price.toFixed(2)}
-                </td>
+                <td className="py-2 px-4">${item.menu_item.price}</td>
                 <td className="py-2 px-4">
                   ${(item.quantity * item.menu_item.price).toFixed(2)}
                 </td>

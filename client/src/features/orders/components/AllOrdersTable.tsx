@@ -62,7 +62,7 @@ const AllOrdersTable: FC<AllOrdersTableProps> = ({
               </td>
               <td className="py-3 px-6">
                 <span className="font-semibold text-lg">
-                  ${order.total_price.toFixed(2)}
+                  ${order.total_price}
                 </span>
               </td>
             </tr>

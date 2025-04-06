@@ -128,7 +128,7 @@ const MenuItemTable: React.FC<MenuItemTableProps> = ({
                 <td className={tdCSS}>{menuItem.name}</td>
                 <td className={tdCSS}>{menuItem.secondary_name}</td>
                 <td className={tdCSS}>{menuItem.menu_category.name}</td>
-                <td className={tdCSS}>${menuItem.price.toFixed(2)}</td>
+                <td className={tdCSS}>${menuItem.price}</td>
                 <td className={tdCSS}>
                   <EditButton
                     onClick={() => {

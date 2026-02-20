@@ -7,6 +7,7 @@ Full-stack restaurant point-of-sale (POS) system for managing dine-in/takeout or
 - Scalable feature structure: domain-based frontend slices and RESTful backend blueprints.
 - Production-minded backend behaviors: JWT token revocation and `/api/health` health-check endpoint.
 - Automated verification: backend integration tests for auth flow and health endpoint.
+- CI quality gates: GitHub Actions validates frontend build and backend tests on pushes/PRs.
 
 ## Tech stack
 - Frontend: React 19, TypeScript, Vite, Redux Toolkit, MUI, DnD Kit
@@ -60,3 +61,8 @@ Run backend integration tests:
 cd server
 pipenv run python -m unittest discover -s tests -p "test_*.py"
 ```
+
+## CI
+CI runs on each push to `main` and every pull request:
+- `client-build`: installs dependencies and runs `npm run build`
+- `server-tests`: installs Pipenv dependencies and runs backend integration tests

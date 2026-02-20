@@ -7,8 +7,8 @@ on:
       - main
 
 jobs:
-  client-build:
-    name: Client Build
+  client-quality:
+    name: Client Quality
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -26,6 +26,15 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test
 
       - name: Build
         run: npm run build

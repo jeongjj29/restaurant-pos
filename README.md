@@ -62,7 +62,16 @@ cd server
 pipenv run python -m unittest discover -s tests -p "test_*.py"
 ```
 
+Run frontend quality checks:
+```bash
+cd client
+npm install
+npm run lint
+npm run typecheck
+npm run test
+```
+
 ## CI
 CI runs on each push to `main` and every pull request:
-- `client-build`: installs dependencies and runs `npm run build`
+- `client-quality`: runs frontend lint, typecheck, tests, and build
 - `server-tests`: installs Pipenv dependencies and runs backend integration tests

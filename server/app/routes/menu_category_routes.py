@@ -1,6 +1,7 @@
 from flask import Blueprint, request, make_response
 from app.models import MenuCategory, MenuItem
 from app.extensions import db
+from .utils import get_or_404
 
 menu_category_bp = Blueprint("menu_categories", __name__, url_prefix="/api/menu_categories")
 
@@ -19,7 +20,7 @@ def create_menu_category():
 
 @menu_category_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_menu_category(id):
-    menu_category = MenuCategory.query.get_or_404(id)
+    menu_category = get_or_404(MenuCategory, id)
 
     if request.method == "GET":
         return make_response(menu_category.to_dict(), 200)

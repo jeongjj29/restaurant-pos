@@ -2,6 +2,7 @@ import bcrypt
 from flask import Blueprint, request, make_response
 from app.models import User
 from app.extensions import db
+from .utils import get_or_404
 
 user_bp = Blueprint("user_bp", __name__, url_prefix="/api/users")
 
@@ -24,7 +25,7 @@ def create_user():
 
 @user_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_user(id):
-    user = User.query.get_or_404(id)
+    user = get_or_404(User, id)
 
     if request.method == "GET":
         return make_response(user.to_dict(), 200)
@@ -42,6 +43,6 @@ def handle_user(id):
 
 @user_bp.route("/<int:id>/orders", methods=["GET"])
 def get_user_orders(id):
-    user = User.query.get_or_404(id)
+    user = get_or_404(User, id)
     orders = [o.to_dict() for o in user.orders]
     return make_response(orders, 200)

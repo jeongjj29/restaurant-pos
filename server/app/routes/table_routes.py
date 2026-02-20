@@ -1,6 +1,7 @@
 from flask import Blueprint, request, make_response
 from app.models import Table
 from app.extensions import db
+from .utils import get_or_404
 
 table_bp = Blueprint("tables", __name__, url_prefix="/api/tables")
 
@@ -19,7 +20,7 @@ def create_table():
 
 @table_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_table(id):
-    table = Table.query.get_or_404(id)
+    table = get_or_404(Table, id)
 
     if request.method == "GET":
         return make_response(table.to_dict(), 200)
@@ -37,6 +38,6 @@ def handle_table(id):
 
 @table_bp.route("/<int:id>/orders", methods=["GET"])
 def get_open_table_orders(id):
-    table = Table.query.get_or_404(id)
+    table = get_or_404(Table, id)
     orders = [order.to_dict() for order in table.orders if order.status == "open"]
     return make_response(orders, 200)

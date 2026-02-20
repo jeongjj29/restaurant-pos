@@ -1,6 +1,7 @@
 from flask import Blueprint, request, make_response
 from app.models import Payment
 from app.extensions import db
+from .utils import get_or_404
 
 payment_bp = Blueprint("payments", __name__, url_prefix="/api/payments")
 
@@ -20,7 +21,7 @@ def create_payment():
 
 @payment_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_payment(id):
-    payment = Payment.query.get_or_404(id)
+    payment = get_or_404(Payment, id)
 
     if request.method == "GET":
         return make_response(payment.to_dict(), 200)

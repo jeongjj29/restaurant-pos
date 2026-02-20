@@ -1,6 +1,7 @@
 from flask import Blueprint, request, make_response
 from app.models import Discount
 from app.extensions import db
+from .utils import get_or_404
 
 discount_bp = Blueprint("discounts", __name__, url_prefix="/api/discounts")
 
@@ -19,7 +20,7 @@ def create_discount():
 
 @discount_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_discount(id):
-    discount = Discount.query.get_or_404(id)
+    discount = get_or_404(Discount, id)
 
     if request.method == "GET":
         return make_response(discount.to_dict(), 200)

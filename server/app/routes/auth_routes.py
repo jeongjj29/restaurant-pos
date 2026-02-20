@@ -2,6 +2,7 @@ from flask import Blueprint,request, make_response
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from app.models import User, TokenBlockList
 from app.extensions import db, jwt
+from .utils import get_or_404
 
 auth_bp = Blueprint("auth_bp", __name__, url_prefix="/api/auth")
 
@@ -46,5 +47,5 @@ def logout():
 @jwt_required()
 def protected():
     user_id = get_jwt_identity()
-    user = User.query.get_or_404(user_id)
+    user = get_or_404(User, user_id)
     return make_response({"message": f"Hello, {user.username}"}, 200)

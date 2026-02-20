@@ -1,6 +1,7 @@
 from flask import Blueprint, request, make_response
 from app.models import Order
 from app.extensions import db
+from .utils import get_or_404
 
 order_bp = Blueprint("orders", __name__, url_prefix="/api/orders")
 
@@ -19,7 +20,7 @@ def create_order():
 
 @order_bp.route("/<int:id>", methods=["GET","PATCH","DELETE"])
 def handle_order(id):
-    order = Order.query.get_or_404(id)
+    order = get_or_404(Order, id)
 
     if request.method == "GET":
         return make_response(order.to_dict(), 200)
@@ -37,6 +38,6 @@ def handle_order(id):
     
 @order_bp.route("/<int:id>/items", methods=["GET"])
 def get_order_items(id):
-    order = Order.query.get_or_404(id)
+    order = get_or_404(Order, id)
     order_items = [order_item.to_dict() for order_item in order.order_items]
     return make_response(order_items, 200)

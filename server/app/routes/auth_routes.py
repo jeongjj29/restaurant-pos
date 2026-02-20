@@ -1,5 +1,5 @@
 from flask import Blueprint,request, make_response
-from flask_jwt_extended import (JWTManager, create_access_token, jwt_required, get_jwt_identity)
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from app.models import User, TokenBlockList
 from app.extensions import db, jwt
 
@@ -33,7 +33,7 @@ def login():
 @auth_bp.route("/logout", methods=["POST"])
 @jwt_required()
 def logout():
-    jti = get_jwt_identity()
+    jti = get_jwt()["jti"]
     token = TokenBlockList(jti=jti)
     db.session.add(token)
     db.session.commit()
@@ -44,4 +44,4 @@ def logout():
 def protected():
     user_id = get_jwt_identity()
     user = User.query.get_or_404(user_id)
-    return make_response({"message": f"Hello, {user['username']}"}), 200
+    return make_response({"message": f"Hello, {user.username}"}, 200)

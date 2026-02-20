@@ -48,9 +48,13 @@ class User(db.Model, SerializerMixin):
     
     @validates("phone_number")
     def validate_phone_number(self, key, phone_number):
-        if len(phone_number) != 10:
+        if phone_number is None:
+            return None
+
+        phone_number_str = str(phone_number)
+        if not phone_number_str.isdigit() or len(phone_number_str) != 10:
             raise ValueError("Phone number must be 10 digits")
-        return phone_number
+        return int(phone_number_str)
 
     @hybrid_property
     def password_hash(self):

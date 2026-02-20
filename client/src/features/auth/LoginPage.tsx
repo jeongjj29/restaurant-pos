@@ -34,7 +34,7 @@ function LoginPage() {
                 setLoginError(null);
                 navigate("/");
               })
-              .catch((err) => {
+              .catch(() => {
                 setLoginError("Invalid username or password");
                 setSubmitting(false);
               });

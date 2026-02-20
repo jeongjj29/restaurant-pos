@@ -3,8 +3,7 @@ import { useLocation } from "react-router-dom";
 import OrderDetails from "@orders/components/OrderDetails";
 import PaymentForm from "@payments/components/PaymentForm";
 import { Order } from "@orders/types";
-
-type PaymentType = "visa" | "mastercard" | "amex" | "discover" | "cash";
+import { PaymentType } from "@payments/types";
 
 interface LocationState {
   order: Order;

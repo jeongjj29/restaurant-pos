@@ -16,10 +16,13 @@ def revoked_token_callback(jwt_header, jwt_payload):
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
-    username = data.get("username")
-    password = data.get("password")
+    username = (data.get("username") or "").strip()
+    password = data.get("password") or ""
+
+    if not username or not password:
+        return make_response({"message": "Username and password are required"}, 400)
 
     user = User.query.filter_by(username=username).first()
 

@@ -78,6 +78,13 @@ class AuthAndHealthRoutesTestCase(unittest.TestCase):
             revoked_response.get_json()["description"], "The token has been revoked"
         )
 
+    def test_login_requires_username_and_password(self):
+        response = self.client.post("/api/auth/login", json={"username": "manager01"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.get_json()["message"], "Username and password are required"
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

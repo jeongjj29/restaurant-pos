@@ -6,10 +6,12 @@ from .utils import get_or_404
 
 user_bp = Blueprint("user_bp", __name__, url_prefix="/api/users")
 
+
 @user_bp.route("/", methods=["GET"])
 def get_users():
     users = [u.to_dict() for u in User.query.all()]
     return make_response(users, 200)
+
 
 @user_bp.route("/", methods=["POST"])
 def create_user():
@@ -22,6 +24,7 @@ def create_user():
     db.session.add(user)
     db.session.commit()
     return make_response(user.to_dict()), 201
+
 
 @user_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_user(id):
@@ -40,6 +43,7 @@ def handle_user(id):
         db.session.delete(user)
         db.session.commit()
         return make_response({}, 204)
+
 
 @user_bp.route("/<int:id>/orders", methods=["GET"])
 def get_user_orders(id):

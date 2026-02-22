@@ -17,6 +17,8 @@ python-dotenv = "*"
 faker = "*"
 
 [dev-packages]
+black = "*"
+ruff = "*"
 
 [requires]
 python_version = "3.8.13"

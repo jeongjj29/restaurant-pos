@@ -4,6 +4,7 @@ from app.extensions import db, bcrypt
 from sqlalchemy_serializer import SerializerMixin
 import re
 
+
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"
 
@@ -45,7 +46,7 @@ class User(db.Model, SerializerMixin):
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             raise ValueError("Invalid email address")
         return email
-    
+
     @validates("phone_number")
     def validate_phone_number(self, key, phone_number):
         if phone_number is None:

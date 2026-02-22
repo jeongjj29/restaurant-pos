@@ -1,9 +1,8 @@
 from sqlalchemy.orm import validates
-from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
 from sqlalchemy_serializer import SerializerMixin
 from app.constants import PAYMENT_TYPE
-from sqlalchemy import DECIMAL
+
 
 class Payment(db.Model, SerializerMixin):
     __tablename__ = "payments"

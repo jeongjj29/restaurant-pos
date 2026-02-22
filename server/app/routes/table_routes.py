@@ -5,10 +5,12 @@ from .utils import get_or_404
 
 table_bp = Blueprint("tables", __name__, url_prefix="/api/tables")
 
+
 @table_bp.route("/", methods=["GET"])
 def get_tables():
     tables = [table.to_dict() for table in Table.query.all()]
     return make_response(tables, 200)
+
 
 @table_bp.route("/", methods=["POST"])
 def create_table():
@@ -17,6 +19,7 @@ def create_table():
     db.session.add(table)
     db.session.commit()
     return make_response(table.to_dict(), 201)
+
 
 @table_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_table(id):
@@ -35,6 +38,7 @@ def handle_table(id):
         db.session.delete(table)
         db.session.commit()
         return make_response({}, 204)
+
 
 @table_bp.route("/<int:id>/orders", methods=["GET"])
 def get_open_table_orders(id):

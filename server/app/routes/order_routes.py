@@ -5,10 +5,12 @@ from .utils import get_or_404
 
 order_bp = Blueprint("orders", __name__, url_prefix="/api/orders")
 
+
 @order_bp.route("/", methods=["GET"])
 def get_orders():
     orders = [order.to_dict() for order in Order.query.all()]
     return make_response(orders, 200)
+
 
 @order_bp.route("/", methods=["POST"])
 def create_order():
@@ -18,7 +20,8 @@ def create_order():
     db.session.commit()
     return make_response(order.to_dict(), 201)
 
-@order_bp.route("/<int:id>", methods=["GET","PATCH","DELETE"])
+
+@order_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_order(id):
     order = get_or_404(Order, id)
 
@@ -34,8 +37,9 @@ def handle_order(id):
     if request.method == "DELETE":
         db.session.delete(order)
         db.session.commit()
-        return make_response({}, 204)   
-    
+        return make_response({}, 204)
+
+
 @order_bp.route("/<int:id>/items", methods=["GET"])
 def get_order_items(id):
     order = get_or_404(Order, id)

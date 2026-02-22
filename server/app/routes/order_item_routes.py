@@ -5,10 +5,12 @@ from .utils import get_or_404
 
 order_item_bp = Blueprint("order_items", __name__, url_prefix="/api/order_items")
 
+
 @order_item_bp.route("/", methods=["GET"])
 def get_order_items():
     order_items = [order_item.to_dict() for order_item in OrderItem.query.all()]
     return make_response(order_items, 200)
+
 
 @order_item_bp.route("/", methods=["POST"])
 def create_order_item():
@@ -17,6 +19,7 @@ def create_order_item():
     db.session.add(order_item)
     db.session.commit()
     return make_response(order_item.to_dict(), 201)
+
 
 @order_item_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_order_item(id):

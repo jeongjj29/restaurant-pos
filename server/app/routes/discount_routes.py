@@ -5,10 +5,12 @@ from .utils import get_or_404
 
 discount_bp = Blueprint("discounts", __name__, url_prefix="/api/discounts")
 
+
 @discount_bp.route("/", methods=["GET"])
 def get_discounts():
     discounts = [discount.to_dict() for discount in Discount.query.all()]
     return make_response(discounts, 200)
+
 
 @discount_bp.route("/", methods=["POST"])
 def create_discount():
@@ -17,6 +19,7 @@ def create_discount():
     db.session.add(discount)
     db.session.commit()
     return make_response(discount.to_dict(), 201)
+
 
 @discount_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_discount(id):

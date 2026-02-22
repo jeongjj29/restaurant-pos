@@ -11,13 +11,15 @@ def get_payments():
     payments = [payment.to_dict() for payment in Payment.query.all()]
     return make_response(payments, 200)
 
-@payment_bp.route("/", methods=["POST"])    
+
+@payment_bp.route("/", methods=["POST"])
 def create_payment():
     data = request.get_json()
     payment = Payment(**data)
     db.session.add(payment)
     db.session.commit()
     return make_response(payment.to_dict(), 201)
+
 
 @payment_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
 def handle_payment(id):

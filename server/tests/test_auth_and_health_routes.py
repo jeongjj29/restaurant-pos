@@ -65,9 +65,7 @@ class AuthAndHealthRoutesTestCase(unittest.TestCase):
 
         protected_response = self.client.get("/api/auth/protected", headers=auth_header)
         self.assertEqual(protected_response.status_code, 200)
-        self.assertEqual(
-            protected_response.get_json()["message"], "Hello, manager01"
-        )
+        self.assertEqual(protected_response.get_json()["message"], "Hello, manager01")
 
         logout_response = self.client.post("/api/auth/logout", headers=auth_header)
         self.assertEqual(logout_response.status_code, 200)

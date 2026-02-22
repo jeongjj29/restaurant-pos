@@ -4,15 +4,19 @@ import MenuItemForm from "@menu/components/MenuItemForm";
 import MenuCategoriesTable from "@menu/components/MenuCategoriesTable";
 import MenuCategoryForm from "@menu/components/MenuCategoryForm";
 import NavBar from "@menu/components/NavBar";
+import { MenuCategory, MenuItem } from "@menu/types";
+
+type TabKey = "items" | "categories" | "layout";
 
 function MenuManagementPage() {
-  const [tab, setTab] = useState("items");
+  const [tab, setTab] = useState<TabKey>("items");
   const [menuItemFormHidden, setMenuItemFormHidden] = useState(true);
-  const [menuItemToEdit, setMenuItemToEdit] = useState(null);
+  const [menuItemToEdit, setMenuItemToEdit] = useState<MenuItem | null>(null);
   const [menuCategoryFormHidden, setMenuCategoryFormHidden] = useState(true);
-  const [menuCategoryToEdit, setMenuCategoryToEdit] = useState(null);
+  const [menuCategoryToEdit, setMenuCategoryToEdit] =
+    useState<MenuCategory | null>(null);
 
-  const handleClick = (field) => {
+  const handleClick = (field: TabKey) => {
     setTab(field);
     setMenuItemFormHidden(true);
     setMenuCategoryFormHidden(true);

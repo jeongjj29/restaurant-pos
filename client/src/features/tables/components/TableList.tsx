@@ -19,10 +19,10 @@ function TableList({ tables }: TableListProps) {
   const sortedTables = [...tables].sort((a, b) => a.number - b.number);
 
   return (
-    <div className="h-full p-4 px-8 rounded-md shadow-lg bg-white/5">
+    <div className="h-full min-h-0 rounded-xl border border-border bg-white/5 p-3">
       {editFormHidden && (
         <button
-          className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-sm mb-4"
+          className="mb-3 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-[#2a1703] hover:bg-accent-soft"
           onClick={() => {
             setEditFormHidden(false);
             setTableToEdit(null);
@@ -33,7 +33,7 @@ function TableList({ tables }: TableListProps) {
       )}
 
       {!editFormHidden && (
-        <div className="flex h-full items-center justify-center">
+        <div className="h-full overflow-auto">
           <TableForm
             tableToEdit={tableToEdit}
             setEditFormHidden={setEditFormHidden}
@@ -44,11 +44,11 @@ function TableList({ tables }: TableListProps) {
       )}
 
       {editFormHidden && (
-        <div className="flex flex-col flex-wrap gap-4 max-h-full">
+        <div className="grid max-h-[calc(100%-3rem)] grid-cols-1 gap-3 overflow-auto pr-1">
           {sortedTables.map((table) => (
             <div
               key={table.id}
-              className="bg-white/5 h-fit p-2 rounded-md shadow-md flex items-center"
+              className="flex items-center justify-between gap-2 rounded-lg border border-border bg-black/10 p-2"
             >
               <DraggableTable
                 tableId={table.id}
@@ -58,7 +58,7 @@ function TableList({ tables }: TableListProps) {
 
               <div className="flex flex-col gap-2">
                 <button
-                  className="bg-green-800 hover:bg-green-800 text-white font-bold py-2 px-2 rounded-sm"
+                  className="rounded-md bg-emerald-500/80 px-2 py-2 text-white hover:bg-emerald-400"
                   onClick={() => {
                     setEditFormHidden(false);
                     setTableToEdit(table);
@@ -68,7 +68,7 @@ function TableList({ tables }: TableListProps) {
                 </button>
 
                 <button
-                  className="bg-red-800 hover:bg-red-800 text-white font-bold py-2 px-2 rounded-sm"
+                  className="rounded-md bg-rose-500/80 px-2 py-2 text-white hover:bg-rose-400"
                   onClick={() => {
                     dispatch(deleteTable(table.id))
                       .unwrap()

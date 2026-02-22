@@ -16,8 +16,8 @@ function Table({ isTable, tableId, number, orders }: TableProps) {
     axios
       .get<Order[]>(`/api/tables/${tableId}/orders`)
       .then((res) => {
-        const orders = res.data;
-        if (orders.length > 0) {
+        const tableOrders = res.data;
+        if (tableOrders.length > 0) {
           navigate(`/orders/table/${tableId}`);
         } else {
           navigate(`/orders/table/${tableId}/new`);
@@ -29,22 +29,20 @@ function Table({ isTable, tableId, number, orders }: TableProps) {
   };
 
   if (!isTable) {
-    return (
-      <div className="flex items-center justify-center w-24 h-24 rounded-lg"></div>
-    );
+    return <div className="flex h-20 w-20 items-center justify-center rounded-lg" />;
   }
 
   return (
-    <div
+    <button
       onClick={handleClick}
-      className={`text-2xl flex items-center justify-center w-24 h-24 border-border rounded-lg text-white cursor-pointer ${
+      className={`flex h-20 w-20 items-center justify-center rounded-xl border text-lg font-semibold transition-all duration-200 hover:-translate-y-[1px] ${
         orders.length > 0
-          ? "bg-green-600 hover:bg-green-500"
-          : "bg-gray-500 hover:bg-gray-400"
+          ? "border-emerald-300/60 bg-emerald-500/25 text-emerald-100 hover:bg-emerald-500/35"
+          : "border-border bg-white/8 text-text-primary hover:bg-white/14"
       }`}
     >
       {number}
-    </div>
+    </button>
   );
 }
 

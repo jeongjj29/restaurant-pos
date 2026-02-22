@@ -26,13 +26,17 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="flex h-screen flex-row bg-background text-text-primary">
-      <div className="w-64 flex-none">
-        <NavBar />
-      </div>
+    <div className="h-screen bg-transparent text-text-primary p-2 md:p-3">
+      <div className="flex h-full min-h-0 flex-col gap-2 md:flex-row">
+        <aside className="w-full md:w-56 md:h-full">
+          <NavBar />
+        </aside>
 
-      <div className="grow p-4 overflow-y-auto">
-        <Outlet />
+        <main className="min-h-0 flex-1">
+          <div className="section-shell glass-panel border-0 h-full min-h-0 overflow-y-auto">
+            <Outlet />
+          </div>
+        </main>
       </div>
     </div>
   );

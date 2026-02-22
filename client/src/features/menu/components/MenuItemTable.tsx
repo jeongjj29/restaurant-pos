@@ -74,8 +74,8 @@ const MenuItemTable: React.FC<MenuItemTableProps> = ({
   }
 
   return (
-    <div className="max-w-4xl border border-border rounded-md shadow-md">
-      <div className="max-h-[85vh] overflow-y-auto rounded-md">
+    <div className="h-full min-h-0 rounded-md border border-border shadow-md">
+      <div className="h-full min-h-0 overflow-auto rounded-md">
         <table className="min-w-full bg-surface rounded-md">
           <thead className="bg-surface z-10">
             <tr>

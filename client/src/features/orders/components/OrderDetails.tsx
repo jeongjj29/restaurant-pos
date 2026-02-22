@@ -1,5 +1,5 @@
 import { TAX_RATE } from "@constants";
-import { OrderItem, Order } from "@orders/types"; // Update this path as needed
+import { Order } from "@orders/types";
 
 interface OrderDetailsProps {
   order: Order | null;

@@ -10,6 +10,7 @@ from .table_routes import table_bp
 from .user_routes import user_bp
 from .base_routes import base_bp
 
+
 def register_blueprints(app):
     app.register_blueprint(auth_bp)
     app.register_blueprint(base_bp)

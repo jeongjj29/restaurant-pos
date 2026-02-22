@@ -1,8 +1,8 @@
 from sqlalchemy.orm import validates
-from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
 from sqlalchemy_serializer import SerializerMixin
 from app.constants import ACCESS_LEVEL
+
 
 class Role(db.Model, SerializerMixin):
     __tablename__ = "roles"

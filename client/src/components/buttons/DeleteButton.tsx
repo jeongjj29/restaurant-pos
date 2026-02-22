@@ -5,7 +5,7 @@ const DeleteButton: React.FC<ButtonProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
-      className="p-1 rounded-md bg-red-500 hover:bg-red-400 text-white transition-colors duration-200"
+      className="rounded-lg bg-rose-500/90 px-2 py-1.5 text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-rose-400"
       aria-label="Delete"
     >
       <DeleteIcon fontSize="small" />

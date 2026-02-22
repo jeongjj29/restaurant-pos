@@ -1,18 +1,21 @@
-@import 'tailwindcss';
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap");
+@import "tailwindcss";
 
 @theme {
-  --color-background: #121212;
-  --color-surface: #1e1e1e;
+  --color-background: #151311;
+  --color-surface: #231f1a;
+  --color-surface-raised: #2d2822;
 
-  --color-text-primary: #e5e7eb;
-  --color-text-secondary: #9ca3af;
-  --color-text-disabled: #6b7280;
+  --color-text-primary: #f4efe8;
+  --color-text-secondary: #c2b6a6;
+  --color-text-disabled: #877a6a;
 
-  --color-border: #374151;
-  --color-accent: #3b82f6;
-  --color-error: #ef4444;
-  --color-hover: #2a2a2a;
-  --color-success: #10b981;
+  --color-border: #51463a;
+  --color-accent: #f59e0b;
+  --color-accent-soft: #f8b84f;
+  --color-error: #f97373;
+  --color-hover: #302a23;
+  --color-success: #22c55e;
   --color-warning: #f59e0b;
 
   --width-iconw: 100px;
@@ -34,6 +37,37 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
+
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Manrope", "Segoe UI", sans-serif;
+    background:
+      radial-gradient(
+        1100px 600px at 8% -20%,
+        color-mix(in oklab, var(--color-accent) 26%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        900px 500px at 90% 120%,
+        color-mix(in oklab, #22d3ee 20%, transparent),
+        transparent 72%
+      ),
+      var(--color-background);
+    color: var(--color-text-primary);
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Sora", "Manrope", sans-serif;
+    letter-spacing: -0.02em;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -47,5 +81,43 @@
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #1e1e1e;
+  background-color: #211c17;
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    background: color-mix(in oklab, var(--color-surface) 88%, black 12%);
+    border: 1px solid color-mix(in oklab, var(--color-border) 80%, #ffffff 8%);
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, white 8%, transparent),
+      0 20px 45px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+  }
+
+  .section-shell {
+    border-radius: 1rem;
+    padding: 0.5rem;
+    animation: float-in 220ms ease-out;
+  }
+
+  .accent-badge {
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--color-accent) 90%, white 10%),
+      color-mix(in oklab, var(--color-accent-soft) 85%, white 15%)
+    );
+    color: #241102;
+    font-weight: 700;
+  }
 }

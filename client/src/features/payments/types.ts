@@ -11,9 +11,7 @@ export interface PaymentsState {
   error: string | null;
 }
 
-export interface PaymentType {
-  type: "amex" | "cash" | "discover" | "mastercard" | "visa";
-}
+export type PaymentType = "amex" | "cash" | "discover" | "mastercard" | "visa";
 
 export interface AddPaymentPayload {
   amount: number;

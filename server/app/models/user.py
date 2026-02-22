@@ -4,6 +4,7 @@ from app.extensions import db, bcrypt
 from sqlalchemy_serializer import SerializerMixin
 import re
 
+
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"
 
@@ -45,12 +46,16 @@ class User(db.Model, SerializerMixin):
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             raise ValueError("Invalid email address")
         return email
-    
+
     @validates("phone_number")
     def validate_phone_number(self, key, phone_number):
-        if len(phone_number) != 10:
+        if phone_number is None:
+            return None
+
+        phone_number_str = str(phone_number)
+        if not phone_number_str.isdigit() or len(phone_number_str) != 10:
             raise ValueError("Phone number must be 10 digits")
-        return phone_number
+        return int(phone_number_str)
 
     @hybrid_property
     def password_hash(self):

@@ -9,4 +9,15 @@ from .menu_category import MenuCategory
 from .discount import Discount
 from .token_blocklist import TokenBlockList
 
-__all__ = ["User", "Role", "Table", "Payment", "Order", "OrderItem", "MenuItem", "MenuCategory", "Discount", "TokenBlockList"]
+__all__ = [
+    "User",
+    "Role",
+    "Table",
+    "Payment",
+    "Order",
+    "OrderItem",
+    "MenuItem",
+    "MenuCategory",
+    "Discount",
+    "TokenBlockList",
+]

@@ -56,7 +56,7 @@ function MenuCategoriesTable({
   }
 
   return (
-    <div className="max-w-2xl overflow-x-auto rounded-md shadow-md border border-border">
+    <div className="h-full min-h-0 overflow-auto rounded-md border border-border shadow-md">
       <table className="min-w-full bg-surface rounded-md">
         <thead>
           <tr>

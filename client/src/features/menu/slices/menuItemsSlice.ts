@@ -100,7 +100,7 @@ const menuItemsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMenuItems.pending, (state) => {
-        handlePendingState;
+        handlePendingState(state);
       })
       .addCase(
         fetchMenuItems.fulfilled,

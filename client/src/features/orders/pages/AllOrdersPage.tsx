@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@app/store";
 import { Order } from "@orders/types";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import AllOrdersTable from "@orders/components/AllOrdersTable";
 import OrderDetails from "@orders/components/OrderDetails";
 
@@ -34,36 +34,35 @@ function AllOrdersPage() {
   });
 
   return (
-    <div className="flex flex-row bg-white/5 h-full w-full rounded-md">
-      <div className="flex flex-col">
-        <div className="flex flex-row justify-start gap-4 ml-6 mt-4">
+    <div className="glass-panel flex h-full w-full flex-col xl:flex-row rounded-2xl p-3 md:p-4 gap-4">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
           <div className="flex flex-col">
-            <label>Start Date:</label>
+            <label className="mb-1 text-sm text-text-secondary">Start Date</label>
             <input
               type="date"
               value={format(startDate, "yyyy-MM-dd")}
               onChange={(e) => setStartDate(new Date(e.target.value))}
-              className="border text-text-primary bg-white/5 border-border p-2 rounded-sm"
+              className="rounded-lg border border-border bg-white/5 p-2.5 text-text-primary"
             />
           </div>
           <div className="flex flex-col">
-            <label>End Date:</label>
+            <label className="mb-1 text-sm text-text-secondary">End Date</label>
             <input
               type="date"
               value={format(endDate, "yyyy-MM-dd")}
               onChange={(e) => setEndDate(new Date(e.target.value))}
-              className="border text-text-primary bg-white/5 border-border p-2 rounded-sm"
+              className="rounded-lg border border-border bg-white/5 p-2.5 text-text-primary"
             />
           </div>
-
           <div className="flex flex-col">
-            <label>Status:</label>
+            <label className="mb-1 text-sm text-text-secondary">Status</label>
             <select
               value={statusFilter}
               onChange={(e) =>
                 setStatusFilter(e.target.value as "all" | "open" | "closed")
               }
-              className="border text-text-primary bg-white/5 border-border p-2 rounded-sm"
+              className="rounded-lg border border-border bg-white/5 p-2.5 text-text-primary"
             >
               <option value="all" className="bg-surface">
                 All Orders
@@ -84,18 +83,18 @@ function AllOrdersPage() {
         />
       </div>
 
-      <div className="flex flex-row">
+      <div className="w-full xl:w-[380px]">
         <OrderDetails order={clickedOrder} />
         {clickedOrder && (
-          <div className="flex flex-col justify-center items-center">
-            <button className="bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 m-4 rounded-sm">
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <button className="rounded-lg border border-border bg-white/5 px-4 py-2.5 font-semibold text-text-primary hover:bg-white/10">
               Print
             </button>
             <button
               onClick={() =>
                 navigate("/orders/payment", { state: { order: clickedOrder } })
               }
-              className="bg-green-300 hover:bg-green-400 text-white font-bold py-2 px-4 m-4 rounded-sm"
+              className="accent-badge rounded-lg px-4 py-2.5"
             >
               Settle
             </button>

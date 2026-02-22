@@ -10,12 +10,13 @@ function EmployeeManagementPage() {
   const [formHidden, setFormHidden] = useState<boolean>(true);
 
   return (
-    <div className="h-full flex bg-white/5 rounded-md p-4">
+    <div className="glass-panel h-full min-h-0 rounded-2xl p-3 md:p-4">
+      <div className="grid h-full min-h-0 grid-cols-1 gap-3 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
       <EmployeeTable
         setSelectedEmployee={setSelectedEmployee}
         setFormHidden={setFormHidden}
       />
-      <div>
+      <div className="min-h-0 overflow-auto">
         {(selectedEmployee || !formHidden) && (
           <EmployeeForm
             employee={selectedEmployee}
@@ -23,6 +24,7 @@ function EmployeeManagementPage() {
             setFormHidden={setFormHidden}
           />
         )}
+      </div>
       </div>
     </div>
   );

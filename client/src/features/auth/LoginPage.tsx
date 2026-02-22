@@ -17,9 +17,12 @@ function LoginPage() {
   });
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-sm">
-        <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="glass-panel w-full max-w-md rounded-2xl p-8">
+        <p className="mb-2 text-xs uppercase tracking-[0.2em] text-text-secondary">
+          Staff Access
+        </p>
+        <h2 className="mb-6 text-3xl font-semibold">Sign In</h2>
         <Formik
           initialValues={{ username: "", password: "" }}
           validationSchema={loginSchema}
@@ -34,7 +37,7 @@ function LoginPage() {
                 setLoginError(null);
                 navigate("/");
               })
-              .catch((err) => {
+              .catch(() => {
                 setLoginError("Invalid username or password");
                 setSubmitting(false);
               });
@@ -45,7 +48,7 @@ function LoginPage() {
               <div>
                 <label
                   htmlFor="username"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="mb-1 block text-sm font-medium text-text-secondary"
                 >
                   Username
                 </label>
@@ -53,19 +56,19 @@ function LoginPage() {
                   type="text"
                   name="username"
                   placeholder="Enter your username"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full rounded-lg border border-border bg-white/5 px-4 py-2.5 text-text-primary focus:border-accent focus:outline-none"
                 />
                 <ErrorMessage
                   name="username"
                   component="div"
-                  className="text-red-600 text-sm mt-1"
+                  className="mt-1 text-sm text-error"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="mb-1 block text-sm font-medium text-text-secondary"
                 >
                   Password
                 </label>
@@ -73,34 +76,28 @@ function LoginPage() {
                   type="password"
                   name="password"
                   placeholder="Enter your password"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full rounded-lg border border-border bg-white/5 px-4 py-2.5 text-text-primary focus:border-accent focus:outline-none"
                 />
                 <ErrorMessage
                   name="password"
                   component="div"
-                  className="text-red-600 text-sm mt-1"
+                  className="mt-1 text-sm text-error"
                 />
               </div>
 
               {loginError && (
-                <div className="text-red-600 text-sm text-center">
-                  {loginError}
-                </div>
+                <div className="text-sm text-center text-error">{loginError}</div>
               )}
 
-              <div className="flex items-center justify-center">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`w-full px-4 py-2 text-white font-bold rounded-md ${
-                    isSubmitting
-                      ? "bg-gray-400"
-                      : "bg-blue-600 hover:bg-blue-700"
-                  } focus:outline-hidden focus:ring-2 focus:ring-blue-500`}
-                >
-                  {isSubmitting ? "Logging in..." : "Login"}
-                </button>
-              </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full rounded-lg bg-accent px-4 py-2.5 font-bold text-[#2a1703] transition-all duration-200 hover:bg-accent-soft ${
+                  isSubmitting ? "cursor-not-allowed opacity-50" : ""
+                }`}
+              >
+                {isSubmitting ? "Logging in..." : "Login"}
+              </button>
             </Form>
           )}
         </Formik>

@@ -9,10 +9,10 @@ function DineInPage() {
   const layout = useMemo(() => createTableLayout(tables), [tables]);
 
   return (
-    <div className="flex h-full items-center justify-center bg-white/5 p-4 rounded-md">
-      <div className="flex-1 self-center justify-self-center relative overflow-visible">
+    <div className="glass-panel flex h-full items-center justify-center rounded-2xl p-3 md:p-4">
+      <div className="relative w-full overflow-auto rounded-xl border border-border/80 bg-black/15 p-4">
         {layout.map((row, i) => (
-          <div key={i} className="flex flex-row gap-2 justify-center mb-2">
+          <div key={i} className="mb-2 flex flex-row justify-center gap-2">
             {row.map((col, j) => (
               <Table
                 key={j}

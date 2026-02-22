@@ -23,8 +23,8 @@ function OrderInput({ tableId }: OrderInputProps) {
   const tables = useAppSelector((state: RootState) => state.tables.tables);
   const table = tables.find((table) => table.id === tableId);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [selectedCategory, setSelectedCategory] = useState<MenuCategory>(
-    menuCategories[0]
+  const [selectedCategory, setSelectedCategory] = useState<MenuCategory | null>(
+    null
   );
   const [pendingOrderItems, setPendingOrderItems] = useState<
     (MenuItem & { quantity: number })[]
@@ -38,7 +38,7 @@ function OrderInput({ tableId }: OrderInputProps) {
     if (menuCategories.length > 0 && !selectedCategory) {
       setSelectedCategory(menuCategories[0]);
     }
-  }, [menuCategories]);
+  }, [menuCategories, selectedCategory]);
 
   const handleMenuItemClick = (menuItem: MenuItem) => {
     setPendingOrderItems((prevOrderItems) => {

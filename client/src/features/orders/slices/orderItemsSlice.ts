@@ -6,7 +6,6 @@ import {
   handleFulfilledState,
   handleRejectedState,
 } from "@utils/sliceUtils";
-import OrderItemsDisplay from "../components/OrderItemsDisplay";
 
 export const fetchOrderItems = createAsyncThunk<
   OrderItem[],

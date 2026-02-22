@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { fetchEmployees } from "../slices/employeesSlice";
-import Employee from "./Employee";
 import { Employee as EmployeeType } from "@employees/types";
 import { RootState } from "@app/store";
 import { toTitleCase } from "@utils/stringUtils";
@@ -32,8 +31,8 @@ function EmployeeTable({
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="overflow-x-auto w-full m-4 ml-6">
-      <table className="min-w-fit bg-surface text-text-primary overflow-hidden border border-border rounded-md">
+    <div className="min-h-0 w-full overflow-auto rounded-xl border border-border bg-black/10">
+      <table className="min-w-full bg-surface text-text-primary overflow-hidden rounded-md">
         <thead className="bg-white/ texxt-text-primary">
           <tr>
             <th className="py-3 px-6 text-left text-md font-semibold">

@@ -3,7 +3,10 @@ interface SubmitButtonProps {
   disabled?: boolean;
 }
 
-const SubmitButton: React.FC<SubmitButtonProps> = ({ label = "Submit", disabled = false }) {
+const SubmitButton: React.FC<SubmitButtonProps> = ({
+  label = "Submit",
+  disabled = false,
+}) => {
   return (
     <button
       type="submit"
@@ -15,6 +18,6 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ label = "Submit", disabled 
       {label}
     </button>
   );
-}
+};
 
 export default SubmitButton;

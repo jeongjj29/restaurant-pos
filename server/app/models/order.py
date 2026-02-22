@@ -1,9 +1,8 @@
 from sqlalchemy.orm import validates
-from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
 from sqlalchemy_serializer import SerializerMixin
 from app.constants import ORDER_STATUS, ORDER_TYPE
-from sqlalchemy import DECIMAL
+
 
 class Order(db.Model, SerializerMixin):
     __tablename__ = "orders"

@@ -12,6 +12,7 @@ export const handleFulfilledState = <T>(
   state: { loading: boolean; error: string | null },
   action: PayloadAction<T>
 ) => {
+  void action;
   state.loading = false;
   state.error = null;
 };

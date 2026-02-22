@@ -62,6 +62,13 @@ cd server
 pipenv run python -m unittest discover -s tests -p "test_*.py"
 ```
 
+Run backend coverage check:
+```bash
+cd server
+pipenv run coverage run -m unittest discover -s tests -p "test_*.py"
+pipenv run coverage report --fail-under=70
+```
+
 Run frontend quality checks:
 ```bash
 cd client

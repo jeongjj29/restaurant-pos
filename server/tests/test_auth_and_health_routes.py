@@ -83,6 +83,18 @@ class AuthAndHealthRoutesTestCase(unittest.TestCase):
             response.get_json()["message"], "Username and password are required"
         )
 
+    def test_login_rejects_invalid_credentials(self):
+        response = self.client.post(
+            "/api/auth/login",
+            json={"username": "manager01", "password": "wrong-password"},
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.get_json()["message"], "Invalid credentials")
+
+    def test_protected_requires_token(self):
+        response = self.client.get("/api/auth/protected")
+        self.assertEqual(response.status_code, 401)
+
 
 if __name__ == "__main__":
     unittest.main()

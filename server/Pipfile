@@ -19,6 +19,7 @@ faker = "==35.2.2"
 [dev-packages]
 black = "==24.8.0"
 ruff = "==0.15.2"
+coverage = "==7.6.1"
 
 [requires]
 python_version = "3.8.13"

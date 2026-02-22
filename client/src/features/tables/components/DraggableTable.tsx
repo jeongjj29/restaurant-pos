@@ -22,10 +22,10 @@ function DraggableTable({ tableId, number, capacity }: DraggableTableProps) {
       {...attributes}
       {...listeners}
       style={style}
-      className="text-lg font-semibold flex flex-col justify-center items-center rounded-md mr-2 px-2 py-4 transition duration-200 hover:bg-white/10"
+      className="flex min-w-[120px] flex-col items-start justify-center rounded-md px-2 py-2 text-sm font-semibold transition duration-200 hover:bg-white/10"
     >
-      <p>Table: {number}</p>
-      <p>Seats: {capacity}</p>
+      <p>Table {number}</p>
+      <p className="text-text-secondary">Seats {capacity}</p>
     </div>
   );
 }

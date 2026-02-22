@@ -17,31 +17,48 @@ function NavBar() {
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [ordersOpen, setOrdersOpen] = useState<boolean>(false);
 
-  const LINK_STYLE =
-    "flex items-center gap-3 rounded-md bg-white/5 py-2 px-3 text-base font-medium hover:bg-white/15";
+  const BASE_LINK_STYLE =
+    "flex items-center gap-3 rounded-lg py-2.5 px-3 text-sm md:text-base font-semibold transition-all duration-200";
 
-  const SUB_LINK_STYLE =
-    "flex items-center gap-3 rounded-md bg-white/5 py-2 px-3 text-base font-medium hover:bg-white/15 ml-8";
+  const linkClassName = ({ isActive }: { isActive: boolean }) =>
+    `${BASE_LINK_STYLE} ${
+      isActive
+        ? "accent-badge shadow-md"
+        : "bg-white/5 text-text-secondary hover:bg-white/12 hover:text-text-primary"
+    }`;
+
+  const subLinkClassName = ({ isActive }: { isActive: boolean }) =>
+    `${BASE_LINK_STYLE} ml-3 ${
+      isActive
+        ? "accent-badge shadow-md"
+        : "bg-white/5 text-text-secondary hover:bg-white/12 hover:text-text-primary"
+    }`;
 
   return (
-    <div className="flex flex-col h-full p-4 shadow-md">
+    <div className="glass-panel section-shell flex h-full min-h-0 flex-col rounded-2xl p-3">
       <NavLink
         to="/"
-        className="flex mb-2 h-36 items-center justify-center rounded-md bg-white/5 p-4"
+        className="mb-2 flex items-center justify-center rounded-xl border border-border/70 p-2.5"
       >
-        <div className="w-32">
-          <h1 className="text-3xl font-bold text-center mb-2">Sik Gaek</h1>
-          <img src={logo} alt="Sik Gaek Logo" className="w-80 block" />
+        <div className="w-full">
+          <h1 className="text-2xl md:text-3xl font-bold text-center mb-2">
+            Sik Gaek
+          </h1>
+          <img
+            src={logo}
+            alt="Sik Gaek Logo"
+            className="w-36 md:w-44 mx-auto block drop-shadow-lg"
+          />
         </div>
       </NavLink>
       <div className="flex grow flex-col space-x-0 space-y-2">
-        <NavLink to="/" className={LINK_STYLE}>
+        <NavLink to="/" className={linkClassName}>
           <HomeIcon />
           <span>Home</span>
         </NavLink>
 
         <button
-          className={LINK_STYLE}
+          className={`${BASE_LINK_STYLE} bg-white/5 text-text-secondary hover:bg-white/12 hover:text-text-primary`}
           onClick={() => setOrdersOpen(!ordersOpen)}
         >
           <AssignmentIcon />
@@ -49,16 +66,16 @@ function NavBar() {
         </button>
 
         {ordersOpen && (
-          <div className="flex flex-col space-y-2 ml-4">
-            <NavLink to="/orders/all" className={SUB_LINK_STYLE}>
+          <div className="flex flex-col space-y-2 ml-2">
+            <NavLink to="/orders/all" className={subLinkClassName}>
               <AssignmentIcon />
               <span>All Orders</span>
             </NavLink>
-            <NavLink to="/orders/dinein" className={SUB_LINK_STYLE}>
+            <NavLink to="/orders/dinein" className={subLinkClassName}>
               <TableRestaurantIcon />
               <span>Dine-In</span>
             </NavLink>
-            <NavLink to="/orders/takeout" className={SUB_LINK_STYLE}>
+            <NavLink to="/orders/takeout" className={subLinkClassName}>
               <TakeoutDiningIcon />
               <span>Take-Out</span>
             </NavLink>
@@ -66,7 +83,7 @@ function NavBar() {
         )}
 
         <button
-          className={LINK_STYLE}
+          className={`${BASE_LINK_STYLE} bg-white/5 text-text-secondary hover:bg-white/12 hover:text-text-primary`}
           onClick={() => setSettingsOpen(!settingsOpen)}
         >
           <SettingsIcon />
@@ -74,29 +91,29 @@ function NavBar() {
         </button>
 
         {settingsOpen && (
-          <div className="flex flex-col space-y-2 ml-4">
-            <NavLink to="/settings/employees" className={SUB_LINK_STYLE}>
+          <div className="flex flex-col space-y-2 ml-2">
+            <NavLink to="/settings/employees" className={subLinkClassName}>
               <GroupIcon />
               <span>Employees</span>
             </NavLink>
 
-            <NavLink to="/settings/menu" className={SUB_LINK_STYLE}>
+            <NavLink to="/settings/menu" className={subLinkClassName}>
               <MenuBookIcon />
               <span>Menu</span>
             </NavLink>
 
-            <NavLink to="/settings/tables" className={SUB_LINK_STYLE}>
+            <NavLink to="/settings/tables" className={subLinkClassName}>
               <TableRestaurantIcon />
               <span>Tables</span>
             </NavLink>
           </div>
         )}
-        <div className="block h-auto w-full grow rounded-md bg-white/5 "></div>
+        <div className="hidden h-auto w-full grow rounded-md md:block"></div>
         <button
           onClick={() => {
-            dispatch(logout()); // Ensure logout is typed correctly
+            dispatch(logout());
           }}
-          className={LINK_STYLE}
+          className={`${BASE_LINK_STYLE} bg-rose-500/20 text-rose-200 hover:bg-rose-500/35`}
         >
           <LogoutIcon />
           <span>Logout</span>

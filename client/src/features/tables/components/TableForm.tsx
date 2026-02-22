@@ -41,7 +41,7 @@ function TableForm({
   });
 
   return (
-    <div className="bg-white/5 p-6 mx-10 rounded-md shadow-md">
+    <div className="mx-auto w-full max-w-md rounded-md bg-white/5 p-4 shadow-md">
       <Formik<TableFormValues>
         initialValues={{
           number: tableToEdit?.number ?? "",

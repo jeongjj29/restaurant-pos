@@ -1,4 +1,4 @@
-import { useRouteError, isRouteErrorResponse } from "react-router-dom";
+import { NavLink, isRouteErrorResponse, useRouteError } from "react-router-dom";
 
 function ErrorPage() {
   const error = useRouteError();
@@ -16,12 +16,20 @@ function ErrorPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center text-center p-4">
-      <h1 className="text-3xl font-bold mb-4 text-red-500">Oops!</h1>
-      <p className="text-lg mb-2 text-text-primary">
-        Sorry, an unexpected error has occurred.
-      </p>
-      <p className="text-text-secondary italic">{errorMessage}</p>
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="glass-panel max-w-lg rounded-2xl p-8 text-center">
+        <h1 className="mb-3 text-4xl font-bold text-error">Route Error</h1>
+        <p className="mb-2 text-lg text-text-primary">
+          Sorry, something went wrong while loading this page.
+        </p>
+        <p className="mb-6 italic text-text-secondary">{errorMessage}</p>
+        <NavLink
+          to="/"
+          className="accent-badge inline-block rounded-lg px-4 py-2.5 text-sm"
+        >
+          Back to Dashboard
+        </NavLink>
+      </div>
     </div>
   );
 }

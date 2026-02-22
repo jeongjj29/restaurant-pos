@@ -7,24 +7,28 @@ function TablesLayout({ tables }: TablesLayoutProps) {
   const layout = createTableLayout(tables);
 
   return (
-    <div className="flex-1 h-full flex items-center justify-center bg-white/5 p-4 rounded-md">
-      <div
-        className="grid gap-2"
-        style={{
-          gridTemplateColumns: `repeat(${TABLE_LAYOUT.HEIGHT}, minmax(0, 1fr))`,
-        }}
-      >
-        {layout.flatMap((row, i) =>
-          row.map((col, j) => (
-            <DroppableTable
-              key={`${i}-${j}`}
-              isTable={col.isTable}
-              number={col.number || undefined}
-              xIndex={j}
-              yIndex={i}
-            />
-          ))
-        )}
+    <div className="h-full min-h-0 rounded-xl border border-border bg-white/5 p-3">
+      <div className="h-full w-full min-h-0 overflow-auto">
+        <div className="flex min-h-full min-w-full items-center justify-center">
+          <div
+            className="grid w-max gap-2"
+            style={{
+              gridTemplateColumns: `repeat(${TABLE_LAYOUT.HEIGHT}, minmax(0, 1fr))`,
+            }}
+          >
+            {layout.flatMap((row, i) =>
+              row.map((col, j) => (
+                <DroppableTable
+                  key={`${i}-${j}`}
+                  isTable={col.isTable}
+                  number={col.number || undefined}
+                  xIndex={j}
+                  yIndex={i}
+                />
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

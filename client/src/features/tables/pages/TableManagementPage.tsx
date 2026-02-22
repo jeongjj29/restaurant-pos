@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { DndContext, DragOverlay, DragEndEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragOverlay,
+  DragEndEvent,
+  pointerWithin,
+} from "@dnd-kit/core";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "@app/hooks";
 import { fetchTables, updateTable } from "@tables/slices/tablesSlice";
@@ -39,7 +44,7 @@ function TableManagementPage() {
 
     dispatch(
       updateTable({
-        tableId: parseInt(active.id.toString()),
+        tableId: parseInt(active.id.toString(), 10),
         updatedData: { location_x: overX, location_y: overY },
       })
     ).catch((err) => console.error("Error updating dragged table:", err));
@@ -49,26 +54,28 @@ function TableManagementPage() {
     dispatch(fetchTables());
   }, [dispatch]);
 
-  if (error) return <p className="text-red-600">Error: {error}</p>;
+  if (error) return <p className="text-error">Error: {error}</p>;
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
-      <DndMonitor setActiveTable={setActiveTable} tables={tables} />
+    <div className="h-full min-h-0 rounded-2xl p-0">
+      <DndContext collisionDetection={pointerWithin} onDragEnd={handleDragEnd}>
+        <DndMonitor setActiveTable={setActiveTable} tables={tables} />
 
-      <div className="w-full h-full flex gap-4 rounded-md overflow-visible">
-        <TableLayout tables={tables} />
-        <TableList tables={tables} />
-      </div>
+        <div className="grid h-full min-h-0 w-full grid-cols-1 gap-3 xl:grid-cols-[minmax(0,2.4fr)_minmax(220px,0.7fr)]">
+          <TableLayout tables={tables} />
+          <TableList tables={tables} />
+        </div>
 
-      <DragOverlay>
-        {activeTable && (
-          <div className="text-lg font-semibold flex flex-col justify-center items-center rounded-md px-2 py-4 bg-white/10 shadow-lg">
-            <p>Table: {activeTable.number}</p>
-            <p>Seats: {activeTable.capacity}</p>
-          </div>
-        )}
-      </DragOverlay>
-    </DndContext>
+        <DragOverlay>
+          {activeTable && (
+            <div className="flex min-w-[120px] flex-col items-start justify-center rounded-md border border-accent/50 bg-accent/20 px-2 py-2 text-sm font-semibold text-text-primary shadow-lg">
+              <p>Table {activeTable.number}</p>
+              <p className="text-text-secondary">Seats {activeTable.capacity}</p>
+            </div>
+          )}
+        </DragOverlay>
+      </DndContext>
+    </div>
   );
 }
 

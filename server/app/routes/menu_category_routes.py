@@ -8,7 +8,7 @@ menu_category_bp = Blueprint(
 )
 
 
-@menu_category_bp.route("/", methods=["GET", "POST"])
+@menu_category_bp.route("/", methods=["GET"])
 def get_menu_categories():
     menu_categories = [category.to_dict() for category in MenuCategory.query.all()]
     return make_response(menu_categories, 200)

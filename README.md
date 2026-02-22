@@ -71,6 +71,13 @@ npm run typecheck
 npm run test
 ```
 
+Run local pre-commit checks before pushing:
+```bash
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files
+```
+
 ## CI
 CI runs on each push to `main` and every pull request:
 - `client-quality`: runs frontend lint, typecheck, tests, and build

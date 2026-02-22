@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@app/store";
 import { Order } from "@orders/types";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import AllOrdersTable from "@orders/components/AllOrdersTable";
 import OrderDetails from "@orders/components/OrderDetails";
 

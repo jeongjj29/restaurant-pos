@@ -1,6 +1,5 @@
 import { MenuItem } from "@menu/types";
 import { Table } from "@tables/types";
-import { TAX_RATE } from "@constants";
 
 interface Props {
   items: (MenuItem & { quantity: number })[];

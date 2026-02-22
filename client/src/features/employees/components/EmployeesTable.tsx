@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { fetchEmployees } from "../slices/employeesSlice";
-import Employee from "./Employee";
 import { Employee as EmployeeType } from "@employees/types";
 import { RootState } from "@app/store";
 import { toTitleCase } from "@utils/stringUtils";

@@ -5,7 +5,7 @@ const CreateButton: React.FC<ButtonProps> = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
-      className="p-1 rounded-md bg-green-500 hover:bg-green-400 text-white transition-colors duration-200"
+      className="rounded-lg bg-emerald-500/90 px-2 py-1.5 text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-emerald-400"
       aria-label="Create"
     >
       <AddIcon fontSize="small" />

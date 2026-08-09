@@ -1,5 +1,5 @@
 from flask import Blueprint, request, make_response
-from app.models import MenuCategory, MenuItem
+from app.models import MenuCategory
 from app.extensions import db
 from .utils import get_or_404
 
@@ -44,7 +44,6 @@ def handle_menu_category(id):
 
 @menu_category_bp.route("/<int:id>/menu_items", methods=["GET"])
 def get_menu_items(id):
-    menu_items = [
-        item.to_dict() for item in MenuItem.query.filter_by(menu_category_id=id).all()
-    ]
+    menu_category = get_or_404(MenuCategory, id)
+    menu_items = [item.to_dict() for item in menu_category.menu_items]
     return make_response(menu_items, 200)

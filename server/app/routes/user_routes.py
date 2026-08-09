@@ -1,4 +1,3 @@
-import bcrypt
 from flask import Blueprint, request, make_response
 from app.models import User
 from app.extensions import db
@@ -15,11 +14,13 @@ def get_users():
 
 @user_bp.route("/", methods=["POST"])
 def create_user():
-    data = request.get_json()
+    data = dict(request.get_json(silent=True) or {})
     password = data.pop("password")
-    if password:
-        password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-        data["password_hash"] = password_hash.decode("utf-8")
+    if not isinstance(password, str) or not password:
+        raise ValueError("Password is required")
+
+    data.pop("_password_hash", None)
+    data["password_hash"] = password
     user = User(**data)
     db.session.add(user)
     db.session.commit()
@@ -34,8 +35,20 @@ def handle_user(id):
         return make_response(user.to_dict(), 200)
 
     if request.method == "PATCH":
-        for key, value in request.get_json().items():
+        data = dict(request.get_json(silent=True) or {})
+        data.pop("id", None)
+        data.pop("_password_hash", None)
+        data.pop("password_hash", None)
+        password = data.pop("password", None)
+
+        for key, value in data.items():
             setattr(user, key, value)
+
+        if password not in (None, ""):
+            if not isinstance(password, str):
+                raise ValueError("Password must be a string")
+            user.password_hash = password
+
         db.session.commit()
         return make_response(user.to_dict(), 200)
 

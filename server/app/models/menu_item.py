@@ -1,9 +1,9 @@
 from sqlalchemy.orm import validates
 from app.extensions import db
-from sqlalchemy_serializer import SerializerMixin
+from .serializer import JsonSerializerMixin
 
 
-class MenuItem(db.Model, SerializerMixin):
+class MenuItem(db.Model, JsonSerializerMixin):
     __tablename__ = "menu_items"
 
     id = db.Column(db.Integer, primary_key=True)

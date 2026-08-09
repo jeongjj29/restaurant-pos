@@ -1,10 +1,10 @@
 from sqlalchemy.orm import validates
 from app.extensions import db
-from sqlalchemy_serializer import SerializerMixin
 from app.constants import ORDER_STATUS, ORDER_TYPE
+from .serializer import JsonSerializerMixin
 
 
-class Order(db.Model, SerializerMixin):
+class Order(db.Model, JsonSerializerMixin):
     __tablename__ = "orders"
 
     id = db.Column(db.Integer, primary_key=True)

@@ -1,10 +1,10 @@
 from sqlalchemy.orm import validates
 from app.extensions import db
-from sqlalchemy_serializer import SerializerMixin
 from app.constants import PAYMENT_TYPE
+from .serializer import JsonSerializerMixin
 
 
-class Payment(db.Model, SerializerMixin):
+class Payment(db.Model, JsonSerializerMixin):
     __tablename__ = "payments"
 
     id = db.Column(db.Integer, primary_key=True)

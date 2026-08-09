@@ -1,10 +1,10 @@
 from sqlalchemy.orm import validates
 from app.extensions import db
-from sqlalchemy_serializer import SerializerMixin
 from app.constants import ACCESS_LEVEL
+from .serializer import JsonSerializerMixin
 
 
-class Role(db.Model, SerializerMixin):
+class Role(db.Model, JsonSerializerMixin):
     __tablename__ = "roles"
 
     id = db.Column(db.Integer, primary_key=True)

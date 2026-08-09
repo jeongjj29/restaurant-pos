@@ -7,6 +7,7 @@ from sqlalchemy import inspect
 
 from app import create_app
 from app.extensions import db
+from app.models import MenuItem, Order, Payment, Role, Table, User
 from manage import register_cli_commands
 
 
@@ -43,6 +44,76 @@ class ManageCliCommandsTestCase(unittest.TestCase):
         self.assertEqual(result.exit_code, 0)
         self.assertIn("Seeded the database.", result.output)
         seed_data_mock.assert_called_once()
+
+    def test_seed_is_non_destructive_idempotent_and_demo_ready(self):
+        with self.app.app_context():
+            sentinel_role = Role(name="Auditor", access_level=5)
+            db.session.add(sentinel_role)
+            db.session.flush()
+            sentinel_user = User(
+                username="sentinel",
+                first_name="Safe",
+                last_name="User",
+                email="safe@example.com",
+                role=sentinel_role,
+                password_hash="keep-this-password",
+            )
+            db.session.add(sentinel_user)
+            db.session.commit()
+
+        first_seed = self.runner.invoke(args=["seed"])
+        self.assertEqual(first_seed.exit_code, 0, first_seed.output)
+
+        with self.app.app_context():
+            first_counts = {
+                "roles": Role.query.count(),
+                "users": User.query.count(),
+                "tables": Table.query.count(),
+                "menu_items": MenuItem.query.count(),
+                "orders": Order.query.count(),
+                "payments": Payment.query.count(),
+            }
+
+        second_seed = self.runner.invoke(args=["seed"])
+        self.assertEqual(second_seed.exit_code, 0, second_seed.output)
+
+        with self.app.app_context():
+            second_counts = {
+                "roles": Role.query.count(),
+                "users": User.query.count(),
+                "tables": Table.query.count(),
+                "menu_items": MenuItem.query.count(),
+                "orders": Order.query.count(),
+                "payments": Payment.query.count(),
+            }
+            self.assertEqual(first_counts, second_counts)
+
+            sentinel = User.query.filter_by(username="sentinel").one()
+            self.assertTrue(sentinel.authenticate("keep-this-password"))
+
+            admin = User.query.filter_by(username="admin").one()
+            waiter = User.query.filter_by(username="waiter").one()
+            self.assertTrue(admin.authenticate("password"))
+            self.assertEqual(waiter.role.name, "Server")
+
+            seeded_tables = Table.query.filter(
+                Table.number.in_([1, 2, 3, 4, 5, 21, 22, 41, 42, 43, 44])
+            ).all()
+            locations = [
+                (table.location_x, table.location_y) for table in seeded_tables
+            ]
+            self.assertEqual(len(seeded_tables), 11)
+            self.assertNotIn((None, None), locations)
+            self.assertEqual(len(locations), len(set(locations)))
+
+            self.assertEqual(Order.query.filter_by(status="open").count(), 1)
+            self.assertEqual(Order.query.filter_by(status="closed").count(), 1)
+            self.assertEqual(Payment.query.count(), 1)
+
+        login_response = self.app.test_client().post(
+            "/api/auth/login", json={"username": "admin", "password": "password"}
+        )
+        self.assertEqual(login_response.status_code, 200)
 
     def test_dropdb_aborts_without_confirmation(self):
         result = self.runner.invoke(args=["dropdb"], input="n\n")

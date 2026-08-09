@@ -1,8 +1,8 @@
-from random import randint, choice as rc
-from faker import Faker
+from datetime import datetime, timedelta, timezone
+from decimal import Decimal, ROUND_HALF_UP
+
 from app.extensions import db
 from app.models import (
-    Discount,
     MenuCategory,
     MenuItem,
     Order,
@@ -13,23 +13,30 @@ from app.models import (
     User,
 )
 
+
 def seed_data():
     print("Starting seed...")
 
-    db.drop_all()
-    db.create_all()
-
-    roles = [
+    role_candidates = [
         Role(name="Admin", access_level=5),
         Role(name="Manager", access_level=4),
         Role(name="Chef", access_level=3),
         Role(name="Server", access_level=2),
         Role(name="Bartender", access_level=1),
     ]
-    db.session.add_all(roles)
-    db.session.commit()
+    roles = []
+    for candidate in role_candidates:
+        role = Role.query.filter_by(name=candidate.name).first()
+        if role is None:
+            role = candidate
+            db.session.add(role)
+        else:
+            role.access_level = candidate.access_level
+        roles.append(role)
+    db.session.flush()
+    roles_by_name = {role.name: role for role in roles}
 
-    categories = [
+    category_candidates = [
         MenuCategory(name="Starters"),
         MenuCategory(name="Korean BBQ"),
         MenuCategory(name="Stir-Fry"),
@@ -44,55 +51,81 @@ def seed_data():
         MenuCategory(name="Beer"),
     ]
 
-    db.session.add_all(categories)
-    db.session.commit()
+    categories = []
+    for candidate in category_candidates:
+        category = MenuCategory.query.filter_by(name=candidate.name).first()
+        if category is None:
+            category = candidate
+            db.session.add(category)
+        categories.append(category)
+    db.session.flush()
+    categories_by_seed_id = {
+        seed_id: category for seed_id, category in enumerate(categories, start=1)
+    }
 
-    tables = [
+    table_candidates = [
         Table(number=1, capacity=6, location_x=1, location_y=1),
-        Table(number=2, capacity=4),
-        Table(number=3, capacity=4),
-        Table(number=4, capacity=4),
-        Table(number=5, capacity=4),
-        Table(number=21, capacity=4),
-        Table(number=22, capacity=4),
-        Table(number=41, capacity=6),
-        Table(number=42, capacity=4),
-        Table(number=43, capacity=8),
-        Table(number=44, capacity=8),
+        Table(number=2, capacity=4, location_x=3, location_y=1),
+        Table(number=3, capacity=4, location_x=5, location_y=1),
+        Table(number=4, capacity=4, location_x=7, location_y=1),
+        Table(number=5, capacity=4, location_x=1, location_y=3),
+        Table(number=21, capacity=4, location_x=3, location_y=3),
+        Table(number=22, capacity=4, location_x=5, location_y=3),
+        Table(number=41, capacity=6, location_x=7, location_y=3),
+        Table(number=42, capacity=4, location_x=2, location_y=4),
+        Table(number=43, capacity=8, location_x=4, location_y=4),
+        Table(number=44, capacity=8, location_x=6, location_y=4),
     ]
 
-    db.session.add_all(tables)
-    db.session.commit()
+    occupied_locations = {
+        (table.location_x, table.location_y)
+        for table in Table.query.all()
+        if table.location_x is not None and table.location_y is not None
+    }
+    tables = []
+    for candidate in table_candidates:
+        table = Table.query.filter_by(number=candidate.number).first()
+        desired_location = (candidate.location_x, candidate.location_y)
+        if table is None:
+            table = candidate
+            if desired_location in occupied_locations:
+                table.location_x = None
+                table.location_y = None
+            else:
+                occupied_locations.add(desired_location)
+            db.session.add(table)
+        elif (
+            table.location_x is None or table.location_y is None
+        ) and desired_location not in occupied_locations:
+            table.location_x, table.location_y = desired_location
+            occupied_locations.add(desired_location)
+        tables.append(table)
+    db.session.flush()
+    tables_by_number = {table.number: table for table in tables}
 
-    users = [
-        User(
-            username="admin",
-            first_name="Admin",
-            last_name="Admin",
-            email="admin@me.com",
-            role_id=1,
-            password_hash="password",
-        ),
-        User(
-            username="manager",
-            first_name="Manager",
-            last_name="Manager",
-            email="manager@me.com",
-            role_id=2,
-            password_hash="password",
-        ),
-        User(
-            username="waiter",
-            first_name="Waiter",
-            last_name="Waiter",
-            email="waiter@me.com",
-            role_id=3,
-            password_hash="password",
-        ),
+    user_specs = [
+        ("admin", "Admin", "Admin", "admin@me.com", "Admin"),
+        ("manager", "Manager", "Manager", "manager@me.com", "Manager"),
+        ("waiter", "Waiter", "Waiter", "waiter@me.com", "Server"),
     ]
 
-    db.session.add_all(users)
-    db.session.commit()
+    users_by_username = {}
+    for username, first_name, last_name, email, role_name in user_specs:
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            user = User(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                role=roles_by_name[role_name],
+                password_hash="password",
+            )
+            db.session.add(user)
+        else:
+            user.role = roles_by_name[role_name]
+        users_by_username[username] = user
+    db.session.flush()
 
     menu_items = [
         MenuItem(
@@ -518,7 +551,80 @@ def seed_data():
         ),
     ]
 
-    db.session.add_all(menu_items)
+    menu_items_by_name = {
+        item.name: item
+        for item in MenuItem.query.filter(
+            MenuItem.name.in_([candidate.name for candidate in menu_items])
+        )
+    }
+    for item in menu_items:
+        existing_item = menu_items_by_name.get(item.name)
+        if existing_item is None:
+            item.menu_category = categories_by_seed_id[item.category_id]
+            db.session.add(item)
+            menu_items_by_name[item.name] = item
+    db.session.flush()
+
+    if Order.query.first() is None:
+        tax_rate = Decimal("0.08875")
+
+        def order_total(lines):
+            subtotal = sum(
+                (
+                    Decimal(str(menu_items_by_name[name].price)) * quantity
+                    for name, quantity in lines
+                ),
+                Decimal("0.00"),
+            )
+            return (subtotal * (Decimal("1.00") + tax_rate)).quantize(
+                Decimal("0.01"), rounding=ROUND_HALF_UP
+            )
+
+        now = datetime.now(timezone.utc)
+        open_lines = [("Bulgogi Pancake", 1), ("Coca Cola", 2)]
+        open_order = Order(
+            status="open",
+            type="dine_in",
+            guests=3,
+            total_price=order_total(open_lines),
+            sales_tax=tax_rate,
+            created_at=now - timedelta(minutes=35),
+            user=users_by_username["waiter"],
+            table=tables_by_number[2],
+        )
+        open_order.order_items = [
+            OrderItem(
+                quantity=quantity,
+                price=menu_items_by_name[name].price,
+                menu_item=menu_items_by_name[name],
+            )
+            for name, quantity in open_lines
+        ]
+
+        closed_lines = [("Fried Dumpling", 2), ("Sprite", 2)]
+        closed_total = order_total(closed_lines)
+        closed_order = Order(
+            status="closed",
+            type="take_out",
+            guests=1,
+            total_price=closed_total,
+            sales_tax=tax_rate,
+            created_at=now - timedelta(hours=2),
+            closed_at=now - timedelta(hours=1, minutes=40),
+            user=users_by_username["manager"],
+        )
+        closed_order.order_items = [
+            OrderItem(
+                quantity=quantity,
+                price=menu_items_by_name[name].price,
+                menu_item=menu_items_by_name[name],
+            )
+            for name, quantity in closed_lines
+        ]
+        closed_order.payments = [Payment(amount=closed_total, type="visa")]
+
+        db.session.add_all([open_order, closed_order])
+
     db.session.commit()
 
     print("Seeding complete!")

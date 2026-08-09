@@ -1,9 +1,9 @@
 from sqlalchemy.orm import validates
 from app.extensions import db
-from sqlalchemy_serializer import SerializerMixin
+from .serializer import JsonSerializerMixin
 
 
-class Discount(db.Model, SerializerMixin):
+class Discount(db.Model, JsonSerializerMixin):
     __tablename__ = "discounts"
 
     id = db.Column(db.Integer, primary_key=True)

@@ -1,9 +1,9 @@
 from sqlalchemy.orm import validates
 from app.extensions import db
-from sqlalchemy_serializer import SerializerMixin
+from .serializer import JsonSerializerMixin
 
 
-class OrderItem(db.Model, SerializerMixin):
+class OrderItem(db.Model, JsonSerializerMixin):
     __tablename__ = "order_items"
 
     id = db.Column(db.Integer, primary_key=True)

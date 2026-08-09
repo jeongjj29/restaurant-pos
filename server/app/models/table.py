@@ -1,9 +1,9 @@
 from sqlalchemy.orm import validates
 from app.extensions import db
-from sqlalchemy_serializer import SerializerMixin
+from .serializer import JsonSerializerMixin
 
 
-class Table(db.Model, SerializerMixin):
+class Table(db.Model, JsonSerializerMixin):
     __tablename__ = "tables"
 
     id = db.Column(db.Integer, primary_key=True)

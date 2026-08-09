@@ -20,12 +20,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
           cache-dependency-path: client/package-lock.json
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
 
       - name: Lint
         run: npm run lint
@@ -52,22 +55,77 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.8"
+          python-version: "3.12"
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install --yes libpq-dev
 
       - name: Install Pipenv
-        run: pip install pipenv
+        run: python -m pip install pipenv==2024.4.1
+
+      - name: Install vulnerability scanner
+        run: python -m pip install pip-audit==2.10.1
+
+      - name: Verify dependency lock
+        run: pipenv verify
 
       - name: Install dependencies
         run: pipenv sync --dev
 
+      - name: Audit locked production dependencies
+        run: |
+          pipenv requirements --hash > /tmp/restaurant-pos-requirements.txt
+          python -m pip_audit --require-hashes --disable-pip --progress-spinner off --requirement /tmp/restaurant-pos-requirements.txt
+
       - name: Format check
-        run: pipenv run black --check app tests
+        run: pipenv run black --check app tests migrations config.py manage.py seed.py wsgi.py healthcheck.py gunicorn.conf.py ../scripts/production_smoke.py
 
       - name: Lint
-        run: pipenv run ruff check app tests
+        run: pipenv run ruff check app tests migrations config.py manage.py seed.py wsgi.py healthcheck.py gunicorn.conf.py ../scripts/production_smoke.py
 
       - name: Run tests
         run: pipenv run coverage run -m unittest discover -s tests -p "test_*.py"
 
       - name: Coverage threshold
         run: pipenv run coverage report --fail-under=70
+
+  production-container:
+    name: Production Container Smoke Test
+    runs-on: ubuntu-latest
+    env:
+      JWT_SECRET_KEY: ci-only-secret-that-is-at-least-32-characters-long
+      POSTGRES_PASSWORD: ci-only-database-password
+      SMOKE_BASE_URL: http://127.0.0.1:8080
+      SMOKE_PASSWORD: ci-only-admin-password
+      SMOKE_USERNAME: ci-admin
+    needs:
+      - client-quality
+      - server-tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build and start production stack
+        run: docker compose -f compose.production.yml up --build --detach --wait --wait-timeout 180
+
+      - name: Verify API, database, and SPA routes
+        run: |
+          curl --fail --show-error http://127.0.0.1:8080/api/health
+          curl --fail --show-error http://127.0.0.1:8080/api/ready
+          curl --fail --show-error 'http://127.0.0.1:8080/orders/payment?orderId=1' | grep --quiet 'id="root"'
+          docker compose -f compose.production.yml exec -T app id -u | grep --quiet '^10001$'
+          docker compose -f compose.production.yml exec -T app gunicorn --version | grep --quiet '23.0.0'
+          docker compose -f compose.production.yml exec -T app python -c "import psycopg; assert psycopg.pq.__impl__ == 'c'"
+
+      - name: Verify authenticated PostgreSQL lifecycle
+        run: |
+          docker compose -f compose.production.yml exec -T app flask --app manage:app create-admin --username "$SMOKE_USERNAME" --email ci-admin@example.invalid --password "$SMOKE_PASSWORD"
+          python3 scripts/production_smoke.py
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose -f compose.production.yml logs --no-color
+
+      - name: Stop production stack
+        if: always()
+        run: docker compose -f compose.production.yml down --volumes

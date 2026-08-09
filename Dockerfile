@@ -1,0 +1,69 @@
+# syntax=docker/dockerfile:1.7
+
+FROM node:22-bookworm-slim@sha256:d649c27dae7ba0137b3cef5dd75baa422c08dc3d9e3fc0c23dfb172dc3cc6436 AS client-build
+
+WORKDIR /build/client
+COPY client/package.json client/package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm npm ci
+COPY client/ ./
+RUN npm run build
+
+
+FROM python:3.12-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2 AS python-dependencies
+
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends build-essential libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build/server
+COPY server/Pipfile server/Pipfile.lock ./
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install "pipenv==2024.4.1" \
+    && pipenv verify \
+    && python -m venv /opt/venv \
+    && pipenv requirements --hash > /tmp/requirements.txt \
+    && /opt/venv/bin/python -m pip install \
+        --require-hashes --requirement /tmp/requirements.txt
+
+
+FROM python:3.12-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2 AS runtime
+
+ENV APP_ENV=production \
+    CLIENT_DIST_DIR=/app/client \
+    JWT_COOKIE_SECURE=true \
+    PATH=/opt/venv/bin:$PATH \
+    PORT=8080 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    RUN_MIGRATIONS=true \
+    WEB_CONCURRENCY=2
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends libpq5 \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 app \
+    && useradd --uid 10001 --gid app --no-create-home --home-dir /app \
+        --shell /usr/sbin/nologin app
+
+WORKDIR /app/server
+COPY --from=python-dependencies /opt/venv /opt/venv
+COPY --chown=10001:10001 server/ ./
+COPY --from=client-build --chown=10001:10001 /build/client/dist/ /app/client/
+
+RUN python -m whitenoise.compress /app/client \
+    && chmod 755 /app/server/docker-entrypoint.sh \
+    && chown -R 10001:10001 /app /opt/venv
+
+USER 10001:10001
+
+EXPOSE 8080
+STOPSIGNAL SIGTERM
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD ["python", "healthcheck.py"]
+
+ENTRYPOINT ["/app/server/docker-entrypoint.sh"]
+CMD ["gunicorn", "--config", "gunicorn.conf.py", "wsgi:application"]

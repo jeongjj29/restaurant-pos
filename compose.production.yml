@@ -1,0 +1,47 @@
+name: restaurant-pos
+
+services:
+  database:
+    image: postgres:17-alpine@sha256:742f40ea20b9ff2ff31db5458d127452988a2164df9e17441e191f3b72252193
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: restaurant_pos
+      POSTGRES_USER: restaurant_pos
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U restaurant_pos -d restaurant_pos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  app:
+    build:
+      context: .
+      target: runtime
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql://restaurant_pos:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@database:5432/restaurant_pos
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?Set JWT_SECRET_KEY}
+      JWT_COOKIE_SECURE: "true"
+      TRUSTED_HOSTS: ${TRUSTED_HOSTS:-}
+      HEALTHCHECK_HOST: ${HEALTHCHECK_HOST:-}
+      TRUST_PROXY_COUNT: ${TRUST_PROXY_COUNT:-0}
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-2}
+      GUNICORN_THREADS: ${GUNICORN_THREADS:-2}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+      SEED_DATABASE: ${SEED_DATABASE:-false}
+      ALLOW_DEMO_SEED: ${ALLOW_DEMO_SEED:-false}
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:${PORT:-8080}:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      start_period: 30s
+
+volumes:
+  postgres-data:

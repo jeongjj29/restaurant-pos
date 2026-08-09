@@ -54,9 +54,10 @@ export const updateEmployee = createAsyncThunk<
   { rejectValue: string }
 >("employees/updateEmployee", async (updatedEmployee, { rejectWithValue }) => {
   try {
+    const { id, ...changes } = updatedEmployee;
     const response = await axios.patch(
-      `/api/users/${updatedEmployee.id}`,
-      updatedEmployee
+      `/api/users/${id}`,
+      changes
     );
     return response.data;
   } catch (error: unknown) {

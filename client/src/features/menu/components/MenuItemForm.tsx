@@ -52,13 +52,24 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({
 
   return (
     <div className="bg-surface p-6 rounded-md shadow-md mb-6 border border-border">
+      <p className="text-xs uppercase tracking-[0.16em] text-text-secondary">
+        Menu catalog
+      </p>
+      <h2 className="mb-5 mt-1 text-xl font-semibold">
+        {menuItemToEdit ? "Edit menu item" : "Add menu item"}
+      </h2>
       <Formik
         initialValues={initialValues}
         validationSchema={menuItemSchema}
         enableReinitialize
-        onSubmit={(values, { setSubmitting, resetForm }) => {
+        onSubmit={async (
+          values,
+          { setSubmitting, resetForm, setStatus }
+        ) => {
+          setStatus(null);
           const formattedValues = {
-            ...values,
+            name: values.name.trim(),
+            secondary_name: values.secondary_name.trim() || null,
             price: Number(values.price),
             category_id: Number(values.category_id),
           };
@@ -67,18 +78,23 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({
             ? updateMenuItem({ ...formattedValues, id: menuItemToEdit.id })
             : addMenuItem(formattedValues);
 
-          dispatch(action)
-            .unwrap()
-            .then(() => resetForm())
-            .catch((err) => console.error("Error submitting menu item:", err))
-            .finally(() => {
-              setSubmitting(false);
-              setMenuItemFormHidden(true);
-              setMenuItemToEdit(null);
-            });
+          try {
+            await dispatch(action).unwrap();
+            resetForm();
+            setMenuItemFormHidden(true);
+            setMenuItemToEdit(null);
+          } catch (error: unknown) {
+            setStatus(
+              typeof error === "string"
+                ? error
+                : "Menu item changes could not be saved"
+            );
+          } finally {
+            setSubmitting(false);
+          }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, status }) => (
           <Form>
             {/* Name */}
             <div className="mb-4">
@@ -167,6 +183,15 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({
               />
             </div>
 
+            {status && (
+              <div
+                role="alert"
+                className="mb-4 rounded-lg border border-error/40 bg-error/10 p-3 text-sm text-error"
+              >
+                {status}
+              </div>
+            )}
+
             {/* Buttons */}
             <div className="flex space-x-4">
               <button
@@ -176,9 +201,13 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({
                   menuItemToEdit
                     ? "bg-green-600 hover:bg-green-500"
                     : "bg-blue-600 hover:bg-blue-500"
-                } text-white font-bold py-2 px-4 rounded-md transition-colors duration-200`}
+                } text-white font-bold py-2 px-4 rounded-md transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50`}
               >
-                {menuItemToEdit ? "Update Menu Item" : "Add Menu Item"}
+                {isSubmitting
+                  ? "Saving…"
+                  : menuItemToEdit
+                    ? "Update Menu Item"
+                    : "Add Menu Item"}
               </button>
               <button
                 type="button"

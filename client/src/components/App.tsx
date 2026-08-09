@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import NavBar from "./layout/NavBar";
 import { useAppDispatch } from "@app/hooks";
@@ -10,20 +10,28 @@ import { fetchMenuCategories } from "@menu/slices/menuCategoriesSlice";
 import { fetchPayments } from "@payments/slices/paymentsSlice";
 import { fetchOrderItems } from "@orders/slices/orderItemsSlice";
 import { fetchRoles } from "@employees/slices/rolesSlice";
+import DataSyncStatus from "./DataSyncStatus";
 
 function App() {
   const dispatch = useAppDispatch();
+  const bootstrapped = useRef(false);
+
+  const refreshData = useCallback(() => {
+    void dispatch(fetchTables());
+    void dispatch(fetchOrders());
+    void dispatch(fetchEmployees());
+    void dispatch(fetchMenuItems());
+    void dispatch(fetchMenuCategories());
+    void dispatch(fetchPayments());
+    void dispatch(fetchOrderItems());
+    void dispatch(fetchRoles());
+  }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchTables());
-    dispatch(fetchOrders());
-    dispatch(fetchEmployees());
-    dispatch(fetchMenuItems());
-    dispatch(fetchMenuCategories());
-    dispatch(fetchPayments());
-    dispatch(fetchOrderItems());
-    dispatch(fetchRoles());
-  }, [dispatch]);
+    if (bootstrapped.current) return;
+    bootstrapped.current = true;
+    refreshData();
+  }, [refreshData]);
 
   return (
     <div className="h-screen bg-transparent text-text-primary p-2 md:p-3">
@@ -32,8 +40,9 @@ function App() {
           <NavBar />
         </aside>
 
-        <main className="min-h-0 flex-1">
-          <div className="section-shell glass-panel border-0 h-full min-h-0 overflow-y-auto">
+        <main className="flex min-h-0 flex-1 flex-col">
+          <DataSyncStatus onRetry={refreshData} />
+          <div className="section-shell glass-panel min-h-0 flex-1 overflow-y-auto border-0">
             <Outlet />
           </div>
         </main>

@@ -20,8 +20,17 @@ import ProtectedRoute from "@auth/ProtectedRoute";
 
 const routes: RouteObject[] = [
   {
+    path: "/login",
+    element: <LoginPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
     path: "/",
-    element: <App />,
+    element: (
+      <ProtectedRoute>
+        <App />
+      </ProtectedRoute>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
@@ -29,16 +38,8 @@ const routes: RouteObject[] = [
         element: <Home />,
       },
       {
-        path: "login",
-        element: <LoginPage />,
-      },
-      {
         path: "orders",
-        element: (
-          <ProtectedRoute>
-            <OrdersManagementPage />
-          </ProtectedRoute>
-        ),
+        element: <OrdersManagementPage />,
         children: [
           { path: "dinein", element: <DineInPage /> },
           { path: "table/:tableId", element: <OrdersByTablePage /> },
@@ -50,11 +51,7 @@ const routes: RouteObject[] = [
       },
       {
         path: "settings",
-        element: (
-          <ProtectedRoute>
-            <SettingsPage />
-          </ProtectedRoute>
-        ),
+        element: <SettingsPage />,
         children: [
           { path: "menu", element: <MenuManagementPage /> },
           { path: "employees", element: <EmployeeManagementPage /> },

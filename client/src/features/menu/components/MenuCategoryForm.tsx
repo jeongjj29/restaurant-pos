@@ -38,27 +38,49 @@ function MenuCategoryForm({
 
   return (
     <div className="bg-surface p-4 rounded-md shadow-md text-text-primary border border-border">
+      <p className="text-xs uppercase tracking-[0.16em] text-text-secondary">
+        Menu organization
+      </p>
+      <h2 className="mb-5 mt-1 text-xl font-semibold">
+        {menuCategoryToEdit ? "Edit category" : "Add category"}
+      </h2>
       <Formik
         initialValues={initialValues}
         validationSchema={menuCategorySchema}
         enableReinitialize
-        onSubmit={(values, { setSubmitting, resetForm }) => {
+        onSubmit={async (
+          values,
+          { setSubmitting, resetForm, setStatus }
+        ) => {
+          setStatus(null);
+          const formattedValues = {
+            name: values.name.trim(),
+            secondary_name: values.secondary_name.trim() || null,
+          };
           const action = menuCategoryToEdit
-            ? updateMenuCategory({ ...values, id: menuCategoryToEdit.id })
-            : addMenuCategory(values);
+            ? updateMenuCategory({
+                ...formattedValues,
+                id: menuCategoryToEdit.id,
+              })
+            : addMenuCategory(formattedValues);
 
-          dispatch(action)
-            .unwrap()
-            .then(() => {
-              resetForm();
-              setMenuCategoryToEdit(null);
-              setMenuCategoryFormHidden(true);
-            })
-            .catch((err) => console.error(err))
-            .finally(() => setSubmitting(false));
+          try {
+            await dispatch(action).unwrap();
+            resetForm();
+            setMenuCategoryToEdit(null);
+            setMenuCategoryFormHidden(true);
+          } catch (error: unknown) {
+            setStatus(
+              typeof error === "string"
+                ? error
+                : "Category changes could not be saved"
+            );
+          } finally {
+            setSubmitting(false);
+          }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, status }) => (
           <Form>
             {/* Name Field */}
             <div className="mb-4">
@@ -99,6 +121,15 @@ function MenuCategoryForm({
               />
             </div>
 
+            {status && (
+              <div
+                role="alert"
+                className="mb-4 rounded-lg border border-error/40 bg-error/10 p-3 text-sm text-error"
+              >
+                {status}
+              </div>
+            )}
+
             {/* Buttons */}
             <div className="flex space-x-4">
               <button
@@ -108,7 +139,11 @@ function MenuCategoryForm({
                   isSubmitting ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
-                {menuCategoryToEdit ? "Update" : "Add"}
+                {isSubmitting
+                  ? "Saving…"
+                  : menuCategoryToEdit
+                    ? "Update"
+                    : "Add"}
               </button>
               <button
                 type="button"

@@ -1,16 +1,19 @@
-type TabKey = "items" | "categories" | "layout";
+export type MenuTabKey = "items" | "categories";
 
 interface NavBarProps {
-  tab: TabKey;
-  setTab: (tab: TabKey) => void;
+  tab: MenuTabKey;
+  setTab: (tab: MenuTabKey) => void;
 }
 
 const NavBar: React.FC<NavBarProps> = ({ tab, setTab }) => {
-  const tabs: TabKey[] = ["items", "categories", "layout"];
+  const tabs: { key: MenuTabKey; label: string }[] = [
+    { key: "items", label: "Menu items" },
+    { key: "categories", label: "Categories" },
+  ];
 
   return (
     <div className="flex border-b border-border space-x-6 text-sm md:text-base lg:text-lg mb-4">
-      {tabs.map((key) => {
+      {tabs.map(({ key, label }) => {
         const isActive = tab === key;
         return (
           <button
@@ -23,7 +26,7 @@ const NavBar: React.FC<NavBarProps> = ({ tab, setTab }) => {
                   : "border-transparent text-text-secondary hover:text-text-primary"
               }`}
           >
-            {key.charAt(0).toUpperCase() + key.slice(1)}
+            {label}
           </button>
         );
       })}

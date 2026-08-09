@@ -41,7 +41,21 @@ describe("LoginPage", () => {
   beforeEach(() => {
     mockNavigate.mockReset();
     mockedAxios.post.mockReset();
+    mockedAxios.isAxiosError.mockReturnValue(true);
     localStorage.clear();
+  });
+
+  it("fills local demo credentials without submitting", async () => {
+    renderLoginPage();
+    const user = userEvent.setup();
+
+    await user.click(
+      screen.getByRole("button", { name: "Fill demo credentials" })
+    );
+
+    expect(screen.getByLabelText("Username")).toHaveValue("admin");
+    expect(screen.getByLabelText("Password")).toHaveValue("password");
+    expect(mockedAxios.post).not.toHaveBeenCalled();
   });
 
   it("shows validation errors when fields are empty", async () => {
@@ -99,8 +113,6 @@ describe("LoginPage", () => {
     await user.type(screen.getByPlaceholderText("Enter your password"), "wrong");
     await user.click(screen.getByRole("button", { name: "Login" }));
 
-    expect(
-      await screen.findByText("Invalid username or password")
-    ).toBeInTheDocument();
+    expect(await screen.findByText("Invalid credentials")).toBeInTheDocument();
   });
 });

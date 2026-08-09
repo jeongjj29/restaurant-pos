@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { fetchEmployees } from "../slices/employeesSlice";
 import { Employee as EmployeeType } from "@employees/types";
@@ -23,17 +22,51 @@ function EmployeeTable({
   const loading = useAppSelector((state: RootState) => state.employees.loading);
   const error = useAppSelector((state: RootState) => state.employees.error);
 
-  useEffect(() => {
-    dispatch(fetchEmployees());
-  }, [dispatch]);
+  if (loading && employees.length === 0) {
+    return (
+      <div className="flex min-h-48 items-center justify-center rounded-xl border border-border bg-white/5 text-text-secondary">
+        Loading employees…
+      </div>
+    );
+  }
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (error && employees.length === 0) {
+    return (
+      <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-xl border border-error/40 bg-error/10 p-6 text-center">
+        <p className="text-error">Could not load employees: {error}</p>
+        <button
+          type="button"
+          onClick={() => void dispatch(fetchEmployees())}
+          className="rounded-lg border border-border px-3 py-2 text-sm font-semibold hover:bg-white/10"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  if (employees.length === 0) {
+    return (
+      <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-white/5 p-6 text-center">
+        <p className="text-text-secondary">No employees have been added yet.</p>
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedEmployee(null);
+            setFormHidden(false);
+          }}
+          className="accent-badge rounded-lg px-4 py-2 text-sm"
+        >
+          Add first employee
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-0 w-full overflow-auto rounded-xl border border-border bg-black/10">
       <table className="min-w-full bg-surface text-text-primary overflow-hidden rounded-md">
-        <thead className="bg-white/ texxt-text-primary">
+        <thead className="bg-white/5 text-text-primary">
           <tr>
             <th className="py-3 px-6 text-left text-md font-semibold">
               First Name

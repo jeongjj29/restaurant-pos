@@ -6,6 +6,11 @@ import { login } from "@auth/authSlice";
 import { useAppDispatch } from "@app/hooks";
 import { LoginFormValues } from "./types";
 
+const DEMO_CREDENTIALS: LoginFormValues = {
+  username: "admin",
+  password: "password",
+};
+
 function LoginPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -26,25 +31,56 @@ function LoginPage() {
         <Formik
           initialValues={{ username: "", password: "" }}
           validationSchema={loginSchema}
-          onSubmit={(
+          onSubmit={async (
             values: LoginFormValues,
             { setSubmitting, resetForm }: FormikHelpers<LoginFormValues>
           ) => {
-            dispatch(login(values))
-              .unwrap()
-              .then(() => {
-                resetForm();
-                setLoginError(null);
-                navigate("/");
-              })
-              .catch(() => {
-                setLoginError("Invalid username or password");
-                setSubmitting(false);
-              });
+            setLoginError(null);
+
+            try {
+              await dispatch(login(values)).unwrap();
+              resetForm();
+              navigate("/");
+            } catch (error: unknown) {
+              setLoginError(
+                typeof error === "string"
+                  ? error
+                  : "Unable to sign in. Please try again."
+              );
+            } finally {
+              setSubmitting(false);
+            }
           }}
         >
-          {({ isSubmitting }) => (
+          {({ isSubmitting, setValues }) => (
             <Form className="space-y-4">
+              <div className="rounded-xl border border-accent/35 bg-accent/10 p-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-soft">
+                      Local demo account
+                    </p>
+                    <p className="mt-1 text-sm text-text-secondary">
+                      Username <code className="text-text-primary">admin</code> ·
+                      Password <code className="text-text-primary">password</code>
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void setValues(DEMO_CREDENTIALS, false);
+                      setLoginError(null);
+                    }}
+                    className="rounded-lg border border-accent/50 px-3 py-2 text-sm font-semibold text-accent-soft transition-colors hover:bg-accent/15"
+                  >
+                    Fill demo credentials
+                  </button>
+                </div>
+                <p className="mt-2 text-xs text-text-disabled">
+                  This only fills the local demo form. Select Login to continue.
+                </p>
+              </div>
+
               <div>
                 <label
                   htmlFor="username"
@@ -54,7 +90,9 @@ function LoginPage() {
                 </label>
                 <Field
                   type="text"
+                  id="username"
                   name="username"
+                  autoComplete="username"
                   placeholder="Enter your username"
                   className="w-full rounded-lg border border-border bg-white/5 px-4 py-2.5 text-text-primary focus:border-accent focus:outline-none"
                 />
@@ -74,7 +112,9 @@ function LoginPage() {
                 </label>
                 <Field
                   type="password"
+                  id="password"
                   name="password"
+                  autoComplete="current-password"
                   placeholder="Enter your password"
                   className="w-full rounded-lg border border-border bg-white/5 px-4 py-2.5 text-text-primary focus:border-accent focus:outline-none"
                 />

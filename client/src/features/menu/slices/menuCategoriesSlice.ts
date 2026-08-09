@@ -62,10 +62,8 @@ export const updateMenuCategory = createAsyncThunk<
   "menuCategories/updateMenuCategory",
   async (updatedMenuCategory, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `/api/menu_categories/${updatedMenuCategory.id}`,
-        updatedMenuCategory
-      );
+      const { id, ...changes } = updatedMenuCategory;
+      const response = await axios.patch(`/api/menu_categories/${id}`, changes);
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

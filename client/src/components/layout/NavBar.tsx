@@ -10,10 +10,13 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useAppDispatch } from "@app/hooks";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import { useAppDispatch, useAppSelector } from "@app/hooks";
 
 function NavBar() {
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const signingOut = useAppSelector((state) => state.auth.loading);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [ordersOpen, setOrdersOpen] = useState<boolean>(false);
 
@@ -58,6 +61,9 @@ function NavBar() {
         </NavLink>
 
         <button
+          type="button"
+          aria-expanded={ordersOpen}
+          aria-controls="orders-navigation"
           className={`${BASE_LINK_STYLE} bg-white/5 text-text-secondary hover:bg-white/12 hover:text-text-primary`}
           onClick={() => setOrdersOpen(!ordersOpen)}
         >
@@ -66,7 +72,7 @@ function NavBar() {
         </button>
 
         {ordersOpen && (
-          <div className="flex flex-col space-y-2 ml-2">
+          <div id="orders-navigation" className="flex flex-col space-y-2 ml-2">
             <NavLink to="/orders/all" className={subLinkClassName}>
               <AssignmentIcon />
               <span>All Orders</span>
@@ -83,6 +89,9 @@ function NavBar() {
         )}
 
         <button
+          type="button"
+          aria-expanded={settingsOpen}
+          aria-controls="settings-navigation"
           className={`${BASE_LINK_STYLE} bg-white/5 text-text-secondary hover:bg-white/12 hover:text-text-primary`}
           onClick={() => setSettingsOpen(!settingsOpen)}
         >
@@ -91,7 +100,7 @@ function NavBar() {
         </button>
 
         {settingsOpen && (
-          <div className="flex flex-col space-y-2 ml-2">
+          <div id="settings-navigation" className="flex flex-col space-y-2 ml-2">
             <NavLink to="/settings/employees" className={subLinkClassName}>
               <GroupIcon />
               <span>Employees</span>
@@ -106,17 +115,34 @@ function NavBar() {
               <TableRestaurantIcon />
               <span>Tables</span>
             </NavLink>
+
+            <NavLink to="/settings/reports" className={subLinkClassName}>
+              <BarChartIcon />
+              <span>Reports</span>
+            </NavLink>
           </div>
         )}
         <div className="hidden h-auto w-full grow rounded-md md:block"></div>
+        {currentUser && (
+          <div className="mb-2 rounded-lg border border-border bg-white/5 px-3 py-2">
+            <p className="text-xs uppercase tracking-[0.12em] text-text-disabled">
+              Signed in as
+            </p>
+            <p className="truncate text-sm font-semibold">
+              {currentUser.first_name} {currentUser.last_name}
+            </p>
+          </div>
+        )}
         <button
+          type="button"
           onClick={() => {
-            dispatch(logout());
+            void dispatch(logout());
           }}
+          disabled={signingOut}
           className={`${BASE_LINK_STYLE} bg-rose-500/20 text-rose-200 hover:bg-rose-500/35`}
         >
           <LogoutIcon />
-          <span>Logout</span>
+          <span>{signingOut ? "Signing out…" : "Logout"}</span>
         </button>
       </div>
     </div>

@@ -3,6 +3,33 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { LoginPayload, AuthState } from "@auth/types";
 import { Employee } from "@employees/types";
 
+const setAuthorizationHeader = (token: string | null) => {
+  if (token) {
+    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common.Authorization;
+  }
+};
+
+const clearStoredAuth = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  setAuthorizationHeader(null);
+};
+
+const readStoredUser = (): Employee | null => {
+  const storedUser = localStorage.getItem("user");
+
+  if (!storedUser) return null;
+
+  try {
+    return JSON.parse(storedUser) as Employee;
+  } catch {
+    clearStoredAuth();
+    return null;
+  }
+};
+
 export const login = createAsyncThunk<
   {
     token: string;
@@ -19,6 +46,7 @@ export const login = createAsyncThunk<
     const { access_token, user } = response.data;
     localStorage.setItem("token", access_token);
     localStorage.setItem("user", JSON.stringify(user));
+    setAuthorizationHeader(access_token);
     return { token: access_token, user };
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -31,27 +59,44 @@ export const login = createAsyncThunk<
 export const logout = createAsyncThunk<void, void, { rejectValue: string }>(
   "auth/logout",
   async (_, { rejectWithValue }) => {
+    const token = localStorage.getItem("token");
+
     try {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-    } catch (error: unknown) {
-      console.error("Logout error:", error);
-      if (axios.isAxiosError(error)) {
-        return rejectWithValue("Logout failed due to network issue");
+      if (token) {
+        await axios.post(
+          "/api/auth/logout",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
       }
-      return rejectWithValue("An unknown error occurred during logout");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data?.message ||
+            "Server session could not be revoked; you were signed out locally"
+        );
+      }
+      return rejectWithValue(
+        "Server session could not be revoked; you were signed out locally"
+      );
+    } finally {
+      clearStoredAuth();
     }
   }
 );
 
 const tokenFromStorage = localStorage.getItem("token");
-const userFromStorage = localStorage.getItem("user")
-  ? JSON.parse(localStorage.getItem("user")!)
-  : null;
+const userFromStorage = readStoredUser();
+
+setAuthorizationHeader(userFromStorage ? tokenFromStorage : null);
 
 const initialState: AuthState = {
-  isAuthenticated: !!tokenFromStorage,
-  token: tokenFromStorage,
+  isAuthenticated: Boolean(tokenFromStorage && userFromStorage),
+  token: userFromStorage ? tokenFromStorage : null,
   user: userFromStorage,
   loading: false,
   error: null,
@@ -94,8 +139,17 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.token = null;
         state.user = null;
+        state.error = null;
       })
-      .addCase(logout.rejected, setError);
+      .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.token = null;
+        state.user = null;
+        state.error =
+          action.payload ||
+          "Server session could not be revoked; you were signed out locally";
+      });
   },
 });
 

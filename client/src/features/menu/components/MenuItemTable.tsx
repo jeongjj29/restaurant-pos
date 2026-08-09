@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMenuItems } from "../slices/menuItemsSlice";
 import { fetchMenuCategories } from "../slices/menuCategoriesSlice";
@@ -25,6 +25,9 @@ const MenuItemTable: React.FC<MenuItemTableProps> = ({
   const menuItemsError = useSelector(
     (state: RootState) => state.menuItems.error
   );
+  const menuItemsLoading = useSelector(
+    (state: RootState) => state.menuItems.loading
+  );
 
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey;
@@ -38,11 +41,6 @@ const MenuItemTable: React.FC<MenuItemTableProps> = ({
     "sticky top-0 px-4 py-2 text-left text-sm font-semibold text-text-primary bg-surface border-b border-border cursor-pointer";
   const tdCSS =
     "px-4 py-2 text-left text-sm text-text-secondary border-b border-border";
-
-  useEffect(() => {
-    dispatch(fetchMenuItems());
-    dispatch(fetchMenuCategories());
-  }, [dispatch]);
 
   const sortedMenuItems = [...menuItems].sort((a, b) => {
     const aVal =
@@ -65,17 +63,57 @@ const MenuItemTable: React.FC<MenuItemTableProps> = ({
     setSortConfig({ key, direction });
   };
 
-  if (menuItems.length === 0 && !menuItemsError) {
+  if (menuItems.length === 0 && menuItemsLoading) {
     return <p className="text-text-secondary">Loading menu items...</p>;
   }
 
-  if (menuItemsError) {
-    return <p className="text-red-600">Error: {menuItemsError}</p>;
+  if (menuItems.length === 0 && menuItemsError) {
+    return (
+      <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-xl border border-error/40 bg-error/10 p-6 text-center">
+        <p className="text-error">Could not load menu items: {menuItemsError}</p>
+        <button
+          type="button"
+          onClick={() => {
+            void dispatch(fetchMenuItems());
+            void dispatch(fetchMenuCategories());
+          }}
+          className="rounded-lg border border-border px-3 py-2 text-sm font-semibold hover:bg-white/10"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  if (menuItems.length === 0) {
+    return (
+      <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-white/5 p-6 text-center">
+        <p className="text-text-secondary">No menu items have been added yet.</p>
+        <button
+          type="button"
+          onClick={() => {
+            setMenuItemToEdit(null);
+            setMenuItemFormHidden(false);
+          }}
+          className="accent-badge rounded-lg px-4 py-2 text-sm"
+        >
+          Add first menu item
+        </button>
+      </div>
+    );
   }
 
   return (
-    <div className="h-full min-h-0 rounded-md border border-border shadow-md">
-      <div className="h-full min-h-0 overflow-auto rounded-md">
+    <div className="flex h-full min-h-0 flex-col gap-2">
+      {menuItemsError && (
+        <div
+          role="alert"
+          className="rounded-lg border border-error/40 bg-error/10 px-3 py-2 text-sm text-error"
+        >
+          Last menu action failed: {menuItemsError}
+        </div>
+      )}
+      <div className="h-full min-h-0 overflow-auto rounded-md border border-border shadow-md">
         <table className="min-w-full bg-surface rounded-md">
           <thead className="bg-surface z-10">
             <tr>
@@ -128,7 +166,7 @@ const MenuItemTable: React.FC<MenuItemTableProps> = ({
                 <td className={tdCSS}>{menuItem.name}</td>
                 <td className={tdCSS}>{menuItem.secondary_name}</td>
                 <td className={tdCSS}>{menuItem.menu_category.name}</td>
-                <td className={tdCSS}>${menuItem.price}</td>
+                <td className={tdCSS}>${Number(menuItem.price).toFixed(2)}</td>
                 <td className={tdCSS}>
                   <EditButton
                     onClick={() => {

@@ -18,7 +18,7 @@ export interface Employee {
   email: string;
   phone_number: number | null;
   role_id: number;
-  created_at: Date;
+  created_at: string | Date;
   role: Role;
 }
 
@@ -38,12 +38,12 @@ export interface AddEmployeePayload {
   password: string;
 }
 
-export interface UpdateEmployeePayload {
+export type UpdateEmployeePayload = {
   id: number;
-  first_name: string | null;
-  last_name: string | null;
-  email: string | null;
+  first_name: string;
+  last_name: string;
+  email: string;
   phone_number: number | null;
-  username: string | null;
-  role_id: number | null;
-}
+  username: string;
+  role_id: number;
+};

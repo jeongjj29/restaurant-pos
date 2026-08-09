@@ -54,10 +54,8 @@ export const updateMenuItem = createAsyncThunk<
   { rejectValue: string }
 >("menuItems/updateMenuItem", async (updatedMenuItem, { rejectWithValue }) => {
   try {
-    const response = await axios.put(
-      `/api/menu_items/${updatedMenuItem.id}`,
-      updatedMenuItem
-    );
+    const { id, ...changes } = updatedMenuItem;
+    const response = await axios.patch(`/api/menu_items/${id}`, changes);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

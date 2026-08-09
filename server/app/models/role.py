@@ -8,7 +8,7 @@ class Role(db.Model, JsonSerializerMixin):
     __tablename__ = "roles"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False, unique=True)
     access_level = db.Column(db.Integer, nullable=False)
 
     users = db.relationship("User", back_populates="role")

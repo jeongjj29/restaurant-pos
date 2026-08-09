@@ -7,7 +7,7 @@ class MenuItem(db.Model, JsonSerializerMixin):
     __tablename__ = "menu_items"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False, unique=True)
     secondary_name = db.Column(db.String, nullable=True)
     description = db.Column(db.String, nullable=True)
     price = db.Column(db.DECIMAL(precision=10, scale=2), nullable=False)

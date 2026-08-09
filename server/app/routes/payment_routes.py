@@ -1,13 +1,15 @@
 from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
-from flask import Blueprint, request, make_response
+from flask import Blueprint, abort, make_response
+from app.authorization import access_level_required
 from app.models import Order, Payment
 from app.extensions import db
-from .utils import get_or_404
+from .utils import get_json_object, get_or_404
 
 payment_bp = Blueprint("payments", __name__, url_prefix="/api/payments")
 MONEY_QUANTUM = Decimal("0.01")
+PAYMENT_FIELDS = {"amount", "type", "order_id"}
 
 
 def _money(value, field_name):
@@ -22,15 +24,21 @@ def _money(value, field_name):
 
 
 @payment_bp.route("/", methods=["GET"])
+@access_level_required()
 def get_payments():
     payments = [payment.to_dict() for payment in Payment.query.all()]
     return make_response(payments, 200)
 
 
 @payment_bp.route("/", methods=["POST"])
+@access_level_required()
 def create_payment():
-    data = dict(request.get_json(silent=True) or {})
-    order = get_or_404(Order, data["order_id"])
+    data = get_json_object(PAYMENT_FIELDS)
+    order = db.session.execute(
+        db.select(Order).where(Order.id == data["order_id"]).with_for_update()
+    ).scalar_one_or_none()
+    if order is None:
+        abort(404)
     amount = _money(data.get("amount"), "payment amount")
 
     if amount < 0:
@@ -54,8 +62,7 @@ def create_payment():
             f"Payment exceeds remaining balance of ${remaining_balance:.2f}"
         )
 
-    data["amount"] = amount
-    payment = Payment(**data)
+    payment = Payment(amount=amount, type=data["type"], order_id=order.id)
     db.session.add(payment)
 
     if amount == remaining_balance:
@@ -66,20 +73,8 @@ def create_payment():
     return make_response(payment.to_dict(), 201)
 
 
-@payment_bp.route("/<int:id>", methods=["GET", "PATCH", "DELETE"])
+@payment_bp.route("/<int:id>", methods=["GET"])
+@access_level_required()
 def handle_payment(id):
     payment = get_or_404(Payment, id)
-
-    if request.method == "GET":
-        return make_response(payment.to_dict(), 200)
-
-    if request.method == "PATCH":
-        for key, value in request.get_json().items():
-            setattr(payment, key, value)
-        db.session.commit()
-        return make_response(payment.to_dict(), 200)
-
-    if request.method == "DELETE":
-        db.session.delete(payment)
-        db.session.commit()
-        return make_response({}, 204)
+    return make_response(payment.to_dict(), 200)

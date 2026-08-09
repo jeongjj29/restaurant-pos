@@ -8,15 +8,17 @@ class Order(db.Model, JsonSerializerMixin):
     __tablename__ = "orders"
 
     id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String, nullable=False)
+    status = db.Column(db.String, nullable=False, index=True)
     type = db.Column(db.String, nullable=False)
     guests = db.Column(db.Integer, default=0)
     total_price = db.Column(db.DECIMAL(precision=10, scale=2), default=0.0)
     sales_tax = db.Column(db.DECIMAL(precision=10, scale=5), default=0.08875)
     created_at = db.Column(db.DateTime, default=db.func.now())
     closed_at = db.Column(db.DateTime, nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    table_id = db.Column(db.Integer, db.ForeignKey("tables.id"))
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("users.id"), nullable=False, index=True
+    )
+    table_id = db.Column(db.Integer, db.ForeignKey("tables.id"), index=True)
 
     user = db.relationship("User", back_populates="orders")
     table = db.relationship("Table", back_populates="orders")

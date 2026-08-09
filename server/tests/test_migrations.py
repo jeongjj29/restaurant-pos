@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from flask_migrate import upgrade
-from sqlalchemy import inspect
+from sqlalchemy import String, inspect
 
 from app import create_app
 from app.extensions import db
@@ -32,6 +32,11 @@ class MigratedSchemaTestCase(unittest.TestCase):
                 table_names = inspect(db.engine).get_table_names()
                 self.assertIn("token_blocklist", table_names)
                 self.assertNotIn("token_block_list", table_names)
+                user_columns = {
+                    column["name"]: column
+                    for column in inspect(db.engine).get_columns("users")
+                }
+                self.assertIsInstance(user_columns["phone_number"]["type"], String)
 
                 role = Role(name="Admin", access_level=5)
                 db.session.add(role)
@@ -56,18 +61,24 @@ class MigratedSchemaTestCase(unittest.TestCase):
                 },
             )
             self.assertEqual(login_response.status_code, 200)
-            token = login_response.get_json()["access_token"]
-            auth_header = {"Authorization": f"Bearer {token}"}
+            access_cookie = client.get_cookie("access_token_cookie")
+            csrf_cookie = client.get_cookie("csrf_access_token")
+            self.assertIsNotNone(access_cookie)
+            self.assertIsNotNone(csrf_cookie)
 
-            protected_response = client.get("/api/auth/protected", headers=auth_header)
+            protected_response = client.get("/api/auth/protected")
             self.assertEqual(protected_response.status_code, 200)
 
-            logout_response = client.post("/api/auth/logout", headers=auth_header)
+            logout_response = client.post(
+                "/api/auth/logout",
+                headers={"X-CSRF-TOKEN": csrf_cookie.value},
+            )
             self.assertEqual(logout_response.status_code, 200)
             with app.app_context():
                 self.assertEqual(TokenBlockList.query.count(), 1)
 
-            revoked_response = client.get("/api/auth/protected", headers=auth_header)
+            client.set_cookie("access_token_cookie", access_cookie.value)
+            revoked_response = client.get("/api/auth/protected")
             self.assertEqual(revoked_response.status_code, 401)
         finally:
             with app.app_context():

@@ -1,4 +1,5 @@
 from .auth_routes import auth_bp
+from .config_routes import config_bp
 from .discount_routes import discount_bp
 from .menu_category_routes import menu_category_bp
 from .menu_item_routes import menu_item_bp
@@ -13,6 +14,7 @@ from .base_routes import base_bp
 
 def register_blueprints(app):
     app.register_blueprint(auth_bp)
+    app.register_blueprint(config_bp)
     app.register_blueprint(base_bp)
     app.register_blueprint(discount_bp)
     app.register_blueprint(menu_category_bp)

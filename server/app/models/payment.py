@@ -10,7 +10,9 @@ class Payment(db.Model, JsonSerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.DECIMAL(precision=10, scale=2), nullable=False)
     type = db.Column(db.String, nullable=False)
-    order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
+    order_id = db.Column(
+        db.Integer, db.ForeignKey("orders.id"), nullable=False, index=True
+    )
 
     order = db.relationship("Order", back_populates="payments")
 

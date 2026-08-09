@@ -9,14 +9,16 @@ class User(db.Model, JsonSerializerMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, nullable=False, unique=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, nullable=False)
-    phone_number = db.Column(db.Integer, nullable=True)
+    email = db.Column(db.String, nullable=False, unique=True)
+    phone_number = db.Column(db.String(20), nullable=True)
     _password_hash = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
-    role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
+    role_id = db.Column(
+        db.Integer, db.ForeignKey("roles.id"), nullable=False, index=True
+    )
 
     role = db.relationship("Role", back_populates="users")
     orders = db.relationship("Order", back_populates="user")
@@ -55,7 +57,7 @@ class User(db.Model, JsonSerializerMixin):
         phone_number_str = str(phone_number)
         if not phone_number_str.isdigit() or len(phone_number_str) != 10:
             raise ValueError("Phone number must be 10 digits")
-        return int(phone_number_str)
+        return phone_number_str
 
     @hybrid_property
     def password_hash(self):

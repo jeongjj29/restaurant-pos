@@ -5,9 +5,14 @@ from .serializer import JsonSerializerMixin
 
 class Table(db.Model, JsonSerializerMixin):
     __tablename__ = "tables"
+    __table_args__ = (
+        db.UniqueConstraint(
+            "location_x", "location_y", name="uq_tables_location_x_location_y"
+        ),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
-    number = db.Column(db.Integer, nullable=False)
+    number = db.Column(db.Integer, nullable=False, unique=True)
     capacity = db.Column(db.Integer, nullable=False)
     location_x = db.Column(db.Integer, nullable=True)
     location_y = db.Column(db.Integer, nullable=True)

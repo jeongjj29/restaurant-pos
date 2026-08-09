@@ -4,7 +4,7 @@ import unittest
 
 from app import create_app
 from app.extensions import db
-from app.models import Role, Table, User
+from app.models import MenuCategory, MenuItem, Role, Table, User
 
 
 class DomainRoutesTestCase(unittest.TestCase):
@@ -17,6 +17,11 @@ class DomainRoutesTestCase(unittest.TestCase):
                 "TESTING": True,
                 "SQLALCHEMY_DATABASE_URI": f"sqlite:///{cls.db_path}",
                 "JWT_SECRET_KEY": "test-jwt-secret",
+                "JWT_TOKEN_LOCATION": ["cookies"],
+                "JWT_COOKIE_CSRF_PROTECT": True,
+                "JWT_COOKIE_SECURE": False,
+                "MIN_PASSWORD_LENGTH": 8,
+                "SALES_TAX_RATE": "0.08875",
             }
         )
         cls.client = cls.app.test_client()
@@ -47,7 +52,28 @@ class DomainRoutesTestCase(unittest.TestCase):
             db.session.flush()
             cls.table_id = table.id
 
+            category = MenuCategory(name="Test Entrees")
+            db.session.add(category)
+            db.session.flush()
+            cls.category_id = category.id
+
+            menu_item = MenuItem(
+                name="Test Bibimbap", price=40, category_id=category.id
+            )
+            db.session.add(menu_item)
+            db.session.flush()
+            cls.menu_item_id = menu_item.id
+
             db.session.commit()
+
+        login_response = cls.client.post(
+            "/api/auth/login",
+            json={"username": "owner01", "password": "secure-password"},
+        )
+        if login_response.status_code != 200:
+            raise RuntimeError("Could not authenticate domain route test client")
+        csrf_cookie = cls.client.get_cookie("csrf_access_token")
+        cls.client.environ_base["HTTP_X_CSRF_TOKEN"] = csrf_cookie.value
 
     @classmethod
     def tearDownClass(cls):
@@ -55,6 +81,30 @@ class DomainRoutesTestCase(unittest.TestCase):
             db.session.remove()
             db.drop_all()
         os.remove(cls.db_path)
+
+    def create_order_with_item(self, *, order_type="take_out", quantity=1):
+        order_response = self.client.post(
+            "/api/orders",
+            json={
+                "type": order_type,
+                "guests": 2,
+                "table_id": self.table_id if order_type == "dine_in" else None,
+                "items": [
+                    {
+                        "menu_item_id": self.menu_item_id,
+                        "quantity": quantity,
+                    }
+                ],
+            },
+        )
+        self.assertEqual(order_response.status_code, 201)
+        order = order_response.get_json()
+        self.assertEqual(order["status"], "open")
+        self.assertEqual(order["total_price"], round(40 * quantity * 1.08875, 2))
+        self.assertEqual(order["sales_tax"], 0.08875)
+        self.assertEqual(order["user_id"], self.user_id)
+        self.assertEqual(order["order_items"][0]["price"], 40.0)
+        return order["id"], order["order_items"][0]["id"]
 
     def test_role_crud_flow(self):
         create_response = self.client.post(
@@ -181,26 +231,32 @@ class DomainRoutesTestCase(unittest.TestCase):
         self.client.delete(f"/api/menu_items/{item_id}")
         self.client.delete(f"/api/menu_categories/{category_id}")
 
-    def test_order_and_payment_crud_flow(self):
-        create_order_response = self.client.post(
-            "/api/orders",
-            json={
-                "status": "open",
-                "type": "dine_in",
-                "guests": 2,
-                "total_price": 42.5,
-                "sales_tax": 0.08875,
-                "user_id": self.user_id,
-                "table_id": self.table_id,
-            },
-        )
-        self.assertEqual(create_order_response.status_code, 201)
-        order_id = create_order_response.get_json()["id"]
+    def test_order_totals_use_persisted_menu_prices_and_payments_are_immutable(self):
+        order_id, order_item_id = self.create_order_with_item()
 
         fetch_order_response = self.client.get(f"/api/orders/{order_id}")
         self.assertEqual(fetch_order_response.status_code, 200)
-        self.assertIsInstance(fetch_order_response.get_json()["total_price"], float)
+        self.assertEqual(fetch_order_response.get_json()["total_price"], 43.55)
         self.assertIsInstance(fetch_order_response.get_json()["sales_tax"], float)
+
+        item_update_response = self.client.patch(
+            f"/api/order_items/{order_item_id}",
+            json={"quantity": 2, "price": 0.01},
+        )
+        self.assertEqual(item_update_response.status_code, 200)
+        self.assertEqual(item_update_response.get_json()["price"], 40.0)
+
+        updated_order = self.client.get(f"/api/orders/{order_id}").get_json()
+        self.assertEqual(updated_order["total_price"], 87.1)
+
+        managed_total_response = self.client.patch(
+            f"/api/orders/{order_id}", json={"total_price": 1, "status": "closed"}
+        )
+        self.assertEqual(managed_total_response.status_code, 400)
+        self.assertEqual(
+            managed_total_response.get_json()["message"],
+            "Unexpected fields: status, total_price",
+        )
 
         create_payment_response = self.client.post(
             "/api/payments",
@@ -213,73 +269,59 @@ class DomainRoutesTestCase(unittest.TestCase):
 
         fetch_payment_response = self.client.get(f"/api/payments/{payment_id}")
         self.assertEqual(fetch_payment_response.status_code, 200)
-
-        patch_payment_response = self.client.patch(
-            f"/api/payments/{payment_id}",
-            json={"amount": 40.0},
+        self.assertEqual(
+            self.client.patch(
+                f"/api/payments/{payment_id}", json={"amount": 1}
+            ).status_code,
+            405,
         )
-        self.assertEqual(patch_payment_response.status_code, 200)
-
-        delete_payment_response = self.client.delete(f"/api/payments/{payment_id}")
-        self.assertEqual(delete_payment_response.status_code, 204)
-        missing_payment_response = self.client.get(f"/api/payments/{payment_id}")
-        self.assertEqual(missing_payment_response.status_code, 404)
-
-        delete_order_response = self.client.delete(f"/api/orders/{order_id}")
-        self.assertEqual(delete_order_response.status_code, 204)
-        missing_order_response = self.client.get(f"/api/orders/{order_id}")
-        self.assertEqual(missing_order_response.status_code, 404)
+        self.assertEqual(
+            self.client.delete(f"/api/payments/{payment_id}").status_code, 405
+        )
+        self.assertEqual(
+            self.client.get(f"/api/payments/{payment_id}").get_json()["amount"], 20.0
+        )
 
     def test_payments_keep_partial_orders_open_and_close_exactly_paid_orders(self):
-        create_order_response = self.client.post(
-            "/api/orders",
-            json={
-                "status": "open",
-                "type": "dine_in",
-                "guests": 2,
-                "total_price": 42.5,
-                "sales_tax": 0.08875,
-                "user_id": self.user_id,
-                "table_id": self.table_id,
-            },
-        )
-        self.assertEqual(create_order_response.status_code, 201)
-        order_id = create_order_response.get_json()["id"]
+        order_id, order_item_id = self.create_order_with_item(order_type="dine_in")
+        order_total = self.client.get(f"/api/orders/{order_id}").get_json()[
+            "total_price"
+        ]
 
         partial_response = self.client.post(
             "/api/payments",
             json={"amount": 12.5, "type": "cash", "order_id": order_id},
         )
         self.assertEqual(partial_response.status_code, 201)
-        partial_payment_id = partial_response.get_json()["id"]
 
         partial_order = self.client.get(f"/api/orders/{order_id}").get_json()
         self.assertEqual(partial_order["status"], "open")
         self.assertIsNone(partial_order["closed_at"])
 
+        remaining = round(order_total - 12.5, 2)
+
         overpayment_response = self.client.post(
             "/api/payments",
-            json={"amount": 30.01, "type": "visa", "order_id": order_id},
+            json={"amount": remaining + 0.01, "type": "visa", "order_id": order_id},
         )
         self.assertEqual(overpayment_response.status_code, 400)
         self.assertEqual(
             overpayment_response.get_json()["message"],
-            "Payment exceeds remaining balance of $30.00",
+            f"Payment exceeds remaining balance of ${remaining:.2f}",
         )
 
         exact_response = self.client.post(
             "/api/payments",
-            json={"amount": 30, "type": "visa", "order_id": order_id},
+            json={"amount": remaining, "type": "visa", "order_id": order_id},
         )
         self.assertEqual(exact_response.status_code, 201)
-        exact_payment_id = exact_response.get_json()["id"]
 
         closed_order = self.client.get(f"/api/orders/{order_id}").get_json()
         self.assertEqual(closed_order["status"], "closed")
         self.assertIsNotNone(closed_order["closed_at"])
         self.assertEqual(
             sorted(payment["amount"] for payment in closed_order["payments"]),
-            [12.5, 30.0],
+            [12.5, remaining],
         )
         self.assertTrue(
             all(
@@ -302,40 +344,28 @@ class DomainRoutesTestCase(unittest.TestCase):
             closed_order_payment.get_json()["message"], "Order is already closed"
         )
 
-        self.client.delete(f"/api/payments/{partial_payment_id}")
-        self.client.delete(f"/api/payments/{exact_payment_id}")
-        self.client.delete(f"/api/orders/{order_id}")
+        closed_item_update = self.client.patch(
+            f"/api/order_items/{order_item_id}", json={"quantity": 2}
+        )
+        self.assertEqual(closed_item_update.status_code, 400)
+        self.assertEqual(
+            closed_item_update.get_json()["message"],
+            "Closed orders cannot be modified",
+        )
 
     def test_order_and_payment_validation_errors_return_400(self):
         invalid_order = self.client.post(
             "/api/orders",
             json={
-                "status": "pending",
-                "type": "dine_in",
+                "type": "delivery",
                 "guests": 2,
-                "total_price": 20.0,
-                "sales_tax": 0.08875,
-                "user_id": self.user_id,
                 "table_id": self.table_id,
             },
         )
         self.assertEqual(invalid_order.status_code, 400)
-        self.assertEqual(invalid_order.get_json()["message"], "Invalid order status")
+        self.assertEqual(invalid_order.get_json()["message"], "Invalid order type")
 
-        create_order = self.client.post(
-            "/api/orders",
-            json={
-                "status": "open",
-                "type": "take_out",
-                "guests": 1,
-                "total_price": 18.0,
-                "sales_tax": 0.08875,
-                "user_id": self.user_id,
-                "table_id": None,
-            },
-        )
-        self.assertEqual(create_order.status_code, 201)
-        order_id = create_order.get_json()["id"]
+        order_id, _ = self.create_order_with_item(order_type="take_out")
 
         invalid_payment = self.client.post(
             "/api/payments",
@@ -345,9 +375,6 @@ class DomainRoutesTestCase(unittest.TestCase):
         self.assertEqual(
             invalid_payment.get_json()["message"], "Invalid payment amount"
         )
-
-        delete_order_response = self.client.delete(f"/api/orders/{order_id}")
-        self.assertEqual(delete_order_response.status_code, 204)
 
     def test_order_items_not_found_returns_404(self):
         response = self.client.get("/api/orders/99999/items")
@@ -370,6 +397,23 @@ class DomainRoutesTestCase(unittest.TestCase):
             response.get_json()["message"], "Missing required field: password"
         )
 
+        short_password = self.client.post(
+            "/api/users",
+            json={
+                "username": "server03",
+                "first_name": "Sammy",
+                "last_name": "Taylor",
+                "email": "sam@example.com",
+                "role_id": self.role_id,
+                "password": "short",
+            },
+        )
+        self.assertEqual(short_password.status_code, 400)
+        self.assertEqual(
+            short_password.get_json()["message"],
+            "Password must be at least 8 characters long",
+        )
+
     def test_created_user_can_log_in_and_update_password(self):
         create_response = self.client.post(
             "/api/users",
@@ -390,7 +434,8 @@ class DomainRoutesTestCase(unittest.TestCase):
         self.assertNotIn("password_hash", user_payload)
         self.assertNotIn("_password_hash", user_payload)
 
-        login_response = self.client.post(
+        credential_client = self.app.test_client()
+        login_response = credential_client.post(
             "/api/auth/login",
             json={"username": "server02", "password": "first-password"},
         )
@@ -403,12 +448,12 @@ class DomainRoutesTestCase(unittest.TestCase):
         self.assertEqual(update_response.status_code, 200)
         self.assertEqual(update_response.get_json()["first_name"], "Robert")
 
-        old_password_response = self.client.post(
+        old_password_response = credential_client.post(
             "/api/auth/login",
             json={"username": "server02", "password": "first-password"},
         )
         self.assertEqual(old_password_response.status_code, 401)
-        new_password_response = self.client.post(
+        new_password_response = credential_client.post(
             "/api/auth/login",
             json={"username": "server02", "password": "second-password"},
         )
@@ -418,8 +463,11 @@ class DomainRoutesTestCase(unittest.TestCase):
             f"/api/users/{user_id}",
             json={"last_name": "Updated", "password": ""},
         )
-        self.assertEqual(empty_password_update.status_code, 200)
-        retained_password_response = self.client.post(
+        self.assertEqual(empty_password_update.status_code, 400)
+        self.assertEqual(
+            empty_password_update.get_json()["message"], "Password is required"
+        )
+        retained_password_response = credential_client.post(
             "/api/auth/login",
             json={"username": "server02", "password": "second-password"},
         )

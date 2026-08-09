@@ -27,6 +27,9 @@ function TableForm({
   const tableSchema = yup.object().shape({
     number: yup
       .number()
+      .typeError("Table number must be a number")
+      .integer("Table number must be a whole number")
+      .positive("Table number must be greater than 0")
       .required("Number is required")
       .test("unique-number", "Table number already exists", function (value) {
         if (tableToEdit && tableToEdit.number === value) {
@@ -36,12 +39,20 @@ function TableForm({
       }),
     capacity: yup
       .number()
+      .typeError("Capacity must be a number")
+      .integer("Capacity must be a whole number")
       .min(1, "Capacity must be at least 1")
       .required("Capacity is required"),
   });
 
   return (
     <div className="mx-auto w-full max-w-md rounded-md bg-white/5 p-4 shadow-md">
+      <p className="text-xs uppercase tracking-[0.16em] text-text-secondary">
+        Floor plan
+      </p>
+      <h2 className="mb-4 mt-1 text-xl font-semibold">
+        {tableToEdit ? `Edit table ${tableToEdit.number}` : "Add a table"}
+      </h2>
       <Formik<TableFormValues>
         initialValues={{
           number: tableToEdit?.number ?? "",
@@ -49,50 +60,43 @@ function TableForm({
         }}
         validationSchema={tableSchema}
         enableReinitialize
-        onSubmit={(values, { setSubmitting, resetForm }) => {
+        onSubmit={async (
+          values,
+          { setSubmitting, resetForm, setStatus }
+        ) => {
+          setStatus(null);
           const parsedValues = {
             number: Number(values.number),
             capacity: Number(values.capacity),
           };
 
-          if (tableToEdit) {
-            dispatch(
-              updateTable({
-                tableId: tableToEdit.id,
-                updatedData: parsedValues,
-              })
-            )
-              .unwrap()
-              .then((res) => {
-                console.log("Table updated successfully:", res);
-                resetForm();
-              })
-              .catch((err) => {
-                console.error("Error updating table:", err);
-              })
-              .finally(() => {
-                setSubmitting(false);
-                setEditFormHidden(true);
-                setTableToEdit(null);
-              });
-          } else {
-            dispatch(addTable(parsedValues))
-              .unwrap()
-              .then((res) => {
-                console.log("Table added successfully:", res);
-                resetForm();
-              })
-              .catch((err) => {
-                console.error("Error adding table:", err);
-              })
-              .finally(() => {
-                setSubmitting(false);
-                setEditFormHidden(true);
-              });
+          try {
+            if (tableToEdit) {
+              await dispatch(
+                updateTable({
+                  tableId: tableToEdit.id,
+                  updatedData: parsedValues,
+                })
+              ).unwrap();
+            } else {
+              await dispatch(addTable(parsedValues)).unwrap();
+            }
+
+            resetForm();
+            setEditFormHidden(true);
+            setTableToEdit(null);
+          } catch (error: unknown) {
+            setStatus(
+              typeof error === "string"
+                ? error
+                : "Table changes could not be saved"
+            );
+          } finally {
+            setSubmitting(false);
           }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, status }) => (
           <Form>
             <div className="mb-4">
               <label
@@ -102,6 +106,7 @@ function TableForm({
                 Table Number
               </label>
               <Field
+                id="number"
                 name="number"
                 type="number"
                 className="border border-border bg-white/10 rounded-md w-full p-2"
@@ -121,6 +126,7 @@ function TableForm({
                 Capacity
               </label>
               <Field
+                id="capacity"
                 name="capacity"
                 type="number"
                 className="border border-border bg-white/10 rounded-md w-full p-2"
@@ -132,6 +138,15 @@ function TableForm({
               />
             </div>
 
+            {status && (
+              <div
+                role="alert"
+                className="mb-4 rounded-lg border border-error/40 bg-error/10 p-3 text-sm text-error"
+              >
+                {status}
+              </div>
+            )}
+
             <div className="flex space-x-4">
               <button
                 type="submit"
@@ -140,7 +155,11 @@ function TableForm({
                   tableToEdit ? "bg-green-600" : "bg-blue-600"
                 } hover:bg-opacity-90 text-white font-bold py-2 px-4 rounded`}
               >
-                {tableToEdit ? "Update Table" : "Add Table"}
+                {isSubmitting
+                  ? "Saving…"
+                  : tableToEdit
+                    ? "Update Table"
+                    : "Add Table"}
               </button>
 
               <button

@@ -9,6 +9,7 @@ import MenuItemGrid from "./MenuItemGrid";
 import OrderSummaryTable from "./OrderSummaryTable";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { calculateSubtotal } from "@utils/pricingUtils";
+import { fetchTables } from "@tables/slices/tablesSlice";
 
 interface OrderInputProps {
   tableId?: number;
@@ -21,8 +22,10 @@ function OrderInput({ tableId }: OrderInputProps) {
     (state: RootState) => state.menuCategories.menuCategories
   );
   const tables = useAppSelector((state: RootState) => state.tables.tables);
+  const currentUser = useAppSelector((state: RootState) => state.auth.user);
   const table = tables.find((table) => table.id === tableId);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<MenuCategory | null>(
     null
   );
@@ -41,6 +44,7 @@ function OrderInput({ tableId }: OrderInputProps) {
   }, [menuCategories, selectedCategory]);
 
   const handleMenuItemClick = (menuItem: MenuItem) => {
+    setSubmitError(null);
     setPendingOrderItems((prevOrderItems) => {
       const existingItem = prevOrderItems.find(
         (item) => item.id === menuItem.id
@@ -58,16 +62,52 @@ function OrderInput({ tableId }: OrderInputProps) {
     });
   };
 
+  const handleQuantityChange = (menuItemId: number, change: number) => {
+    setSubmitError(null);
+    setPendingOrderItems((items) =>
+      items.flatMap((item) => {
+        if (item.id !== menuItemId) return [item];
+        const quantity = item.quantity + change;
+        return quantity > 0 ? [{ ...item, quantity }] : [];
+      })
+    );
+  };
+
+  const handleRemoveItem = (menuItemId: number) => {
+    setSubmitError(null);
+    setPendingOrderItems((items) =>
+      items.filter((item) => item.id !== menuItemId)
+    );
+  };
+
+  const getErrorMessage = (error: unknown) =>
+    typeof error === "string"
+      ? error
+      : error instanceof Error
+        ? error.message
+        : "Unable to submit the order. Please try again.";
+
   const handleOrderSubmit = async () => {
+    if (submitting) return;
+    if (pendingOrderItems.length === 0) {
+      setSubmitError("Add at least one menu item before submitting the order.");
+      return;
+    }
+    if (!currentUser) {
+      setSubmitError("Your session is missing a user. Please sign in again.");
+      return;
+    }
+
     try {
       setSubmitting(true);
+      setSubmitError(null);
       const order = await dispatch(
         addOrder({
           type: table ? "dine_in" : "take_out",
-          total_price: total,
+          total_price: Number(total.toFixed(2)),
           status: "open",
           sales_tax: TAX_RATE,
-          user_id: 1,
+          user_id: currentUser.id,
           table_id: table?.id || null,
         })
       ).unwrap();
@@ -77,32 +117,37 @@ function OrderInput({ tableId }: OrderInputProps) {
             addOrderItem({
               order_id: order.id,
               menu_item_id: item.id,
-              price: item.price,
+              price: Number(item.price),
               quantity: item.quantity,
             })
-          )
+          ).unwrap()
         )
       );
+      await Promise.all([
+        dispatch(fetchOrders()).unwrap(),
+        dispatch(fetchTables()).unwrap(),
+      ]);
+      navigate("/orders/all", { replace: true });
     } catch (error) {
-      console.error("Error submitting order:", error);
+      setSubmitError(getErrorMessage(error));
     } finally {
       setSubmitting(false);
-      dispatch(fetchOrders());
-      navigate("/orders/all");
     }
   };
 
   return (
-    <div className="flex flex-row h-full w-full bg-white/5 rounded-md justify-between">
-      <div className="w-1/8 overflow-y-auto flex flex-col justify-start m-4">
+    <div className="flex h-full w-full flex-col gap-3 rounded-xl bg-white/5 p-3 xl:flex-row">
+      <div className="flex shrink-0 gap-2 overflow-x-auto xl:w-44 xl:flex-col xl:overflow-y-auto">
         {menuCategories.map((menuCategory) => (
           <button
+            type="button"
             key={menuCategory.id}
             onClick={() => setSelectedCategory(menuCategory)}
-            className={`w-full hover:bg-green-400 text-xl font-bold py-2 px-2 rounded-sm mb-2 ${
+            aria-pressed={selectedCategory?.id === menuCategory.id}
+            className={`min-w-32 rounded-lg px-3 py-2 text-left text-sm font-bold transition-colors xl:w-full ${
               selectedCategory?.id === menuCategory.id
-                ? "bg-white/15"
-                : "bg-white/5"
+                ? "bg-accent text-[#241102]"
+                : "bg-white/5 text-text-primary hover:bg-white/10"
             }`}
           >
             {menuCategory.name}
@@ -123,6 +168,10 @@ function OrderInput({ tableId }: OrderInputProps) {
         total={total}
         onClick={handleOrderSubmit}
         submitting={submitting}
+        error={submitError}
+        onIncrement={(itemId) => handleQuantityChange(itemId, 1)}
+        onDecrement={(itemId) => handleQuantityChange(itemId, -1)}
+        onRemove={handleRemoveItem}
       />
     </div>
   );

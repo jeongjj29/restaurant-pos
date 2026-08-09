@@ -1,28 +1,28 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   DndContext,
   DragOverlay,
   DragEndEvent,
   pointerWithin,
 } from "@dnd-kit/core";
-import { useSelector } from "react-redux";
-import { useAppDispatch } from "@app/hooks";
+import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { fetchTables, updateTable } from "@tables/slices/tablesSlice";
 import DndMonitor from "@tables/DndMonitor";
 import TableLayout from "@tables/components/TableLayout";
 import TableList from "@tables/components/TableList";
-import { RootState } from "@app/store";
 import { Table } from "@tables/types";
 
 function TableManagementPage() {
   const dispatch = useAppDispatch();
 
-  const tables = useSelector((state: RootState) => state.tables.tables);
-  const error = useSelector((state: RootState) => state.tables.error);
+  const tables = useAppSelector((state) => state.tables.tables);
 
   const [activeTable, setActiveTable] = useState<Table | null>(null);
+  const [fetchLoading, setFetchLoading] = useState(tables.length === 0);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [layoutError, setLayoutError] = useState<string | null>(null);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (!over) return;
@@ -33,35 +33,101 @@ function TableManagementPage() {
       (table) => table.location_x === overX && table.location_y === overY
     );
 
-    if (occupiedLocation) {
-      dispatch(
-        updateTable({
-          tableId: occupiedLocation.id,
-          updatedData: { location_x: null, location_y: null },
-        })
-      ).catch((err) => console.error("Error updating occupied table:", err));
-    }
+    setLayoutError(null);
 
-    dispatch(
-      updateTable({
-        tableId: parseInt(active.id.toString(), 10),
-        updatedData: { location_x: overX, location_y: overY },
-      })
-    ).catch((err) => console.error("Error updating dragged table:", err));
+    try {
+      if (occupiedLocation && occupiedLocation.id !== Number(active.id)) {
+        await dispatch(
+          updateTable({
+            tableId: occupiedLocation.id,
+            updatedData: { location_x: null, location_y: null },
+          })
+        ).unwrap();
+      }
+
+      await dispatch(
+        updateTable({
+          tableId: Number(active.id),
+          updatedData: { location_x: overX, location_y: overY },
+        })
+      ).unwrap();
+    } catch (error: unknown) {
+      setLayoutError(
+        typeof error === "string"
+          ? error
+          : "The floor-plan change could not be saved"
+      );
+    }
   };
 
-  useEffect(() => {
-    dispatch(fetchTables());
+  const loadTables = useCallback(async () => {
+    setFetchLoading(true);
+    setFetchError(null);
+
+    try {
+      await dispatch(fetchTables()).unwrap();
+    } catch (error: unknown) {
+      setFetchError(
+        typeof error === "string" ? error : "Tables could not be loaded"
+      );
+    } finally {
+      setFetchLoading(false);
+    }
   }, [dispatch]);
 
-  if (error) return <p className="text-error">Error: {error}</p>;
+  useEffect(() => {
+    void loadTables();
+  }, [loadTables]);
+
+  if (fetchLoading && tables.length === 0) {
+    return (
+      <div className="flex h-full items-center justify-center rounded-xl border border-border bg-white/5 text-text-secondary">
+        Loading floor plan…
+      </div>
+    );
+  }
+
+  if (fetchError && tables.length === 0) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-3 rounded-xl border border-error/40 bg-error/10 p-6 text-center">
+        <p className="text-error">Could not load the floor plan: {fetchError}</p>
+        <button
+          type="button"
+          onClick={() => void loadTables()}
+          className="rounded-lg border border-border px-3 py-2 text-sm font-semibold hover:bg-white/10"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="h-full min-h-0 rounded-2xl p-0">
-      <DndContext collisionDetection={pointerWithin} onDragEnd={handleDragEnd}>
+    <div className="flex h-full min-h-0 flex-col rounded-2xl p-0">
+      {(fetchError || layoutError) && (
+        <div
+          role="alert"
+          className="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-error/40 bg-error/10 px-3 py-2 text-sm text-error"
+        >
+          <span>{layoutError || `Floor plan refresh failed: ${fetchError}`}</span>
+          {fetchError && (
+            <button
+              type="button"
+              onClick={() => void loadTables()}
+              className="rounded-md border border-error/40 px-2.5 py-1.5 font-semibold text-text-primary"
+            >
+              Retry
+            </button>
+          )}
+        </div>
+      )}
+      <DndContext
+        collisionDetection={pointerWithin}
+        onDragEnd={(event) => void handleDragEnd(event)}
+      >
         <DndMonitor setActiveTable={setActiveTable} tables={tables} />
 
-        <div className="grid h-full min-h-0 w-full grid-cols-1 gap-3 xl:grid-cols-[minmax(0,2.4fr)_minmax(220px,0.7fr)]">
+        <div className="grid min-h-0 w-full flex-1 grid-cols-1 gap-3 xl:grid-cols-[minmax(0,2.4fr)_minmax(220px,0.7fr)]">
           <TableLayout tables={tables} />
           <TableList tables={tables} />
         </div>

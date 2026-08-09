@@ -15,7 +15,7 @@ function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
   const total = subtotal + tax;
 
   return (
-    <div className="h-full bg-surface p-6 rounded-lg shadow-lg flex flex-col justify-between overflow-hidden h-[85vh] max-w-md">
+    <div className="flex h-[85vh] max-w-md flex-col justify-between overflow-hidden rounded-lg bg-surface p-6 shadow-lg">
       <div className="flex flex-col mb-4">
         <p className="text-text-primary text-xl font-semibold">
           Order #{orderId}
@@ -46,7 +46,7 @@ function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
                 <td className="px-4 py-2">{item.menu_item.name}</td>
                 <td className="px-4 py-2">${item.price}</td>
                 <td className="px-4 py-2">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  ${(Number(item.price) * item.quantity).toFixed(2)}
                 </td>
               </tr>
             ))}

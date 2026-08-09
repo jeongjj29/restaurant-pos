@@ -7,15 +7,16 @@ interface Props {
 
 function MenuItemGrid({ items, onClick }: Props) {
   return (
-    <div className="w-fit h-fit grid grid-cols-4 gap-2 mt-6">
+    <div className="grid min-w-0 flex-1 auto-rows-[5.5rem] grid-cols-2 gap-2 overflow-y-auto sm:grid-cols-3 lg:grid-cols-4">
       {items.map((item) => (
-        <div
+        <button
+          type="button"
           key={item.id}
           onClick={() => onClick(item)}
-          className="w-32 h-20 flex items-center justify-center text-center rounded-lg bg-neutral-500 cursor-pointer hover:bg-neutral-600"
+          className="flex min-w-0 items-center justify-center rounded-lg border border-border bg-surface-raised p-2 text-center font-semibold text-text-primary transition-colors hover:border-accent hover:bg-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           {item.name}
-        </div>
+        </button>
       ))}
     </div>
   );

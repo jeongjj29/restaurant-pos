@@ -1,4 +1,3 @@
-import { TAX_RATE } from "@constants";
 import { Order } from "@orders/types";
 
 interface OrderDetailsProps {
@@ -8,63 +7,64 @@ interface OrderDetailsProps {
 function OrderDetails({ order }: OrderDetailsProps) {
   if (!order) return null;
 
-  const subtotal = order.order_items.reduce(
-    (acc, item) => acc + item.menu_item.price * item.quantity,
+  const items = order.order_items ?? [];
+  const subtotal = items.reduce(
+    (total, item) => total + Number(item.price) * item.quantity,
     0
   );
-  const tax = parseFloat((subtotal * TAX_RATE).toFixed(2));
-  const total = subtotal + tax;
+  const storedTotal = Number(order.total_price);
+  const total = Number.isFinite(storedTotal) ? storedTotal : subtotal;
+  const tax = Math.max(0, total - subtotal);
 
   return (
-    <div className="m-6 flex flex-col justify-between overflow-hidden border-2 rounded-lg shadow-lg">
-      <h1 className="text-2xl text-center mt-4 mb-4">Order #{order.id}</h1>
-      <p>Type: {order.type === "take_out" ? "TAKE-OUT" : "DINE-IN"}</p>
-      <div>
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-green-300 text-white sticky top-0 z-10">
+    <section className="flex max-h-full flex-col overflow-hidden rounded-xl border border-border bg-surface">
+      <div className="border-b border-border p-4">
+        <h1 className="text-xl text-text-primary">Order #{order.id}</h1>
+        <p className="mt-1 text-sm text-text-secondary">
+          {order.type === "take_out" ? "Take-out" : "Dine-in"} · {order.status}
+        </p>
+      </div>
+
+      <div className="overflow-auto">
+        <table className="min-w-full text-left text-sm text-text-primary">
+          <thead className="sticky top-0 z-10 bg-surface-raised text-text-secondary">
             <tr>
-              <th className="py-2 px-4 text-left">Quantity</th>
-              <th className="py-2 px-4 text-left">Name</th>
-              <th className="py-2 px-4 text-left">Price</th>
-              <th className="py-2 px-4 text-left">Total</th>
+              <th className="px-4 py-3 font-medium">Qty</th>
+              <th className="px-4 py-3 font-medium">Item</th>
+              <th className="px-4 py-3 text-right font-medium">Price</th>
+              <th className="px-4 py-3 text-right font-medium">Total</th>
             </tr>
           </thead>
-          <tbody>
-            {order.order_items.map((item) => (
-              <tr
-                key={item.id}
-                className={item.id % 2 === 0 ? "bg-white" : "bg-gray-100"}
-              >
-                <td className="py-2 px-4">{item.quantity}</td>
-                <td className="py-2 px-4">{item.menu_item.name}</td>
-                <td className="py-2 px-4">${item.menu_item.price}</td>
-                <td className="py-2 px-4">
-                  ${(item.quantity * item.menu_item.price).toFixed(2)}
-                </td>
-              </tr>
-            ))}
+          <tbody className="divide-y divide-border">
+            {items.map((item) => {
+              const price = Number(item.price);
+              return (
+                <tr key={item.id} className="odd:bg-white/5">
+                  <td className="px-4 py-3">{item.quantity}</td>
+                  <td className="px-4 py-3">{item.menu_item.name}</td>
+                  <td className="px-4 py-3 text-right">${price.toFixed(2)}</td>
+                  <td className="px-4 py-3 text-right">
+                    ${(item.quantity * price).toFixed(2)}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
+        {items.length === 0 && (
+          <p className="p-4 text-sm text-text-secondary">No line items found.</p>
+        )}
       </div>
-      <div className="flex justify-end items-end w-full mt-4 p-4 bg-gray-100">
-        <table className="w-auto">
-          <tfoot>
-            <tr>
-              <td className="py-2 px-4 font-bold text-right">SUBTOTAL</td>
-              <td className="py-2 px-4 font-bold">${subtotal.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="py-2 px-4 font-bold text-right">TAX</td>
-              <td className="py-2 px-4 font-bold">${tax.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="py-2 px-4 font-bold text-right">TOTAL</td>
-              <td className="py-2 px-4 font-bold">${total.toFixed(2)}</td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </div>
+
+      <dl className="mt-auto grid grid-cols-2 gap-y-2 border-t border-border bg-black/15 p-4 text-sm">
+        <dt className="text-text-secondary">Subtotal</dt>
+        <dd className="text-right font-semibold">${subtotal.toFixed(2)}</dd>
+        <dt className="text-text-secondary">Tax</dt>
+        <dd className="text-right font-semibold">${tax.toFixed(2)}</dd>
+        <dt className="text-base font-bold">Total</dt>
+        <dd className="text-right text-base font-bold">${total.toFixed(2)}</dd>
+      </dl>
+    </section>
   );
 }
 

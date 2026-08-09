@@ -70,13 +70,13 @@ export const updateTable = createAsyncThunk<
 );
 
 export const deleteTable = createAsyncThunk<
-  Table,
+  number,
   number,
   { rejectValue: string }
 >("tables/deleteTable", async (tableId, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`/api/tables/${tableId}`);
-    return response.data;
+    await axios.delete(`/api/tables/${tableId}`);
+    return tableId;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(
@@ -149,11 +149,9 @@ const tablesSlice = createSlice({
       .addCase(deleteTable.pending, (state) => {
         handlePendingState(state);
       })
-      .addCase(deleteTable.fulfilled, (state, action: PayloadAction<Table>) => {
+      .addCase(deleteTable.fulfilled, (state, action: PayloadAction<number>) => {
         handleFulfilledState(state, action);
-        state.tables = state.tables.filter(
-          (table) => table.id !== action.payload.id
-        );
+        state.tables = state.tables.filter((table) => table.id !== action.payload);
       })
       .addCase(
         deleteTable.rejected,

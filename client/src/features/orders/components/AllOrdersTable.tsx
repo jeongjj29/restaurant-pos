@@ -1,13 +1,15 @@
-import { Order } from "@orders/types"; // Make sure this type exists
+import { Order } from "@orders/types";
 import { FC } from "react";
 
 interface AllOrdersTableProps {
   orders: Order[];
+  selectedOrderId: number | null;
   setClickedOrder: (order: Order) => void;
 }
 
 const AllOrdersTable: FC<AllOrdersTableProps> = ({
   orders,
+  selectedOrderId,
   setClickedOrder,
 }) => {
   if (orders.length === 0) {
@@ -17,9 +19,9 @@ const AllOrdersTable: FC<AllOrdersTableProps> = ({
   }
 
   return (
-    <div className="overflow-x-auto w-full m-4 ml-6 border-border shadow-lg border rounded-md">
-      <table className="min-w-full bg-surface text-text-primary overflow-hidden">
-        <thead className="bg-white/ text-text-primary">
+    <div className="w-full max-w-full overflow-x-auto rounded-md border border-border shadow-lg">
+      <table className="min-w-full overflow-hidden bg-surface text-text-primary">
+        <thead className="bg-white/5 text-text-primary">
           <tr>
             <th className="py-3 px-6 text-left text-md font-semibold">
               Order #
@@ -33,40 +35,59 @@ const AllOrdersTable: FC<AllOrdersTableProps> = ({
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
-          {orders.map((order, index) => (
-            <tr
-              key={order.id}
-              className={`${
-                index % 2 === 0 ? "bg-white/10" : "bg-white/5"
-              } hover:bg-surface/60 cursor-pointer transition-colors`}
-              onClick={() => {
-                if (order.status === "closed") return;
-                setClickedOrder(order);
-              }}
-            >
-              <td className="py-3 px-6">{order.id}</td>
-              <td className="py-3 px-6">
-                {new Date(order.created_at).toLocaleString()}
-              </td>
-              <td className="py-3 px-6">
-                {order.type === "take_out" ? "TAKE-OUT" : "DINE-IN"}
-              </td>
-              <td className="py-3 px-6">
-                <span
-                  className={`${
-                    order.status === "open" ? "bg-green-600" : "bg-red-500"
-                  } text-white py-1 px-3 rounded-full text-sm`}
-                >
-                  {order.status.toUpperCase()}
-                </span>
-              </td>
-              <td className="py-3 px-6">
-                <span className="font-semibold text-lg">
-                  ${order.total_price}
-                </span>
-              </td>
-            </tr>
-          ))}
+          {orders.map((order, index) => {
+            const selectable = order.status === "open";
+            const selectOrder = () => {
+              if (selectable) setClickedOrder(order);
+            };
+
+            return (
+              <tr
+                key={order.id}
+                tabIndex={selectable ? 0 : undefined}
+                aria-label={selectable ? `Select order ${order.id}` : undefined}
+                aria-selected={selectedOrderId === order.id}
+                onClick={selectOrder}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    selectOrder();
+                  }
+                }}
+                className={`${
+                  index % 2 === 0 ? "bg-white/10" : "bg-white/5"
+                } ${
+                  selectedOrderId === order.id ? "outline-2 outline-accent" : ""
+                } ${
+                  selectable
+                    ? "cursor-pointer hover:bg-surface/60 focus-visible:outline-2 focus-visible:outline-accent"
+                    : "cursor-default opacity-75"
+                } transition-colors`}
+              >
+                <td className="px-6 py-3">{order.id}</td>
+                <td className="px-6 py-3">
+                  {new Date(order.created_at).toLocaleString()}
+                </td>
+                <td className="px-6 py-3">
+                  {order.type === "take_out" ? "TAKE-OUT" : "DINE-IN"}
+                </td>
+                <td className="px-6 py-3">
+                  <span
+                    className={`rounded-full px-3 py-1 text-sm text-white ${
+                      order.status === "open" ? "bg-green-700" : "bg-red-700"
+                    }`}
+                  >
+                    {order.status.toUpperCase()}
+                  </span>
+                </td>
+                <td className="px-6 py-3">
+                  <span className="text-lg font-semibold">
+                    ${Number(order.total_price).toFixed(2)}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

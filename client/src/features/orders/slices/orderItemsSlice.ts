@@ -6,6 +6,7 @@ import {
   handleFulfilledState,
   handleRejectedState,
 } from "@utils/sliceUtils";
+import { normalizeOrderItem } from "@orders/normalizers";
 
 export const fetchOrderItems = createAsyncThunk<
   OrderItem[],
@@ -14,7 +15,7 @@ export const fetchOrderItems = createAsyncThunk<
 >("orderItems/fetchOrderItems", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get("/api/order_items");
-    return response.data;
+    return response.data.map(normalizeOrderItem);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(
@@ -32,7 +33,7 @@ export const addOrderItem = createAsyncThunk<
 >("orderItems/addOrderItem", async (newOrderItem, { rejectWithValue }) => {
   try {
     const response = await axios.post("/api/order_items", newOrderItem);
-    return response.data;
+    return normalizeOrderItem(response.data);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(
@@ -51,11 +52,12 @@ export const updateOrderItem = createAsyncThunk<
   "orderItems/updateOrderItem",
   async (updatedOrderItem, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `/api/order_items/${updatedOrderItem.id}`,
-        updatedOrderItem
+      const { id, ...changes } = updatedOrderItem;
+      const response = await axios.patch(
+        `/api/order_items/${id}`,
+        changes
       );
-      return response.data;
+      return normalizeOrderItem(response.data);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         return rejectWithValue(
@@ -74,7 +76,7 @@ export const deleteOrderItem = createAsyncThunk<
 >("orderItems/deleteOrderItem", async (orderItemId, { rejectWithValue }) => {
   try {
     const response = await axios.delete(`/api/order_items/${orderItemId}`);
-    return response.data;
+    return normalizeOrderItem(response.data);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(

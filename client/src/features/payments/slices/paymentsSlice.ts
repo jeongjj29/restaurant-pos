@@ -7,6 +7,11 @@ import {
   handleRejectedState,
 } from "@utils/sliceUtils";
 
+const normalizePayment = (payment: Payment): Payment => ({
+  ...payment,
+  amount: Number.isFinite(Number(payment.amount)) ? Number(payment.amount) : 0,
+});
+
 export const fetchPayments = createAsyncThunk<
   Payment[],
   undefined,
@@ -14,7 +19,7 @@ export const fetchPayments = createAsyncThunk<
 >("payments/fetchPayments", async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get("/api/payments");
-    return response.data;
+    return response.data.map(normalizePayment);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(
@@ -32,7 +37,7 @@ export const addPayment = createAsyncThunk<
 >("payments/addPayment", async (newPayment, { rejectWithValue }) => {
   try {
     const response = await axios.post("/api/payments", newPayment);
-    return response.data;
+    return normalizePayment(response.data);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(
@@ -49,11 +54,12 @@ export const updatePayment = createAsyncThunk<
   { rejectValue: string }
 >("payments/updatePayment", async (updatedPayment, { rejectWithValue }) => {
   try {
-    const response = await axios.put(
-      `/api/payments/${updatedPayment.id}`,
-      updatedPayment
+    const { id, ...changes } = updatedPayment;
+    const response = await axios.patch(
+      `/api/payments/${id}`,
+      changes
     );
-    return response.data;
+    return normalizePayment(response.data);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(
@@ -71,7 +77,7 @@ export const deletePayment = createAsyncThunk<
 >("payments/deletePayment", async (paymentId, { rejectWithValue }) => {
   try {
     const response = await axios.delete(`/api/payments/${paymentId}`);
-    return response.data;
+    return normalizePayment(response.data);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(

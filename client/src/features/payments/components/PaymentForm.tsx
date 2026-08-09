@@ -1,12 +1,19 @@
-import { ErrorMessage, Formik, Field, Form } from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as yup from "yup";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addPayment } from "../slices/paymentsSlice";
-import { updateOrder } from "@orders/slices/ordersSlice";
-import { PaymentType } from "../types";
+import { useAppDispatch } from "@app/hooks";
+import { addPayment, fetchPayments } from "@payments/slices/paymentsSlice";
+import { fetchOrders } from "@orders/slices/ordersSlice";
+import { fetchTables } from "@tables/slices/tablesSlice";
+import { PaymentType } from "@payments/types";
 import { Order } from "@orders/types";
-import { AppDispatch } from "@app/store";
+import {
+  centsToMoney,
+  getPaidCents,
+  getRemainingCents,
+  moneyToCents,
+} from "@payments/paymentMath";
 
 interface Props {
   order: Order;
@@ -15,123 +22,169 @@ interface Props {
 
 interface FormValues {
   amount: number;
-  order_id: number;
-  type: PaymentType;
 }
 
-const PaymentSchema = yup.object().shape({
-  amount: yup
-    .number()
-    .required("Amount is required")
-    .positive("Amount must be a positive number"),
-});
+type Feedback = { kind: "error" | "success"; message: string } | null;
+
+const getErrorMessage = (error: unknown): string =>
+  typeof error === "string"
+    ? error
+    : error instanceof Error
+      ? error.message
+      : "Unable to record the payment. Please try again.";
 
 function PaymentForm({ order, type }: Props) {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [feedback, setFeedback] = useState<Feedback>(null);
 
-  const totalPayments = order.payments.reduce(
-    (total, payment) => total + payment.amount,
-    0
-  );
+  const totalCents = moneyToCents(order.total_price);
+  const paidCents = getPaidCents(order);
+  const remainingCents = getRemainingCents(order);
+  const remainingBalance = centsToMoney(remainingCents);
+
+  const PaymentSchema = yup.object({
+    amount: yup
+      .number()
+      .typeError("Enter a valid payment amount")
+      .required("Amount is required")
+      .positive("Amount must be greater than $0.00")
+      .max(
+        remainingBalance,
+        `Amount cannot exceed $${remainingBalance.toFixed(2)}`
+      ),
+  });
+
+  if (order.status === "closed" || remainingCents === 0) {
+    return (
+      <div className="rounded-xl border border-success/40 bg-success/10 p-4 text-success">
+        <h3 className="font-semibold">Order settled</h3>
+        <p className="mt-1 text-sm">No balance remains on this order.</p>
+      </div>
+    );
+  }
 
   return (
     <Formik<FormValues>
-      initialValues={{
-        amount: 0,
-        order_id: order.id,
-        type,
-      }}
+      initialValues={{ amount: remainingBalance }}
       validationSchema={PaymentSchema}
-      onSubmit={(values, { setSubmitting, resetForm }) => {
-        setSubmitting(true);
+      enableReinitialize
+      onSubmit={async (values, { resetForm, setSubmitting }) => {
+        setFeedback(null);
+        const amountCents = moneyToCents(values.amount);
 
-        const paymentAmount = values.amount;
-        const newTotalPayments = totalPayments + paymentAmount;
-
-        if (newTotalPayments > order.total_price) {
-          alert(
-            `Error: The payment exceeds the order balance of $${(
-              order.total_price - totalPayments
-            ).toFixed(2)}`
-          );
+        if (amountCents <= 0 || amountCents > remainingCents) {
+          setFeedback({
+            kind: "error",
+            message: `Enter an amount from $0.01 to $${remainingBalance.toFixed(2)}.`,
+          });
           setSubmitting(false);
           return;
         }
 
-        dispatch(addPayment(values))
-          .unwrap()
-          .then(() => {
-            if (newTotalPayments === order.total_price) {
-              dispatch(updateOrder({ id: order.id, status: "closed" }))
-                .unwrap()
-                .then(() => {
-                  resetForm();
-                  setSubmitting(false);
-                  navigate("/");
-                })
-                .catch((err) => {
-                  console.error(err);
-                  setSubmitting(false);
-                });
-            } else {
-              setSubmitting(false);
-              resetForm();
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            setSubmitting(false);
+        let paymentRecorded = false;
+        try {
+          await dispatch(
+            addPayment({
+              amount: centsToMoney(amountCents),
+              order_id: order.id,
+              type,
+            })
+          ).unwrap();
+          paymentRecorded = true;
+
+          const [orders] = await Promise.all([
+            dispatch(fetchOrders()).unwrap(),
+            dispatch(fetchPayments()).unwrap(),
+            dispatch(fetchTables()).unwrap(),
+          ]);
+          const refreshedOrder = orders.find(
+            (candidate) => candidate.id === order.id
+          );
+
+          resetForm();
+          if (refreshedOrder?.status === "closed") {
+            navigate("/orders/all", { replace: true });
+            return;
+          }
+
+          const refreshedRemaining = refreshedOrder
+            ? centsToMoney(getRemainingCents(refreshedOrder))
+            : centsToMoney(remainingCents - amountCents);
+          setFeedback({
+            kind: "success",
+            message: `Payment recorded. Remaining balance: $${refreshedRemaining.toFixed(2)}.`,
           });
+        } catch (error) {
+          setFeedback({
+            kind: "error",
+            message: paymentRecorded
+              ? "Payment was recorded, but the latest order state could not be loaded. Return to Orders before trying again."
+              : getErrorMessage(error),
+          });
+        } finally {
+          setSubmitting(false);
+        }
       }}
-      enableReinitialize
     >
       {({ isSubmitting }) => (
-        <Form className="p-4 space-y-4 bg-white shadow-md rounded-sm">
-          <div>
-            <label htmlFor="order_id">Order ID:</label>
-            <Field
-              name="order_id"
-              type="text"
-              readOnly
-              className="w-full border border-gray-300 p-2 rounded-sm mt-1"
-            />
-          </div>
+        <Form className="space-y-4 rounded-xl border border-border bg-surface-raised p-4">
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 rounded-lg bg-black/15 p-3 text-sm">
+            <dt className="text-text-secondary">Order</dt>
+            <dd className="text-right font-semibold">#{order.id}</dd>
+            <dt className="text-text-secondary">Method</dt>
+            <dd className="text-right font-semibold uppercase">{type}</dd>
+            <dt className="text-text-secondary">Order total</dt>
+            <dd className="text-right">${centsToMoney(totalCents).toFixed(2)}</dd>
+            <dt className="text-text-secondary">Paid</dt>
+            <dd className="text-right">${centsToMoney(paidCents).toFixed(2)}</dd>
+            <dt className="font-semibold text-text-primary">Balance</dt>
+            <dd className="text-right font-bold text-accent">
+              ${remainingBalance.toFixed(2)}
+            </dd>
+          </dl>
 
           <div>
-            <label htmlFor="type">Payment Type:</label>
+            <label htmlFor="payment-amount" className="font-semibold">
+              Payment amount
+            </label>
             <Field
-              name="type"
-              type="text"
-              readOnly
-              className="w-full border border-gray-300 p-2 rounded-sm mt-1"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="amount">Amount:</label>
-            <Field
+              id="payment-amount"
               name="amount"
               type="number"
-              placeholder="Enter amount"
-              className="w-full border border-gray-300 p-2 rounded-sm mt-1"
+              inputMode="decimal"
+              min="0.01"
+              max={remainingBalance}
+              step="0.01"
+              className="mt-1 w-full rounded-lg border border-border bg-black/20 p-3 text-text-primary focus:border-accent focus:outline-none"
             />
             <ErrorMessage
               name="amount"
               component="div"
-              className="text-red-600 text-sm mt-1"
+              className="mt-1 text-sm text-error"
             />
           </div>
 
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-sm"
+          {feedback && (
+            <p
+              role={feedback.kind === "error" ? "alert" : "status"}
+              className={`rounded-lg p-3 text-sm ${
+                feedback.kind === "error"
+                  ? "bg-error/10 text-error"
+                  : "bg-success/10 text-success"
+              }`}
             >
-              {isSubmitting ? "Submitting..." : "Submit Payment"}
-            </button>
-          </div>
+              {feedback.message}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="accent-badge w-full rounded-lg px-4 py-3 transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isSubmitting ? "Recording payment..." : "Record payment"}
+          </button>
         </Form>
       )}
     </Formik>

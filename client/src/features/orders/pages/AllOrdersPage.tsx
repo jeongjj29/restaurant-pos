@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "@app/store";
+import { useAppSelector } from "@app/hooks";
 import { Order } from "@orders/types";
 import { format } from "date-fns";
 import AllOrdersTable from "@orders/components/AllOrdersTable";
 import OrderDetails from "@orders/components/OrderDetails";
+import { parseLocalDateInput } from "@orders/dateUtils";
 
 function AllOrdersPage() {
   const navigate = useNavigate();
-  const orders = useSelector((state: RootState) => state.orders.orders);
-  const [clickedOrder, setClickedOrder] = useState<Order | null>(null);
+  const orders = useAppSelector((state) => state.orders.orders);
+  const [clickedOrderId, setClickedOrderId] = useState<number | null>(null);
+  const clickedOrder =
+    orders.find((order) => order.id === clickedOrderId) ?? null;
 
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
@@ -34,30 +36,54 @@ function AllOrdersPage() {
   });
 
   return (
-    <div className="glass-panel flex h-full w-full flex-col xl:flex-row rounded-2xl p-3 md:p-4 gap-4">
+    <div className="glass-panel flex h-full w-full flex-col gap-4 rounded-2xl p-3 md:p-4 xl:flex-row">
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
           <div className="flex flex-col">
-            <label className="mb-1 text-sm text-text-secondary">Start Date</label>
+            <label
+              htmlFor="orders-start-date"
+              className="mb-1 text-sm text-text-secondary"
+            >
+              Start Date
+            </label>
             <input
+              id="orders-start-date"
               type="date"
               value={format(startDate, "yyyy-MM-dd")}
-              onChange={(e) => setStartDate(new Date(e.target.value))}
+              onChange={(event) => {
+                const date = parseLocalDateInput(event.target.value);
+                if (date) setStartDate(date);
+              }}
               className="rounded-lg border border-border bg-white/5 p-2.5 text-text-primary"
             />
           </div>
           <div className="flex flex-col">
-            <label className="mb-1 text-sm text-text-secondary">End Date</label>
+            <label
+              htmlFor="orders-end-date"
+              className="mb-1 text-sm text-text-secondary"
+            >
+              End Date
+            </label>
             <input
+              id="orders-end-date"
               type="date"
               value={format(endDate, "yyyy-MM-dd")}
-              onChange={(e) => setEndDate(new Date(e.target.value))}
+              onChange={(event) => {
+                const date = parseLocalDateInput(event.target.value);
+                if (date) setEndDate(date);
+              }}
               className="rounded-lg border border-border bg-white/5 p-2.5 text-text-primary"
             />
           </div>
           <div className="flex flex-col">
-            <label className="mb-1 text-sm text-text-secondary">Status</label>
+            <label
+              htmlFor="orders-status"
+              className="mb-1 text-sm text-text-secondary"
+            >
+              Status
+            </label>
             <select
+              id="orders-status"
               value={statusFilter}
               onChange={(e) =>
                 setStatusFilter(e.target.value as "all" | "open" | "closed")
@@ -79,7 +105,8 @@ function AllOrdersPage() {
 
         <AllOrdersTable
           orders={filteredOrders}
-          setClickedOrder={setClickedOrder}
+          selectedOrderId={clickedOrderId}
+          setClickedOrder={(order: Order) => setClickedOrderId(order.id)}
         />
       </div>
 
@@ -87,12 +114,20 @@ function AllOrdersPage() {
         <OrderDetails order={clickedOrder} />
         {clickedOrder && (
           <div className="mt-4 grid grid-cols-2 gap-3">
-            <button className="rounded-lg border border-border bg-white/5 px-4 py-2.5 font-semibold text-text-primary hover:bg-white/10">
+            <button
+              type="button"
+              onClick={() => window.print()}
+              aria-label={`Print order ${clickedOrder.id}`}
+              className="rounded-lg border border-border bg-white/5 px-4 py-2.5 font-semibold text-text-primary hover:bg-white/10"
+            >
               Print
             </button>
             <button
+              type="button"
               onClick={() =>
-                navigate("/orders/payment", { state: { order: clickedOrder } })
+                navigate(`/orders/payment?orderId=${clickedOrder.id}`, {
+                  state: { order: clickedOrder },
+                })
               }
               className="accent-badge rounded-lg px-4 py-2.5"
             >

@@ -1,91 +1,121 @@
 # Restaurant POS Application
 
-Full-stack restaurant point-of-sale (POS) system for managing dine-in/takeout orders, menu/catalog operations, employees, tables, and payments.
+A full-stack restaurant point-of-sale demo for dine-in and takeout orders,
+payments, menu management, employees, tables, and live sales summaries.
 
-## Project highlights
-- End-to-end product scope: authentication, operations dashboard, order lifecycle, and payments.
-- Scalable feature structure: domain-based frontend slices and RESTful backend blueprints.
-- Production-minded backend behaviors: JWT token revocation and `/api/health` health-check endpoint.
-- Automated verification: backend integration tests for auth flow and health endpoint.
-- CI quality gates: GitHub Actions validates frontend build and backend tests on pushes/PRs.
+## Demo highlights
+
+- Authenticated dashboard with a seeded local demo account
+- Dine-in floor view and takeout order entry
+- Partial or full payment settlement with automatic order closing
+- Menu, employee, role, and table management
+- Live revenue, ticket, order-status, and payment-method summaries
+- Idempotent, non-destructive demo seeding
 
 ## Tech stack
-- Frontend: React 19, TypeScript, Vite, Redux Toolkit, MUI, DnD Kit
-- Backend: Flask, SQLAlchemy, Alembic/Flask-Migrate, Flask-JWT-Extended
-- Data: PostgreSQL (recommended), SQLite (local tests)
 
-## Architecture
-- `client/`: React SPA with feature-based modules (`auth`, `orders`, `menu`, `employees`, `tables`, `payments`)
-- `server/`: Flask API with blueprint-per-domain routing and SQLAlchemy models
-- `server/migrations/`: Alembic migrations for schema evolution
-
-## Core features
-- Role-based employee management and authentication
-- Dine-in and takeout order flows
-- Table management with drag-and-drop layout interactions
-- Menu and category management
-- Payment tracking and sales reporting
+- Frontend: React 19, TypeScript, Vite, Redux Toolkit, MUI
+- Backend: Flask, SQLAlchemy, Alembic/Flask-Migrate, JWT
+- Local demo data: SQLite
 
 ## Quick start
-### 1) Backend
+
+Prerequisites: Node.js 20, Python 3.8, and Pipenv.
+
+### 1. Start the backend
+
 ```bash
 cd server
 cp .env.example .env
-pipenv install
-pipenv run flask db upgrade
+pipenv sync --dev
+pipenv run flask --app manage db upgrade
+pipenv run flask --app manage seed
 pipenv run python manage.py
 ```
-Backend runs on `http://localhost:5555`.
 
-### 2) Frontend
+The API runs at `http://localhost:5555`; its health endpoint is
+`http://localhost:5555/api/health`.
+
+Run migrations before the seed command. Seeding can be run again safely: it
+merges the bundled demo catalog and users without dropping existing data, and
+only creates the sample orders when the database has no orders.
+
+### 2. Start the frontend
+
+In a second terminal:
+
 ```bash
 cd client
-npm install
+npm ci
 npm run dev
 ```
-Frontend runs on `http://localhost:5173` and proxies API traffic to the backend.
 
-## Backend environment variables
-See `server/.env.example`.
+Open `http://localhost:5173`. Vite proxies `/api` requests to the backend on
+port 5555.
 
-## API overview
-- `GET /api/health`: health status
-- `POST /api/auth/login`: login
-- `POST /api/auth/logout`: logout (JWT revocation)
-- `GET /api/auth/protected`: authenticated test route
-- Domain APIs: `/api/orders`, `/api/order_items`, `/api/menu_items`, `/api/menu_categories`, `/api/tables`, `/api/payments`, `/api/users`, `/api/roles`, `/api/discounts`
+### 3. Sign in
 
-## Testing
-Run backend integration tests:
+- Username: `admin`
+- Password: `password`
+
+The login page also has a **Fill demo credentials** button. It fills the form
+without submitting it.
+
+## Suggested demo walkthrough
+
+1. Sign in and show the dashboard counts.
+2. Open **Orders → Dine-In**. Table 2 contains the seeded open order; another
+   table starts a new order.
+3. Open **Orders → All Orders**, select an open order, and settle it. Partial
+   payments keep it open; the exact remaining payment closes it.
+4. Open **Settings → Reports** to show recorded revenue and payment mix.
+5. Use **Settings → Menu**, **Employees**, or **Tables** to demonstrate
+   create/edit flows and floor-layout management.
+
+The seed also includes one paid takeout order so reports are populated on first
+launch.
+
+## Configuration
+
+`server/.env.example` uses SQLite for a zero-service local start. The relative
+database URL is stored by Flask under `server/instance/restaurant_pos.db`.
+Set `DATABASE_URL`, `JWT_SECRET_KEY`, or `PORT` to override those defaults.
+
+The development commands and credentials above are for a local portfolio demo,
+not a production deployment. A deployed environment should use a strong JWT
+secret, a production WSGI server, a managed database/driver, HTTPS, and explicit
+authorization policy for domain routes.
+
+## Verification
+
+Frontend quality gates:
+
 ```bash
-cd server
-pipenv run python -m unittest discover -s tests -p "test_*.py"
+cd client
+npm ci
+npm run lint
+npm run typecheck
+npm run test
+npm run build
 ```
 
-Run backend coverage check:
+Backend quality gates:
+
 ```bash
 cd server
+pipenv sync --dev
+pipenv run black --check app tests
+pipenv run ruff check app tests
 pipenv run coverage run -m unittest discover -s tests -p "test_*.py"
 pipenv run coverage report --fail-under=70
 ```
 
-Run frontend quality checks:
-```bash
-cd client
-npm install
-npm run lint
-npm run typecheck
-npm run test
-```
+CI runs these checks on every pull request and push to `main`.
 
-Run local pre-commit checks before pushing:
-```bash
-pip install pre-commit
-pre-commit install
-pre-commit run --all-files
-```
+## Project structure
 
-## CI
-CI runs on each push to `main` and every pull request:
-- `client-quality`: runs frontend lint, typecheck, tests, and build
-- `server-tests`: installs Pipenv dependencies and runs backend integration tests
+- `client/`: React SPA organized by feature (`auth`, `orders`, `menu`,
+  `employees`, `tables`, `payments`)
+- `server/app/`: Flask application, domain blueprints, and SQLAlchemy models
+- `server/migrations/`: Alembic schema history
+- `server/seed.py`: repeatable local demo data

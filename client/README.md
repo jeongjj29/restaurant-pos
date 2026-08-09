@@ -2,11 +2,12 @@
 
 ## Run locally
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-App defaults to `http://localhost:5173`.
+App defaults to `http://localhost:5173`. Start and seed the backend first by
+following the root `README.md`, then sign in with `admin` / `password`.
 
 ## Build
 ```bash
@@ -21,4 +22,5 @@ npm run preview
 - `src/routes.tsx`: route tree and protected route composition
 
 ## API integration
-Vite dev server proxies `/api/*` requests to `http://localhost:5555/` (configured in `vite.config.js`).
+Vite's development and preview servers proxy `/api/*` requests to
+`http://localhost:5555/` (configured in `vite.config.js`).

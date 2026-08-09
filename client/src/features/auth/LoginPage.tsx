@@ -1,9 +1,9 @@
 import * as yup from "yup";
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { login } from "@auth/authSlice";
-import { useAppDispatch } from "@app/hooks";
+import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { LoginFormValues } from "./types";
 
 const DEMO_CREDENTIALS: LoginFormValues = {
@@ -11,9 +11,24 @@ const DEMO_CREDENTIALS: LoginFormValues = {
   password: "password",
 };
 
+const showDemoCredentials =
+  import.meta.env.DEV || import.meta.env.VITE_SHOW_DEMO_CREDENTIALS === "true";
+
+const safeReturnPath = (state: unknown) => {
+  if (!state || typeof state !== "object" || !("from" in state)) return "/";
+  const from = (state as { from?: unknown }).from;
+  return typeof from === "string" &&
+    from.startsWith("/") &&
+    !from.startsWith("//")
+    ? from
+    : "/";
+};
+
 function LoginPage() {
   const dispatch = useAppDispatch();
+  const authenticationError = useAppSelector((state) => state.auth.error);
   const navigate = useNavigate();
+  const location = useLocation();
   const [loginError, setLoginError] = useState<string | null>(null);
 
   const loginSchema = yup.object().shape({
@@ -40,7 +55,7 @@ function LoginPage() {
             try {
               await dispatch(login(values)).unwrap();
               resetForm();
-              navigate("/");
+              navigate(safeReturnPath(location.state));
             } catch (error: unknown) {
               setLoginError(
                 typeof error === "string"
@@ -54,32 +69,34 @@ function LoginPage() {
         >
           {({ isSubmitting, setValues }) => (
             <Form className="space-y-4">
-              <div className="rounded-xl border border-accent/35 bg-accent/10 p-3">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-soft">
-                      Local demo account
-                    </p>
-                    <p className="mt-1 text-sm text-text-secondary">
-                      Username <code className="text-text-primary">admin</code> ·
-                      Password <code className="text-text-primary">password</code>
-                    </p>
+              {showDemoCredentials && (
+                <div className="rounded-xl border border-accent/35 bg-accent/10 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-soft">
+                        Local demo account
+                      </p>
+                      <p className="mt-1 text-sm text-text-secondary">
+                        Username <code className="text-text-primary">admin</code> ·
+                        Password <code className="text-text-primary">password</code>
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void setValues(DEMO_CREDENTIALS, false);
+                        setLoginError(null);
+                      }}
+                      className="rounded-lg border border-accent/50 px-3 py-2 text-sm font-semibold text-accent-soft transition-colors hover:bg-accent/15"
+                    >
+                      Fill demo credentials
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      void setValues(DEMO_CREDENTIALS, false);
-                      setLoginError(null);
-                    }}
-                    className="rounded-lg border border-accent/50 px-3 py-2 text-sm font-semibold text-accent-soft transition-colors hover:bg-accent/15"
-                  >
-                    Fill demo credentials
-                  </button>
+                  <p className="mt-2 text-xs text-text-disabled">
+                    This only fills the local demo form. Select Login to continue.
+                  </p>
                 </div>
-                <p className="mt-2 text-xs text-text-disabled">
-                  This only fills the local demo form. Select Login to continue.
-                </p>
-              </div>
+              )}
 
               <div>
                 <label
@@ -125,8 +142,10 @@ function LoginPage() {
                 />
               </div>
 
-              {loginError && (
-                <div className="text-sm text-center text-error">{loginError}</div>
+              {(loginError || authenticationError) && (
+                <div role="alert" className="text-sm text-center text-error">
+                  {loginError || authenticationError}
+                </div>
               )}
 
               <button

@@ -71,14 +71,13 @@ describe("LoginPage", () => {
   it("logs in successfully and redirects to home", async () => {
     mockedAxios.post.mockResolvedValue({
       data: {
-        access_token: "token-123",
         user: {
           id: 1,
           username: "manager01",
           first_name: "Alice",
           last_name: "Smith",
           email: "alice@example.com",
-          phone_number: 1234567890,
+          phone_number: "1234567890",
           role_id: 1,
           created_at: "2026-02-20T00:00:00.000Z",
           role: { id: 1, name: "Admin", access_level: 5 },
@@ -96,7 +95,11 @@ describe("LoginPage", () => {
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith("/");
     });
-    expect(localStorage.getItem("token")).toBe("token-123");
+    expect(localStorage.getItem("token")).toBeNull();
+    expect(mockedAxios.post).toHaveBeenCalledWith("/api/auth/login", {
+      username: "manager01",
+      password: "secure-password",
+    });
   });
 
   it("shows login error on invalid credentials", async () => {

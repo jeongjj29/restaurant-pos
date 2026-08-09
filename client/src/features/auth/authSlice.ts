@@ -1,40 +1,28 @@
-import axios from "axios";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import axios from "@app/apiClient";
 import { LoginPayload, AuthState } from "@auth/types";
 import { Employee } from "@employees/types";
 
-const setAuthorizationHeader = (token: string | null) => {
-  if (token) {
-    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-  } else {
-    delete axios.defaults.headers.common.Authorization;
-  }
-};
+const errorMessage = (error: unknown, fallback: string) =>
+  axios.isAxiosError(error)
+    ? error.response?.data?.message || fallback
+    : fallback;
 
-const clearStoredAuth = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  setAuthorizationHeader(null);
-};
-
-const readStoredUser = (): Employee | null => {
-  const storedUser = localStorage.getItem("user");
-
-  if (!storedUser) return null;
-
+export const restoreSession = createAsyncThunk<
+  Employee,
+  void,
+  { rejectValue: string }
+>("auth/restoreSession", async (_, { rejectWithValue }) => {
   try {
-    return JSON.parse(storedUser) as Employee;
-  } catch {
-    clearStoredAuth();
-    return null;
+    const response = await axios.get<{ user: Employee }>("/api/auth/me");
+    return response.data.user;
+  } catch (error: unknown) {
+    return rejectWithValue(errorMessage(error, "No active session"));
   }
-};
+});
 
 export const login = createAsyncThunk<
-  {
-    token: string;
-    user: Employee;
-  },
+  Employee,
   LoginPayload,
   { rejectValue: string }
 >("auth/login", async ({ username, password }, { rejectWithValue }) => {
@@ -43,61 +31,32 @@ export const login = createAsyncThunk<
       username,
       password,
     });
-    const { access_token, user } = response.data;
-    localStorage.setItem("token", access_token);
-    localStorage.setItem("user", JSON.stringify(user));
-    setAuthorizationHeader(access_token);
-    return { token: access_token, user };
+    return response.data.user;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      return rejectWithValue(error.response?.data?.message || "Login failed");
-    }
-    return rejectWithValue("An unknown error occurred during login");
+    return rejectWithValue(errorMessage(error, "Login failed"));
   }
 });
 
 export const logout = createAsyncThunk<void, void, { rejectValue: string }>(
   "auth/logout",
   async (_, { rejectWithValue }) => {
-    const token = localStorage.getItem("token");
-
     try {
-      if (token) {
-        await axios.post(
-          "/api/auth/logout",
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      }
+      await axios.post("/api/auth/logout");
     } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        return rejectWithValue(
-          error.response?.data?.message ||
-            "Server session could not be revoked; you were signed out locally"
-        );
-      }
       return rejectWithValue(
-        "Server session could not be revoked; you were signed out locally"
+        errorMessage(
+          error,
+          "Server session could not be revoked; you were signed out locally"
+        )
       );
-    } finally {
-      clearStoredAuth();
     }
   }
 );
 
-const tokenFromStorage = localStorage.getItem("token");
-const userFromStorage = readStoredUser();
-
-setAuthorizationHeader(userFromStorage ? tokenFromStorage : null);
-
 const initialState: AuthState = {
-  isAuthenticated: Boolean(tokenFromStorage && userFromStorage),
-  token: userFromStorage ? tokenFromStorage : null,
-  user: userFromStorage,
+  isAuthenticated: false,
+  user: null,
+  initialized: false,
   loading: false,
   error: null,
 };
@@ -107,28 +66,51 @@ const setError = (
   action: PayloadAction<string | undefined>
 ) => {
   state.loading = false;
+  state.initialized = true;
   state.error = action.payload || "An error occurred";
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    sessionExpired: (state) => {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.initialized = true;
+      state.loading = false;
+      state.error = "Your session expired. Sign in again to continue.";
+    },
+  },
   extraReducers: (builder) => {
     builder
+      .addCase(restoreSession.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(restoreSession.fulfilled, (state, action) => {
+        state.loading = false;
+        state.initialized = true;
+        state.isAuthenticated = true;
+        state.user = action.payload;
+      })
+      .addCase(restoreSession.rejected, (state) => {
+        state.loading = false;
+        state.initialized = true;
+        state.isAuthenticated = false;
+        state.user = null;
+        state.error = null;
+      })
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        login.fulfilled,
-        (state, action: PayloadAction<{ token: string; user: Employee }>) => {
-          state.loading = false;
-          state.isAuthenticated = true;
-          state.token = action.payload.token;
-          state.user = action.payload.user;
-        }
-      )
+      .addCase(login.fulfilled, (state, action: PayloadAction<Employee>) => {
+        state.loading = false;
+        state.initialized = true;
+        state.isAuthenticated = true;
+        state.user = action.payload;
+      })
       .addCase(login.rejected, setError)
 
       .addCase(logout.pending, (state) => {
@@ -136,15 +118,15 @@ const authSlice = createSlice({
       })
       .addCase(logout.fulfilled, (state) => {
         state.loading = false;
+        state.initialized = true;
         state.isAuthenticated = false;
-        state.token = null;
         state.user = null;
         state.error = null;
       })
       .addCase(logout.rejected, (state, action) => {
         state.loading = false;
+        state.initialized = true;
         state.isAuthenticated = false;
-        state.token = null;
         state.user = null;
         state.error =
           action.payload ||
@@ -153,4 +135,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { sessionExpired } = authSlice.actions;
 export default authSlice.reducer;

@@ -26,6 +26,14 @@ interface FormValues {
 const fieldClassName =
   "w-full rounded-lg border border-border bg-white/5 px-3 py-2.5 text-text-primary focus:border-accent focus:outline-none";
 const errorClassName = "mt-1 text-xs text-error";
+const configuredMinimumPasswordLength = Number(
+  import.meta.env.VITE_MIN_PASSWORD_LENGTH ?? 12
+);
+const minimumPasswordLength =
+  Number.isInteger(configuredMinimumPasswordLength) &&
+  configuredMinimumPasswordLength >= 8
+    ? configuredMinimumPasswordLength
+    : 12;
 
 const employeeSchema = (isEditing: boolean) =>
   yup.object({
@@ -66,7 +74,10 @@ const employeeSchema = (isEditing: boolean) =>
       ? yup.string()
       : yup
           .string()
-          .min(6, "Password must be at least 6 characters")
+          .min(
+            minimumPasswordLength,
+            `Password must be at least ${minimumPasswordLength} characters`
+          )
           .required("Password is required"),
   });
 
@@ -97,7 +108,7 @@ function EmployeeForm({
   const initialValues: FormValues = {
     first_name: employee?.first_name ?? "",
     last_name: employee?.last_name ?? "",
-    phone_number: employee?.phone_number?.toString() ?? "",
+    phone_number: employee?.phone_number ?? "",
     email: employee?.email ?? "",
     username: employee?.username ?? "",
     role_id: employee?.role_id ?? roles[0]?.id ?? "",
@@ -144,9 +155,7 @@ function EmployeeForm({
           const employeeValues = {
             first_name: values.first_name.trim(),
             last_name: values.last_name.trim(),
-            phone_number: values.phone_number.trim()
-              ? Number(values.phone_number)
-              : null,
+            phone_number: values.phone_number.trim() || null,
             email: values.email.trim(),
             username: values.username.trim(),
             role_id: Number(values.role_id),

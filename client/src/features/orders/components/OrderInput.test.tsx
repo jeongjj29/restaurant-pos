@@ -1,15 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axios from "axios";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
+
 import OrderInput from "./OrderInput";
-import authReducer from "@auth/authSlice";
 import menuCategoriesReducer from "@menu/slices/menuCategoriesSlice";
-import orderItemsReducer from "@orders/slices/orderItemsSlice";
+import menuItemsReducer, { updateMenuItem } from "@menu/slices/menuItemsSlice";
 import ordersReducer from "@orders/slices/ordersSlice";
+import runtimeConfigReducer from "@features/config/runtimeConfigSlice";
 import tablesReducer from "@tables/slices/tablesSlice";
 import type { MenuCategory, MenuItem } from "@menu/types";
 
@@ -26,6 +27,11 @@ vi.mock("react-router-dom", async () => {
 vi.mock("axios");
 const mockedAxios = vi.mocked(axios, true);
 
+const categories = [
+  { id: 1, name: "Mains", secondary_name: null, menu_items: [] },
+  { id: 2, name: "Drinks", secondary_name: null, menu_items: [] },
+] as MenuCategory[];
+
 const menuItem = {
   id: 3,
   name: "Demo Burger",
@@ -35,61 +41,69 @@ const menuItem = {
   image: null,
   category_id: 1,
   order_items: [],
-  menu_category: {},
-} as unknown as MenuItem;
+  menu_category: categories[0],
+} as MenuItem;
 
-const category = {
-  id: 1,
-  name: "Mains",
-  secondary_name: null,
-  menu_items: [menuItem],
-} as MenuCategory;
+const completeOrder = {
+  id: 21,
+  type: "take_out",
+  guests: 0,
+  total_price: "9.90",
+  status: "open",
+  sales_tax: "0.10",
+  user_id: 7,
+  table_id: null,
+  created_at: "2026-08-09T12:00:00Z",
+  closed_at: null,
+  user: {},
+  table: null,
+  order_items: [
+    {
+      id: 31,
+      quantity: 1,
+      price: "9.00",
+      menu_item_id: 3,
+      menu_item: menuItem,
+    },
+  ],
+  payments: [],
+};
 
-const renderOrderInput = () => {
+const renderOrderInput = (salesTaxRate: number | null = 0.1) => {
   const store = configureStore({
     reducer: {
-      auth: authReducer,
       menuCategories: menuCategoriesReducer,
-      orderItems: orderItemsReducer,
+      menuItems: menuItemsReducer,
       orders: ordersReducer,
+      runtimeConfig: runtimeConfigReducer,
       tables: tablesReducer,
     },
     preloadedState: {
-      auth: {
-        isAuthenticated: true,
-        token: "demo-token",
-        user: {
-          id: 7,
-          username: "demo",
-          first_name: "Demo",
-          last_name: "User",
-          email: "demo@example.com",
-          phone_number: null,
-          role_id: 1,
-          created_at: "2026-08-09T12:00:00Z" as unknown as Date,
-          role: { id: 1, name: "Admin", access_level: 5 },
-        },
-        loading: false,
-        error: null,
-      },
       menuCategories: {
-        menuCategories: [category],
+        menuCategories: categories,
         loading: false,
         error: null,
       },
-      orderItems: { orderItems: [], loading: false, error: null },
+      menuItems: { menuItems: [menuItem], loading: false, error: null },
       orders: { orders: [], loading: false, error: null },
+      runtimeConfig: {
+        salesTaxRate,
+        loading: salesTaxRate === null,
+        error: null,
+      },
       tables: { tables: [], loading: false, error: null },
     },
   });
 
-  return render(
+  render(
     <Provider store={store}>
       <MemoryRouter>
         <OrderInput />
       </MemoryRouter>
     </Provider>
   );
+
+  return store;
 };
 
 describe("OrderInput", () => {
@@ -99,45 +113,95 @@ describe("OrderInput", () => {
     mockedAxios.isAxiosError.mockReturnValue(true);
   });
 
-  it("blocks empty orders and stays on the form when a line item fails", async () => {
-    mockedAxios.post.mockImplementation(async (url, payload) => {
-      if (url === "/api/orders") {
-        return {
-          data: {
-            id: 21,
-            ...(payload as object),
-            guests: 0,
-            created_at: "2026-08-09T12:00:00Z",
-            closed_at: null,
-            user: {},
-            table: null,
-            order_items: [],
-            payments: [],
-          },
-        };
-      }
-      throw {
-        isAxiosError: true,
-        response: { data: { message: "Could not add order item" } },
-      };
+  it("uses the flat menu-item state and follows category moves immediately", async () => {
+    const store = renderOrderInput();
+
+    expect(
+      await screen.findByRole("button", { name: "Demo Burger" })
+    ).toBeInTheDocument();
+
+    act(() => {
+      store.dispatch(
+        updateMenuItem.fulfilled(
+          { ...menuItem, category_id: 2, menu_category: categories[1] },
+          "move-item",
+          { ...menuItem, category_id: 2 }
+        )
+      );
     });
-    renderOrderInput();
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("button", { name: "Demo Burger" })
+      ).not.toBeInTheDocument();
+    });
+    await userEvent.click(screen.getByRole("button", { name: "Drinks" }));
+    expect(
+      screen.getByRole("button", { name: "Demo Burger" })
+    ).toBeInTheDocument();
+  });
+
+  it("keeps submission disabled until server configuration is available", async () => {
+    renderOrderInput(null);
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Demo Burger" })
+    );
+
+    expect(screen.getByRole("button", { name: "Submit" })).toBeDisabled();
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Loading sales tax configuration"
+    );
+    expect(mockedAxios.post).not.toHaveBeenCalled();
+  });
+
+  it("submits one atomic order request using the server tax preview", async () => {
+    mockedAxios.post.mockResolvedValue({ data: completeOrder });
+    const store = renderOrderInput();
     const user = userEvent.setup();
 
-    const submit = screen.getByRole("button", { name: "Submit" });
-    expect(submit).toBeDisabled();
-    expect(mockedAxios.post).not.toHaveBeenCalled();
+    await user.click(
+      await screen.findByRole("button", { name: "Demo Burger" })
+    );
+    expect(screen.getByText("$0.90")).toBeInTheDocument();
+    expect(screen.getByText("$9.90")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Submit" }));
 
-    await user.click(screen.getByRole("button", { name: "Demo Burger" }));
-    await user.click(submit);
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith("/orders/all", {
+        replace: true,
+      });
+    });
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+    expect(mockedAxios.post).toHaveBeenCalledWith("/api/orders", {
+      type: "take_out",
+      table_id: null,
+      items: [{ menu_item_id: 3, quantity: 1 }],
+    });
+    expect(store.getState().orders.orders[0]).toMatchObject({
+      id: 21,
+      total_price: 9.9,
+      order_items: [{ menu_item_id: 3, quantity: 1, price: 9 }],
+    });
+  });
+
+  it("keeps local order state clean when the atomic request fails", async () => {
+    mockedAxios.post.mockRejectedValue({
+      response: { data: { message: "Menu item is unavailable" } },
+    });
+    const store = renderOrderInput();
+    const user = userEvent.setup();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Demo Burger" })
+    );
+    await user.click(screen.getByRole("button", { name: "Submit" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Could not add order item"
+      "Menu item is unavailable"
     );
-    expect(mockedAxios.post).toHaveBeenCalledWith(
-      "/api/orders",
-      expect.objectContaining({ user_id: 7 })
-    );
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+    expect(store.getState().orders.orders).toEqual([]);
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@app/apiClient";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {
   Table,
@@ -11,6 +11,7 @@ import {
   handleFulfilledState,
   handleRejectedState,
 } from "@utils/sliceUtils";
+import { addOrder } from "@orders/slices/ordersSlice";
 
 export const fetchTables = createAsyncThunk<
   Table[],
@@ -158,7 +159,16 @@ const tablesSlice = createSlice({
         (state, action: PayloadAction<string | undefined>) => {
           handleRejectedState(state, action);
         }
-      );
+      )
+      .addCase(addOrder.fulfilled, (state, action) => {
+        if (action.payload.table_id === null) return;
+        const table = state.tables.find(
+          (currentTable) => currentTable.id === action.payload.table_id
+        );
+        if (table) {
+          table.orders = [...(table.orders ?? []), action.payload];
+        }
+      });
   },
 });
 

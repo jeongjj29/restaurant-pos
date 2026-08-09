@@ -1,20 +1,40 @@
 import { useAppSelector } from "@app/hooks";
+import { hasMinimumAccess, MANAGER_ACCESS_LEVEL } from "@auth/access";
 
 interface DataSyncStatusProps {
   onRetry: () => void;
 }
 
 function DataSyncStatus({ onRetry }: DataSyncStatusProps) {
-  const resources = useAppSelector((state) => [
-    { label: "employees", ...state.employees },
-    { label: "roles", ...state.roles },
-    { label: "menu items", ...state.menuItems },
-    { label: "menu categories", ...state.menuCategories },
-    { label: "orders", ...state.orders },
-    { label: "order items", ...state.orderItems },
-    { label: "payments", ...state.payments },
-    { label: "tables", ...state.tables },
-  ]);
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const employees = useAppSelector((state) => state.employees);
+  const roles = useAppSelector((state) => state.roles);
+  const menuItems = useAppSelector((state) => state.menuItems);
+  const menuCategories = useAppSelector((state) => state.menuCategories);
+  const orders = useAppSelector((state) => state.orders);
+  const orderItems = useAppSelector((state) => state.orderItems);
+  const payments = useAppSelector((state) => state.payments);
+  const tables = useAppSelector((state) => state.tables);
+  const runtimeConfig = useAppSelector((state) => state.runtimeConfig);
+  const canViewManagementData = hasMinimumAccess(
+    currentUser,
+    MANAGER_ACCESS_LEVEL
+  );
+  const resources = [
+    ...(canViewManagementData
+      ? [
+          { label: "employees", ...employees },
+          { label: "roles", ...roles },
+        ]
+      : []),
+    { label: "menu items", ...menuItems },
+    { label: "menu categories", ...menuCategories },
+    { label: "orders", ...orders },
+    { label: "order items", ...orderItems },
+    { label: "payments", ...payments },
+    { label: "tables", ...tables },
+    { label: "runtime configuration", ...runtimeConfig },
+  ];
 
   const loadingCount = resources.filter((resource) => resource.loading).length;
   const failures = resources.filter((resource) => resource.error);

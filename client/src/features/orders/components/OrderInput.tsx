@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addOrder, fetchOrders } from "../slices/ordersSlice";
-import { addOrderItem } from "../slices/orderItemsSlice";
-import { TAX_RATE } from "@constants";
+import { addOrder } from "../slices/ordersSlice";
 import { RootState } from "@app/store";
-import { MenuCategory, MenuItem } from "@menu/types";
+import { MenuItem } from "@menu/types";
 import MenuItemGrid from "./MenuItemGrid";
 import OrderSummaryTable from "./OrderSummaryTable";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
-import { calculateSubtotal } from "@utils/pricingUtils";
-import { fetchTables } from "@tables/slices/tablesSlice";
+import {
+  calculateOrderPreview,
+  calculateSubtotal,
+} from "@utils/pricingUtils";
 
 interface OrderInputProps {
   tableId?: number;
@@ -21,12 +21,18 @@ function OrderInput({ tableId }: OrderInputProps) {
   const menuCategories = useAppSelector(
     (state: RootState) => state.menuCategories.menuCategories
   );
+  const menuItems = useAppSelector(
+    (state: RootState) => state.menuItems.menuItems
+  );
   const tables = useAppSelector((state: RootState) => state.tables.tables);
-  const currentUser = useAppSelector((state: RootState) => state.auth.user);
+  const runtimeConfig = useAppSelector(
+    (state: RootState) => state.runtimeConfig
+  );
   const table = tables.find((table) => table.id === tableId);
+  const isDineIn = tableId !== undefined;
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<MenuCategory | null>(
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null
   );
   const [pendingOrderItems, setPendingOrderItems] = useState<
@@ -34,14 +40,38 @@ function OrderInput({ tableId }: OrderInputProps) {
   >([]);
 
   const subtotal = calculateSubtotal(pendingOrderItems);
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax;
+  const preview =
+    runtimeConfig.salesTaxRate === null
+      ? null
+      : calculateOrderPreview(subtotal, runtimeConfig.salesTaxRate);
+  const visibleMenuItems = menuItems.filter(
+    (menuItem) => menuItem.category_id === selectedCategoryId
+  );
 
   useEffect(() => {
-    if (menuCategories.length > 0 && !selectedCategory) {
-      setSelectedCategory(menuCategories[0]);
+    if (menuCategories.length === 0) {
+      setSelectedCategoryId(null);
+      return;
     }
-  }, [menuCategories, selectedCategory]);
+
+    const selectedCategoryStillExists = menuCategories.some(
+      (category) => category.id === selectedCategoryId
+    );
+    if (!selectedCategoryStillExists) {
+      setSelectedCategoryId(menuCategories[0].id);
+    }
+  }, [menuCategories, selectedCategoryId]);
+
+  useEffect(() => {
+    setPendingOrderItems((pendingItems) =>
+      pendingItems.flatMap((pendingItem) => {
+        const currentItem = menuItems.find((item) => item.id === pendingItem.id);
+        return currentItem
+          ? [{ ...currentItem, quantity: pendingItem.quantity }]
+          : [];
+      })
+    );
+  }, [menuItems]);
 
   const handleMenuItemClick = (menuItem: MenuItem) => {
     setSubmitError(null);
@@ -93,40 +123,26 @@ function OrderInput({ tableId }: OrderInputProps) {
       setSubmitError("Add at least one menu item before submitting the order.");
       return;
     }
-    if (!currentUser) {
-      setSubmitError("Your session is missing a user. Please sign in again.");
+    if (runtimeConfig.salesTaxRate === null) {
+      setSubmitError(
+        "Sales tax configuration is unavailable. Retry data sync before submitting."
+      );
       return;
     }
 
     try {
       setSubmitting(true);
       setSubmitError(null);
-      const order = await dispatch(
+      await dispatch(
         addOrder({
-          type: table ? "dine_in" : "take_out",
-          total_price: Number(total.toFixed(2)),
-          status: "open",
-          sales_tax: TAX_RATE,
-          user_id: currentUser.id,
-          table_id: table?.id || null,
+          type: isDineIn ? "dine_in" : "take_out",
+          table_id: tableId ?? null,
+          items: pendingOrderItems.map((item) => ({
+            menu_item_id: item.id,
+            quantity: item.quantity,
+          })),
         })
       ).unwrap();
-      await Promise.all(
-        pendingOrderItems.map((item) =>
-          dispatch(
-            addOrderItem({
-              order_id: order.id,
-              menu_item_id: item.id,
-              price: Number(item.price),
-              quantity: item.quantity,
-            })
-          ).unwrap()
-        )
-      );
-      await Promise.all([
-        dispatch(fetchOrders()).unwrap(),
-        dispatch(fetchTables()).unwrap(),
-      ]);
       navigate("/orders/all", { replace: true });
     } catch (error) {
       setSubmitError(getErrorMessage(error));
@@ -142,10 +158,10 @@ function OrderInput({ tableId }: OrderInputProps) {
           <button
             type="button"
             key={menuCategory.id}
-            onClick={() => setSelectedCategory(menuCategory)}
-            aria-pressed={selectedCategory?.id === menuCategory.id}
+            onClick={() => setSelectedCategoryId(menuCategory.id)}
+            aria-pressed={selectedCategoryId === menuCategory.id}
             className={`min-w-32 rounded-lg px-3 py-2 text-left text-sm font-bold transition-colors xl:w-full ${
-              selectedCategory?.id === menuCategory.id
+              selectedCategoryId === menuCategory.id
                 ? "bg-accent text-[#241102]"
                 : "bg-white/5 text-text-primary hover:bg-white/10"
             }`}
@@ -155,17 +171,17 @@ function OrderInput({ tableId }: OrderInputProps) {
         ))}
       </div>
 
-      <MenuItemGrid
-        items={selectedCategory?.menu_items || []}
-        onClick={handleMenuItemClick}
-      />
+      <MenuItemGrid items={visibleMenuItems} onClick={handleMenuItemClick} />
 
       <OrderSummaryTable
         items={pendingOrderItems}
         table={table}
         subtotal={subtotal}
-        tax={tax}
-        total={total}
+        tax={preview?.tax ?? null}
+        total={preview?.total ?? null}
+        configurationLoading={runtimeConfig.loading}
+        configurationError={runtimeConfig.error}
+        isDineIn={isDineIn}
         onClick={handleOrderSubmit}
         submitting={submitting}
         error={submitError}

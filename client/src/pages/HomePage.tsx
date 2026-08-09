@@ -1,9 +1,15 @@
 import { NavLink } from "react-router-dom";
 import { useAppSelector } from "@app/hooks";
 import { RootState } from "@app/store";
+import { hasMinimumAccess, MANAGER_ACCESS_LEVEL } from "@auth/access";
 
 function Home() {
   const orders = useAppSelector((state: RootState) => state.orders.orders);
+  const currentUser = useAppSelector((state: RootState) => state.auth.user);
+  const canViewManagement = hasMinimumAccess(
+    currentUser,
+    MANAGER_ACCESS_LEVEL
+  );
   const openOrders = orders.filter((order) => order.status === "open").length;
   const employees = useAppSelector(
     (state: RootState) => state.employees.employees.length
@@ -15,9 +21,25 @@ function Home() {
 
   const cards = [
     { label: "Open Orders", value: openOrders, to: "/orders/all" },
-    { label: "Team Members", value: employees, to: "/settings/employees" },
-    { label: "Menu Items", value: menuItems, to: "/settings/menu" },
-    { label: "Dining Tables", value: tables, to: "/settings/tables" },
+    ...(canViewManagement
+      ? [
+          {
+            label: "Team Members",
+            value: employees,
+            to: "/settings/employees",
+          },
+        ]
+      : []),
+    {
+      label: "Menu Items",
+      value: menuItems,
+      to: canViewManagement ? "/settings/menu" : "/orders/takeout",
+    },
+    {
+      label: "Dining Tables",
+      value: tables,
+      to: canViewManagement ? "/settings/tables" : "/orders/dinein",
+    },
   ];
 
   return (

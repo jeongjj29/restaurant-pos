@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@app/apiClient";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import OrderItemsDisplay from "@orders/components/OrderItemsDisplay";
@@ -89,12 +89,7 @@ function OrdersByTablePage() {
   return (
     <div className="flex h-full flex-wrap gap-4 overflow-auto p-3 md:p-4">
       {orders.map((order) => (
-        <OrderItemsDisplay
-          key={order.id}
-          table={table}
-          orderItems={order.order_items}
-          orderId={order.id}
-        />
+        <OrderItemsDisplay key={order.id} order={order} />
       ))}
     </div>
   );

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@app/apiClient";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {
   AddMenuItemPayload,
@@ -68,13 +68,13 @@ export const updateMenuItem = createAsyncThunk<
 });
 
 export const deleteMenuItem = createAsyncThunk<
-  MenuItem,
+  number,
   number,
   { rejectValue: string }
 >("menuItems/deleteMenuItem", async (menuItemId, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`/api/menu_items/${menuItemId}`);
-    return response.data;
+    await axios.delete(`/api/menu_items/${menuItemId}`);
+    return menuItemId;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(
@@ -152,10 +152,10 @@ const menuItemsSlice = createSlice({
       })
       .addCase(
         deleteMenuItem.fulfilled,
-        (state, action: PayloadAction<MenuItem>) => {
+        (state, action: PayloadAction<number>) => {
           handleFulfilledState(state, action);
           state.menuItems = state.menuItems.filter(
-            (menuItem) => menuItem.id !== action.payload.id
+            (menuItem) => menuItem.id !== action.payload
           );
         }
       )

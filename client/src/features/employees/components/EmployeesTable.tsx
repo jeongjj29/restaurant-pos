@@ -9,11 +9,13 @@ import EditButton from "@components/buttons/EditButton";
 interface EmployeeTableProps {
   setSelectedEmployee: (employee: EmployeeType | null) => void;
   setFormHidden: (hidden: boolean) => void;
+  canEdit: boolean;
 }
 
 function EmployeeTable({
   setSelectedEmployee,
   setFormHidden,
+  canEdit,
 }: EmployeeTableProps) {
   const dispatch = useAppDispatch();
   const employees = useAppSelector(
@@ -49,16 +51,18 @@ function EmployeeTable({
     return (
       <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-white/5 p-6 text-center">
         <p className="text-text-secondary">No employees have been added yet.</p>
-        <button
-          type="button"
-          onClick={() => {
-            setSelectedEmployee(null);
-            setFormHidden(false);
-          }}
-          className="accent-badge rounded-lg px-4 py-2 text-sm"
-        >
-          Add first employee
-        </button>
+        {canEdit && (
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedEmployee(null);
+              setFormHidden(false);
+            }}
+            className="accent-badge rounded-lg px-4 py-2 text-sm"
+          >
+            Add first employee
+          </button>
+        )}
       </div>
     );
   }
@@ -79,14 +83,16 @@ function EmployeeTable({
               Phone #
             </th>
             <th className="py-3 px-6 text-left text-md font-semibold">Email</th>
-            <th className="py-3 px-6 text-left text-md font-semibold">
-              <CreateButton
-                onClick={() => {
-                  setSelectedEmployee(null);
-                  setFormHidden(false);
-                }}
-              />
-            </th>
+            {canEdit && (
+              <th className="py-3 px-6 text-left text-md font-semibold">
+                <CreateButton
+                  onClick={() => {
+                    setSelectedEmployee(null);
+                    setFormHidden(false);
+                  }}
+                />
+              </th>
+            )}
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
@@ -104,14 +110,16 @@ function EmployeeTable({
               </td>
               <td className="py-3 px-6 text-left">{employee.phone_number}</td>
               <td className="py-3 px-6 text-left">{employee.email}</td>
-              <td className="py-3 px-6 text-left">
-                <EditButton
-                  onClick={() => {
-                    setSelectedEmployee(employee);
-                    setFormHidden(false);
-                  }}
-                />
-              </td>
+              {canEdit && (
+                <td className="py-3 px-6 text-left">
+                  <EditButton
+                    onClick={() => {
+                      setSelectedEmployee(employee);
+                      setFormHidden(false);
+                    }}
+                  />
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

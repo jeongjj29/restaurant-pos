@@ -7,8 +7,8 @@ export type LoginPayload = {
 
 export type AuthState = {
   isAuthenticated: boolean;
-  token: string | null;
   user: Employee | null;
+  initialized: boolean;
   loading: boolean;
   error: string | null;
 };

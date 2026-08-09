@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@app/apiClient";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Role, RolesState } from "@employees/types";
 import {
@@ -46,10 +46,8 @@ export const updateRole = createAsyncThunk<Role, Role, { rejectValue: string }>(
   "roles/updateRole",
   async (updatedRole, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `/api/roles/${updatedRole.id}`,
-        updatedRole
-      );
+      const { id, ...changes } = updatedRole;
+      const response = await axios.patch(`/api/roles/${id}`, changes);
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -63,13 +61,13 @@ export const updateRole = createAsyncThunk<Role, Role, { rejectValue: string }>(
 );
 
 export const deleteRole = createAsyncThunk<
-  Role,
+  number,
   number,
   { rejectValue: string }
 >("roles/deleteRole", async (roleId, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`/api/roles/${roleId}`);
-    return response.data;
+    await axios.delete(`/api/roles/${roleId}`);
+    return roleId;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(
@@ -129,9 +127,7 @@ const rolesSlice = createSlice({
       })
       .addCase(deleteRole.fulfilled, (state, action) => {
         handleFulfilledState(state, action);
-        state.roles = state.roles.filter(
-          (role) => role.id !== action.payload.id
-        );
+        state.roles = state.roles.filter((role) => role.id !== action.payload);
       })
       .addCase(deleteRole.rejected, (state, action) => {
         handleRejectedState(state, action);

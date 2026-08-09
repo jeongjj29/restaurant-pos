@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@app/apiClient";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {
   AddOrderPayload,
@@ -69,13 +69,13 @@ export const updateOrder = createAsyncThunk<
 });
 
 export const deleteOrder = createAsyncThunk<
-  Order,
+  number,
   number,
   { rejectValue: string }
 >("orders/deleteOrder", async (orderId, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`/api/orders/${orderId}`);
-    return normalizeOrder(response.data);
+    await axios.delete(`/api/orders/${orderId}`);
+    return orderId;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(
@@ -148,11 +148,9 @@ const ordersSlice = createSlice({
       .addCase(deleteOrder.pending, (state) => {
         handlePendingState(state);
       })
-      .addCase(deleteOrder.fulfilled, (state, action: PayloadAction<Order>) => {
+      .addCase(deleteOrder.fulfilled, (state, action: PayloadAction<number>) => {
         handleFulfilledState(state, action);
-        state.orders = state.orders.filter(
-          (order) => order.id !== action.payload.id
-        );
+        state.orders = state.orders.filter((order) => order.id !== action.payload);
       })
       .addCase(
         deleteOrder.rejected,

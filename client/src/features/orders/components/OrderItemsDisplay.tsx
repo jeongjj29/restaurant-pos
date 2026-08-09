@@ -1,29 +1,26 @@
 import { calculateSubtotal } from "@utils/pricingUtils";
-import { TAX_RATE } from "@constants";
-import { OrderItem } from "@orders/types";
-import { Table } from "@features/tables/types";
+import { Order } from "@orders/types";
 
 interface Props {
-  table: Table | undefined;
-  orderItems: OrderItem[];
-  orderId: number;
+  order: Order;
 }
 
-function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
-  const subtotal = calculateSubtotal(orderItems);
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax;
+function OrderItemsDisplay({ order }: Props) {
+  const subtotal = calculateSubtotal(order.order_items);
+  const serverTotal = Number(order.total_price);
+  const total = Number.isFinite(serverTotal) ? serverTotal : subtotal;
+  const tax = Math.max(0, total - subtotal);
 
   return (
     <div className="flex h-[85vh] max-w-md flex-col justify-between overflow-hidden rounded-lg bg-surface p-6 shadow-lg">
       <div className="flex flex-col mb-4">
         <p className="text-text-primary text-xl font-semibold">
-          Order #{orderId}
+          Order #{order.id}
         </p>
         <p className="text-text-secondary text-md">
-          Type: {table ? "Dine-In" : "Take-Out"}
+          Type: {order.type === "dine_in" ? "Dine-In" : "Take-Out"}
         </p>
-        <p>{table ? `Table ${table.number}` : null}</p>
+        <p>{order.table ? `Table ${order.table.number}` : null}</p>
       </div>
 
       <div className="flex-grow overflow-y-auto">
@@ -37,7 +34,7 @@ function OrderItemsDisplay({ table, orderItems, orderId }: Props) {
             </tr>
           </thead>
           <tbody>
-            {orderItems.map((item, index) => (
+            {order.order_items.map((item, index) => (
               <tr
                 key={item.id}
                 className={index % 2 === 0 ? "bg-white/5" : "bg-white/10"}

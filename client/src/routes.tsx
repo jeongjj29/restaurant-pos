@@ -1,62 +1,96 @@
+import { lazy, ReactElement, Suspense } from "react";
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 
-import App from "@components/App";
-import Home from "@pages/HomePage";
-import LoginPage from "@auth/LoginPage";
 import ErrorPage from "@pages/ErrorPage";
-import SettingsPage from "@pages/SettingsPage";
-import MenuManagementPage from "@menu/pages/MenuManagementPage";
-import EmployeeManagementPage from "@employees/pages/EmployeeManagementPage";
-import TableManagementPage from "@tables/pages/TableManagementPage";
-import SalesReportsPage from "@pages/SalesReportPage";
-import OrdersManagementPage from "@orders/pages/OrdersManagementPage";
-import DineInPage from "@orders/pages/DineInPage";
-import TakeOutPage from "@orders/pages/TakeOutPage";
-import AllOrdersPage from "@orders/pages/AllOrdersPage";
-import PaymentsPage from "@orders/pages/PaymentsPage";
-import OrdersByTablePage from "@orders/pages/OrdersByTablePage";
-import DineInOrderInputPage from "@orders/pages/DineInOrderInputPage";
 import ProtectedRoute from "@auth/ProtectedRoute";
+import MinimumAccessRoute from "@auth/MinimumAccessRoute";
+import { MANAGER_ACCESS_LEVEL } from "@auth/access";
+import RouteLoading from "@components/RouteLoading";
+
+const App = lazy(() => import("@components/App"));
+const Home = lazy(() => import("@pages/HomePage"));
+const LoginPage = lazy(() => import("@auth/LoginPage"));
+const SettingsPage = lazy(() => import("@pages/SettingsPage"));
+const MenuManagementPage = lazy(
+  () => import("@menu/pages/MenuManagementPage")
+);
+const EmployeeManagementPage = lazy(
+  () => import("@employees/pages/EmployeeManagementPage")
+);
+const TableManagementPage = lazy(
+  () => import("@tables/pages/TableManagementPage")
+);
+const SalesReportsPage = lazy(() => import("@pages/SalesReportPage"));
+const OrdersManagementPage = lazy(
+  () => import("@orders/pages/OrdersManagementPage")
+);
+const DineInPage = lazy(() => import("@orders/pages/DineInPage"));
+const TakeOutPage = lazy(() => import("@orders/pages/TakeOutPage"));
+const AllOrdersPage = lazy(() => import("@orders/pages/AllOrdersPage"));
+const PaymentsPage = lazy(() => import("@orders/pages/PaymentsPage"));
+const OrdersByTablePage = lazy(
+  () => import("@orders/pages/OrdersByTablePage")
+);
+const DineInOrderInputPage = lazy(
+  () => import("@orders/pages/DineInOrderInputPage")
+);
+
+const loadable = (element: ReactElement) => (
+  <Suspense fallback={<RouteLoading />}>{element}</Suspense>
+);
 
 const routes: RouteObject[] = [
   {
     path: "/login",
-    element: <LoginPage />,
+    element: loadable(<LoginPage />),
     errorElement: <ErrorPage />,
   },
   {
     path: "/",
     element: (
       <ProtectedRoute>
-        <App />
+        {loadable(<App />)}
       </ProtectedRoute>
     ),
     errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        element: <Home />,
+        element: loadable(<Home />),
       },
       {
         path: "orders",
-        element: <OrdersManagementPage />,
+        element: loadable(<OrdersManagementPage />),
         children: [
-          { path: "dinein", element: <DineInPage /> },
-          { path: "table/:tableId", element: <OrdersByTablePage /> },
-          { path: "table/:tableId/new", element: <DineInOrderInputPage /> },
-          { path: "takeout", element: <TakeOutPage /> },
-          { path: "all", element: <AllOrdersPage /> },
-          { path: "payment", element: <PaymentsPage /> },
+          { path: "dinein", element: loadable(<DineInPage />) },
+          {
+            path: "table/:tableId",
+            element: loadable(<OrdersByTablePage />),
+          },
+          {
+            path: "table/:tableId/new",
+            element: loadable(<DineInOrderInputPage />),
+          },
+          { path: "takeout", element: loadable(<TakeOutPage />) },
+          { path: "all", element: loadable(<AllOrdersPage />) },
+          { path: "payment", element: loadable(<PaymentsPage />) },
         ],
       },
       {
         path: "settings",
-        element: <SettingsPage />,
+        element: (
+          <MinimumAccessRoute minimumAccessLevel={MANAGER_ACCESS_LEVEL}>
+            {loadable(<SettingsPage />)}
+          </MinimumAccessRoute>
+        ),
         children: [
-          { path: "menu", element: <MenuManagementPage /> },
-          { path: "employees", element: <EmployeeManagementPage /> },
-          { path: "tables", element: <TableManagementPage /> },
-          { path: "reports", element: <SalesReportsPage /> },
+          { path: "menu", element: loadable(<MenuManagementPage />) },
+          {
+            path: "employees",
+            element: loadable(<EmployeeManagementPage />),
+          },
+          { path: "tables", element: loadable(<TableManagementPage />) },
+          { path: "reports", element: loadable(<SalesReportsPage />) },
         ],
       },
     ],

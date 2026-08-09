@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@app/apiClient";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { AddPaymentPayload, Payment, PaymentsState } from "@payments/types";
 import {
@@ -48,46 +48,6 @@ export const addPayment = createAsyncThunk<
   }
 });
 
-export const updatePayment = createAsyncThunk<
-  Payment,
-  Payment,
-  { rejectValue: string }
->("payments/updatePayment", async (updatedPayment, { rejectWithValue }) => {
-  try {
-    const { id, ...changes } = updatedPayment;
-    const response = await axios.patch(
-      `/api/payments/${id}`,
-      changes
-    );
-    return normalizePayment(response.data);
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to update payment"
-      );
-    }
-    return rejectWithValue("An unknown error occurred");
-  }
-});
-
-export const deletePayment = createAsyncThunk<
-  Payment,
-  number,
-  { rejectValue: string }
->("payments/deletePayment", async (paymentId, { rejectWithValue }) => {
-  try {
-    const response = await axios.delete(`/api/payments/${paymentId}`);
-    return normalizePayment(response.data);
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to delete payment"
-      );
-    }
-    return rejectWithValue("An unknown error occurred");
-  }
-});
-
 const initialState: PaymentsState = {
   payments: [],
   loading: false,
@@ -128,42 +88,6 @@ const paymentsSlice = createSlice({
       )
       .addCase(
         addPayment.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          handleRejectedState(state, action);
-        }
-      )
-      .addCase(updatePayment.pending, (state) => {
-        handlePendingState(state);
-      })
-      .addCase(
-        updatePayment.fulfilled,
-        (state, action: PayloadAction<Payment>) => {
-          handleFulfilledState(state, action);
-          state.payments = state.payments.map((payment) =>
-            payment.id === action.payload.id ? action.payload : payment
-          );
-        }
-      )
-      .addCase(
-        updatePayment.rejected,
-        (state, action: PayloadAction<string | undefined>) => {
-          handleRejectedState(state, action);
-        }
-      )
-      .addCase(deletePayment.pending, (state) => {
-        handlePendingState(state);
-      })
-      .addCase(
-        deletePayment.fulfilled,
-        (state, action: PayloadAction<Payment>) => {
-          handleFulfilledState(state, action);
-          state.payments = state.payments.filter(
-            (payment) => payment.id !== action.payload.id
-          );
-        }
-      )
-      .addCase(
-        deletePayment.rejected,
         (state, action: PayloadAction<string | undefined>) => {
           handleRejectedState(state, action);
         }

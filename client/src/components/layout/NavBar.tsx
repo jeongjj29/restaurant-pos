@@ -12,10 +12,15 @@ import TakeoutDiningIcon from "@mui/icons-material/TakeoutDining";
 import LogoutIcon from "@mui/icons-material/Logout";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
+import { hasMinimumAccess, MANAGER_ACCESS_LEVEL } from "@auth/access";
 
 function NavBar() {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((state) => state.auth.user);
+  const canViewSettings = hasMinimumAccess(
+    currentUser,
+    MANAGER_ACCESS_LEVEL
+  );
   const signingOut = useAppSelector((state) => state.auth.loading);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [ordersOpen, setOrdersOpen] = useState<boolean>(false);
@@ -88,39 +93,46 @@ function NavBar() {
           </div>
         )}
 
-        <button
-          type="button"
-          aria-expanded={settingsOpen}
-          aria-controls="settings-navigation"
-          className={`${BASE_LINK_STYLE} bg-white/5 text-text-secondary hover:bg-white/12 hover:text-text-primary`}
-          onClick={() => setSettingsOpen(!settingsOpen)}
-        >
-          <SettingsIcon />
-          <span>Settings</span>
-        </button>
+        {canViewSettings && (
+          <>
+            <button
+              type="button"
+              aria-expanded={settingsOpen}
+              aria-controls="settings-navigation"
+              className={`${BASE_LINK_STYLE} bg-white/5 text-text-secondary hover:bg-white/12 hover:text-text-primary`}
+              onClick={() => setSettingsOpen(!settingsOpen)}
+            >
+              <SettingsIcon />
+              <span>Settings</span>
+            </button>
 
-        {settingsOpen && (
-          <div id="settings-navigation" className="flex flex-col space-y-2 ml-2">
-            <NavLink to="/settings/employees" className={subLinkClassName}>
-              <GroupIcon />
-              <span>Employees</span>
-            </NavLink>
+            {settingsOpen && (
+              <div
+                id="settings-navigation"
+                className="flex flex-col space-y-2 ml-2"
+              >
+                <NavLink to="/settings/employees" className={subLinkClassName}>
+                  <GroupIcon />
+                  <span>Employees</span>
+                </NavLink>
 
-            <NavLink to="/settings/menu" className={subLinkClassName}>
-              <MenuBookIcon />
-              <span>Menu</span>
-            </NavLink>
+                <NavLink to="/settings/menu" className={subLinkClassName}>
+                  <MenuBookIcon />
+                  <span>Menu</span>
+                </NavLink>
 
-            <NavLink to="/settings/tables" className={subLinkClassName}>
-              <TableRestaurantIcon />
-              <span>Tables</span>
-            </NavLink>
+                <NavLink to="/settings/tables" className={subLinkClassName}>
+                  <TableRestaurantIcon />
+                  <span>Tables</span>
+                </NavLink>
 
-            <NavLink to="/settings/reports" className={subLinkClassName}>
-              <BarChartIcon />
-              <span>Reports</span>
-            </NavLink>
-          </div>
+                <NavLink to="/settings/reports" className={subLinkClassName}>
+                  <BarChartIcon />
+                  <span>Reports</span>
+                </NavLink>
+              </div>
+            )}
+          </>
         )}
         <div className="hidden h-auto w-full grow rounded-md md:block"></div>
         {currentUser && (

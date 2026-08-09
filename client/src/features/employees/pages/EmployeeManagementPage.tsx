@@ -2,8 +2,12 @@ import { useState } from "react";
 import EmployeeTable from "@employees/components/EmployeesTable";
 import EmployeeForm from "@employees/components/EmployeeForm";
 import { Employee } from "@employees/types";
+import { useAppSelector } from "@app/hooks";
+import { ADMIN_ACCESS_LEVEL, hasMinimumAccess } from "@auth/access";
 
 function EmployeeManagementPage() {
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const canEditEmployees = hasMinimumAccess(currentUser, ADMIN_ACCESS_LEVEL);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
     null
   );
@@ -21,17 +25,23 @@ function EmployeeManagementPage() {
         <EmployeeTable
           setSelectedEmployee={setSelectedEmployee}
           setFormHidden={setFormHidden}
+          canEdit={canEditEmployees}
         />
         <div className="min-h-0 overflow-auto">
-          {!formHidden ? (
+          {canEditEmployees && !formHidden ? (
             <EmployeeForm
               employee={selectedEmployee}
               setSelectedEmployee={setSelectedEmployee}
               setFormHidden={setFormHidden}
             />
-          ) : (
+          ) : canEditEmployees ? (
             <div className="flex min-h-48 items-center justify-center rounded-xl border border-dashed border-border bg-white/5 p-6 text-center text-sm text-text-secondary">
               Select an employee to edit, or create a new team member.
+            </div>
+          ) : (
+            <div className="flex min-h-48 items-center justify-center rounded-xl border border-border bg-white/5 p-6 text-center text-sm text-text-secondary">
+              Employee profiles are read-only for managers. An administrator can
+              create or update staff accounts.
             </div>
           )}
         </div>

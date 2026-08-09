@@ -46,14 +46,17 @@ describe("orders thunks", () => {
 
   it("updates orders with PATCH and does not send the id as a field", async () => {
     mockedAxios.patch.mockResolvedValue({
-      data: { ...apiOrder, status: "closed" },
+      data: { ...apiOrder, guests: 4, table_id: 3 },
     });
     const store = createStore();
 
-    await store.dispatch(updateOrder({ id: 12, status: "closed" })).unwrap();
+    await store
+      .dispatch(updateOrder({ id: 12, guests: 4, table_id: 3 }))
+      .unwrap();
 
     expect(mockedAxios.patch).toHaveBeenCalledWith("/api/orders/12", {
-      status: "closed",
+      guests: 4,
+      table_id: 3,
     });
   });
 });

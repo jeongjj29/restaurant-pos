@@ -5,18 +5,18 @@ import { Payment } from "@features/payments/types";
 
 export interface Order {
   id: number;
-  type: string;
+  type: OrderType;
   guests: number;
   total_price: number;
   status: string;
   sales_tax: number;
   user_id: number;
-  table_id: number;
+  table_id: number | null;
   created_at: Date;
-  closed_at: Date;
+  closed_at: Date | null;
 
   user: Employee;
-  table: Table;
+  table: Table | null;
   order_items: OrderItem[];
   payments: Payment[];
 }
@@ -44,28 +44,29 @@ export interface OrderItemsState {
   error: string | null;
 }
 
+export type OrderType = "dine_in" | "take_out";
+
+export interface CreateOrderItemPayload {
+  menu_item_id: number;
+  quantity: number;
+}
+
 export interface AddOrderPayload {
-  type: string;
-  total_price: number;
-  status: string;
-  sales_tax: number;
-  user_id: number;
+  type: OrderType;
+  guests?: number;
   table_id: number | null;
+  items: CreateOrderItemPayload[];
 }
 
 export interface UpdateOrderPayload {
   id: number;
-  type?: string;
-  total_price?: number;
-  status?: string;
-  sales_tax?: number;
-  user_id?: number;
-  table_id?: number;
+  type?: OrderType;
+  guests?: number;
+  table_id?: number | null;
 }
 
 export interface AddOrderItemPayload {
   order_id: number;
   menu_item_id: number;
-  price: number;
   quantity: number;
 }

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@app/apiClient";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {
   MenuCategory,
@@ -77,17 +77,15 @@ export const updateMenuCategory = createAsyncThunk<
 );
 
 export const deleteMenuCategory = createAsyncThunk<
-  MenuCategory,
+  number,
   number,
   { rejectValue: string }
 >(
   "menuCategories/deleteMenuCategory",
   async (menuCategoryId, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(
-        `/api/menu_categories/${menuCategoryId}`
-      );
-      return response.data;
+      await axios.delete(`/api/menu_categories/${menuCategoryId}`);
+      return menuCategoryId;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         return rejectWithValue(
@@ -166,10 +164,10 @@ const menuCategoriesSlice = createSlice({
       })
       .addCase(
         deleteMenuCategory.fulfilled,
-        (state, action: PayloadAction<MenuCategory>) => {
+        (state, action: PayloadAction<number>) => {
           handleFulfilledState(state, action);
           state.menuCategories = state.menuCategories.filter(
-            (category) => category.id !== action.payload.id
+            (category) => category.id !== action.payload
           );
         }
       )

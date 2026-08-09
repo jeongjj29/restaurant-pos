@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import NavBar from "./layout/NavBar";
-import { useAppDispatch } from "@app/hooks";
+import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { fetchTables } from "@tables/slices/tablesSlice";
 import { fetchOrders } from "@orders/slices/ordersSlice";
 import { fetchEmployees } from "@employees/slices/employeesSlice";
@@ -11,21 +11,31 @@ import { fetchPayments } from "@payments/slices/paymentsSlice";
 import { fetchOrderItems } from "@orders/slices/orderItemsSlice";
 import { fetchRoles } from "@employees/slices/rolesSlice";
 import DataSyncStatus from "./DataSyncStatus";
+import { hasMinimumAccess, MANAGER_ACCESS_LEVEL } from "@auth/access";
+import { fetchRuntimeConfig } from "@features/config/runtimeConfigSlice";
 
 function App() {
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const canViewManagementData = hasMinimumAccess(
+    currentUser,
+    MANAGER_ACCESS_LEVEL
+  );
   const bootstrapped = useRef(false);
 
   const refreshData = useCallback(() => {
     void dispatch(fetchTables());
     void dispatch(fetchOrders());
-    void dispatch(fetchEmployees());
     void dispatch(fetchMenuItems());
     void dispatch(fetchMenuCategories());
     void dispatch(fetchPayments());
     void dispatch(fetchOrderItems());
-    void dispatch(fetchRoles());
-  }, [dispatch]);
+    void dispatch(fetchRuntimeConfig());
+    if (canViewManagementData) {
+      void dispatch(fetchEmployees());
+      void dispatch(fetchRoles());
+    }
+  }, [canViewManagementData, dispatch]);
 
   useEffect(() => {
     if (bootstrapped.current) return;

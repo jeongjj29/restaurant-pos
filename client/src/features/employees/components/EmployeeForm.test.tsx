@@ -19,7 +19,7 @@ const employee: Employee = {
   first_name: "Alice",
   last_name: "Smith",
   email: "alice@example.com",
-  phone_number: 2125550100,
+  phone_number: "0125550100",
   role_id: 2,
   created_at: "2026-01-01T00:00:00Z",
   role: { id: 2, name: "Manager", access_level: 4 },
@@ -81,7 +81,7 @@ describe("EmployeeForm", () => {
       expect(mockedAxios.patch).toHaveBeenCalledWith("/api/users/7", {
         first_name: "Alicia",
         last_name: "Smith",
-        phone_number: 2125550100,
+        phone_number: "0125550100",
         email: "alice@example.com",
         username: "alice",
         role_id: 2,

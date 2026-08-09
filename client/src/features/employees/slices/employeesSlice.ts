@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@app/apiClient";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {
   AddEmployeePayload,
@@ -71,13 +71,13 @@ export const updateEmployee = createAsyncThunk<
 });
 
 export const deleteEmployee = createAsyncThunk<
-  Employee,
+  number,
   number,
   { rejectValue: string }
 >("employees/deleteEmployee", async (employeeId, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`/api/users/${employeeId}`);
-    return response.data;
+    await axios.delete(`/api/users/${employeeId}`);
+    return employeeId;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue(
@@ -158,10 +158,10 @@ const employeesSlice = createSlice({
       })
       .addCase(
         deleteEmployee.fulfilled,
-        (state, action: PayloadAction<Employee>) => {
+        (state, action: PayloadAction<number>) => {
           handleFulfilledState(state, action);
           state.employees = state.employees.filter(
-            (employee) => employee.id !== action.payload.id
+            (employee) => employee.id !== action.payload
           );
         }
       )

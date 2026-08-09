@@ -4,9 +4,12 @@ import { Table } from "@tables/types";
 interface Props {
   items: (MenuItem & { quantity: number })[];
   table: Table | undefined;
+  isDineIn: boolean;
   subtotal: number;
-  tax: number;
-  total: number;
+  tax: number | null;
+  total: number | null;
+  configurationLoading: boolean;
+  configurationError: string | null;
   onClick: () => void;
   submitting: boolean;
   error: string | null;
@@ -18,9 +21,12 @@ interface Props {
 function OrderSummaryTable({
   items,
   table,
+  isDineIn,
   subtotal,
   tax,
   total,
+  configurationLoading,
+  configurationError,
   onClick,
   submitting,
   error,
@@ -31,7 +37,11 @@ function OrderSummaryTable({
   return (
     <section className="flex max-h-full min-h-[24rem] w-full flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-lg xl:w-[26rem]">
       <h1 className="border-b border-border py-3 text-center text-xl font-bold">
-        {table ? `Table ${table.number} Order` : "Take-Out Order"}
+        {isDineIn
+          ? table
+            ? `Table ${table.number} Order`
+            : "Dine-In Order"
+          : "Take-Out Order"}
       </h1>
 
       <div className="flex-grow overflow-auto">
@@ -104,14 +114,16 @@ function OrderSummaryTable({
               <td className="py-1 px-4 font-semibold text-text-secondary">
                 Tax
               </td>
-              <td className="py-1 px-4 font-bold">${tax.toFixed(2)}</td>
+              <td className="py-1 px-4 font-bold">
+                {tax === null ? "—" : `$${tax.toFixed(2)}`}
+              </td>
             </tr>
             <tr>
               <td className="py-2 px-4 font-semibold text-text-secondary text-lg">
                 Total
               </td>
               <td className="py-2 px-4 font-bold text-lg">
-                ${total.toFixed(2)}
+                {total === null ? "—" : `$${total.toFixed(2)}`}
               </td>
             </tr>
           </tfoot>
@@ -122,6 +134,22 @@ function OrderSummaryTable({
             Add at least one item to submit this order.
           </p>
         )}
+        {tax === null && !error && (
+          <p
+            role={configurationError ? "alert" : "status"}
+            className={`mb-3 rounded-lg p-3 text-center text-sm ${
+              configurationError
+                ? "bg-error/10 text-error"
+                : "bg-white/5 text-text-secondary"
+            }`}
+          >
+            {configurationError
+              ? "Sales tax configuration is unavailable. Retry data sync before submitting."
+              : configurationLoading
+                ? "Loading sales tax configuration…"
+                : "Waiting for sales tax configuration…"}
+          </p>
+        )}
         {error && (
           <p role="alert" className="mb-3 rounded-lg bg-error/10 p-3 text-sm text-error">
             {error}
@@ -130,7 +158,7 @@ function OrderSummaryTable({
 
         <button
           type="button"
-          disabled={submitting || items.length === 0}
+          disabled={submitting || items.length === 0 || tax === null}
           onClick={onClick}
           className="accent-badge w-full rounded-lg px-6 py-2.5 transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-45"
         >

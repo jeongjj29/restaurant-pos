@@ -4,6 +4,7 @@ import { RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "@app/store";
 import { router } from "@routes";
+import SessionExpirationListener from "@auth/SessionExpirationListener";
 import "./index.css";
 
 const container = document.getElementById("root");
@@ -12,6 +13,7 @@ if (!container) throw new Error("Root container not found");
 createRoot(container).render(
   <React.StrictMode>
     <Provider store={store}>
+      <SessionExpirationListener />
       <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>

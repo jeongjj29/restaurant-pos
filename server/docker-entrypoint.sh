@@ -31,7 +31,7 @@ run_migrations() {
     esac
 
     attempt=1
-    while ! flask --app manage:app db upgrade; do
+    while ! /opt/venv/bin/flask --app manage:app db upgrade; do
         if [ "$attempt" -ge "$max_attempts" ]; then
             echo "Database migrations failed after $attempt attempts" >&2
             return 1
@@ -47,7 +47,7 @@ if is_enabled "${RUN_MIGRATIONS:-true}"; then
 fi
 
 if is_enabled "${SEED_DATABASE:-false}"; then
-    flask --app manage:app seed
+    /opt/venv/bin/flask --app manage:app seed
 fi
 
 exec "$@"

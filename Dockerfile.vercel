@@ -66,4 +66,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD ["python", "healthcheck.py"]
 
 ENTRYPOINT ["/app/server/docker-entrypoint.sh"]
-CMD ["gunicorn", "--config", "gunicorn.conf.py", "wsgi:application"]
+CMD ["/opt/venv/bin/gunicorn", "--config", "gunicorn.conf.py", "wsgi:application"]

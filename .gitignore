@@ -72,3 +72,5 @@ instance
 .vscode
 .idea/
 .env
+.vercel
+.env*

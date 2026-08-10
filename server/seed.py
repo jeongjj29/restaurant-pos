@@ -3,6 +3,7 @@ from decimal import Decimal, ROUND_HALF_UP
 
 from app.extensions import db
 from app.models import (
+    Discount,
     MenuCategory,
     MenuItem,
     Order,
@@ -10,8 +11,32 @@ from app.models import (
     Payment,
     Role,
     Table,
+    TokenBlockList,
     User,
 )
+
+
+DEMO_USERNAME = "demo"
+DEMO_PASSWORD = "restaurant-demo"
+
+
+def reset_demo_data():
+    """Delete application data and rebuild the intentionally public demo baseline."""
+    for model in (
+        Payment,
+        OrderItem,
+        Order,
+        TokenBlockList,
+        User,
+        MenuItem,
+        MenuCategory,
+        Discount,
+        Table,
+        Role,
+    ):
+        db.session.query(model).delete(synchronize_session=False)
+
+    seed_data()
 
 
 def seed_data():
@@ -104,9 +129,7 @@ def seed_data():
     tables_by_number = {table.number: table for table in tables}
 
     user_specs = [
-        ("admin", "Admin", "Admin", "admin@me.com", "Admin"),
-        ("manager", "Manager", "Manager", "manager@me.com", "Manager"),
-        ("waiter", "Waiter", "Waiter", "waiter@me.com", "Server"),
+        (DEMO_USERNAME, "Demo", "Server", "demo@example.invalid", "Server"),
     ]
 
     users_by_username = {}
@@ -119,7 +142,7 @@ def seed_data():
                 last_name=last_name,
                 email=email,
                 role=roles_by_name[role_name],
-                password_hash="password",
+                password_hash=DEMO_PASSWORD,
             )
             db.session.add(user)
         else:
@@ -589,7 +612,7 @@ def seed_data():
             total_price=order_total(open_lines),
             sales_tax=tax_rate,
             created_at=now - timedelta(minutes=35),
-            user=users_by_username["waiter"],
+            user=users_by_username[DEMO_USERNAME],
             table=tables_by_number[2],
         )
         open_order.order_items = [
@@ -611,7 +634,7 @@ def seed_data():
             sales_tax=tax_rate,
             created_at=now - timedelta(hours=2),
             closed_at=now - timedelta(hours=1, minutes=40),
-            user=users_by_username["manager"],
+            user=users_by_username[DEMO_USERNAME],
         )
         closed_order.order_items = [
             OrderItem(

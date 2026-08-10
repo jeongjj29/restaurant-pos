@@ -108,6 +108,7 @@ describe("App bootstrap permissions", () => {
     expect(requests.fetchOrders).toHaveBeenCalledOnce();
     expect(requests.fetchRuntimeConfig).toHaveBeenCalledOnce();
     expect(screen.queryByRole("button", { name: "Settings" })).not.toBeInTheDocument();
+    expect(screen.getByText(/shared public demo/i)).toBeInTheDocument();
   });
 
   it("loads management data and shows settings to managers", () => {

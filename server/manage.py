@@ -14,6 +14,7 @@ CANONICAL_ROLES = (
     ("Server", 2),
     ("Bartender", 1),
 )
+DEMO_RESET_CONFIRMATION = "reset-restaurant-pos-demo"
 
 
 def _ensure_canonical_roles(role_model):
@@ -59,6 +60,31 @@ def seed():
 
     seed_data()
     click.echo("Seeded the database.")
+
+
+@click.command("reset-demo", help="Destructively restore the public demo baseline.")
+@click.option(
+    "--confirm",
+    required=True,
+    help=f"Required safety phrase: {DEMO_RESET_CONFIRMATION}",
+)
+@with_appcontext
+def reset_demo(confirm):
+    if confirm != DEMO_RESET_CONFIRMATION:
+        raise click.ClickException("Demo reset confirmation did not match.")
+
+    if current_app.config.get("ENVIRONMENT") == "production" and not (
+        current_app.config.get("ALLOW_DEMO_RESET")
+    ):
+        raise click.ClickException(
+            "Demo reset is disabled in production. Temporarily set "
+            "ALLOW_DEMO_RESET=true only while performing an intentional reset."
+        )
+
+    from seed import reset_demo_data
+
+    reset_demo_data()
+    click.echo("Reset the demo database to its seeded baseline.")
 
 
 @click.command("create-admin", help="Create the initial production administrator.")
@@ -149,6 +175,7 @@ def dropdb(yes):
 
 def register_cli_commands(flask_app):
     flask_app.cli.add_command(seed)
+    flask_app.cli.add_command(reset_demo)
     flask_app.cli.add_command(create_admin)
     flask_app.cli.add_command(dropdb)
 

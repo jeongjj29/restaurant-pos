@@ -29,8 +29,8 @@ Before the first deployment:
   point-in-time recovery.
 - Configure HTTPS and redirect HTTP to HTTPS at the platform load balancer or
   reverse proxy.
-- Rate-limit `POST /api/auth/login` at the trusted edge and alert on sustained
-  authentication failures.
+- Keep the built-in application rate limits enabled, add trusted-edge limits for
+  distributed traffic, and alert on sustained authentication failures.
 - Generate a unique JWT secret and store it in the platform's secret manager.
 - Set the required application environment variables below.
 - Build the repository-root `Dockerfile` and expose the platform's assigned
@@ -69,9 +69,11 @@ existing login cookies, which is useful during a suspected credential leak but
 should otherwise be planned.
 
 The image already sets `APP_ENV=production`, `CLIENT_DIST_DIR=/app/client`,
-`JWT_COOKIE_SECURE=true`, `PORT=8080`, `RUN_MIGRATIONS=true`, and
-`WEB_CONCURRENCY=2`. Declare the security-sensitive values explicitly in the
-host configuration so their intended state remains visible.
+`JWT_COOKIE_SECURE=true`, `JWT_ACCESS_TOKEN_MINUTES=60`, `PORT=8080`,
+`RATELIMIT_ENABLED=true`, and the demo seed/reset switches to `false`. The
+generic image uses `RUN_MIGRATIONS=true`; `Dockerfile.vercel` uses `false` so a
+single deliberate release command owns migrations. Declare security-sensitive
+values explicitly in host configuration so their intended state remains visible.
 
 ## Generic managed-container procedure
 
@@ -108,12 +110,16 @@ The product names differ by host, but the deployment sequence is the same:
 | `TRUST_PROXY_COUNT` | `0` | Exact number of trusted reverse-proxy hops that set `X-Forwarded-For`, `X-Forwarded-Proto`, and `X-Forwarded-Host`. Do not guess or overstate this count. |
 | `FORWARDED_ALLOW_IPS` | `127.0.0.1,::1` | Gunicorn proxy peers allowed to supply forwarded headers. Use the platform's documented proxy addresses. Use `*` only when the container cannot be reached except through a trusted proxy. |
 | `JWT_COOKIE_SAMESITE` | `Lax` | Keep `Lax` for the same-origin deployment. `Strict` is more restrictive; `None` requires Secure cookies and a separately reviewed cross-site design. |
-| `JWT_ACCESS_TOKEN_MINUTES` | `480` | Login-cookie lifetime in minutes. Shorten to match the operating environment. |
+| `JWT_ACCESS_TOKEN_MINUTES` | `60` in production | Login-cookie lifetime in minutes. The local development default remains `480`. |
 | `MIN_PASSWORD_LENGTH` | `12` | Minimum length for new or bootstrap user passwords; values below `8` are rejected. |
 | `SALES_TAX_RATE` | `0.08875` | Decimal fraction from `0` through `1`; set this for the deployment's tax policy. The authenticated client reads this runtime value from the API. |
 | `MAX_CONTENT_LENGTH` | `1048576` | Maximum request body size in bytes. |
 | `DATABASE_POOL_RECYCLE_SECONDS` | `300` | Recycle interval for database connections. Match database/provider limits. |
 | `CORS_ORIGINS` | unset | Leave unset for the supported same-origin topology. If needed, use only exact comma-separated origins; wildcard CORS is rejected in production. |
+| `RATELIMIT_ENABLED` | `true` in production | Keep application-level throttling enabled. It complements rather than replaces the trusted edge. |
+| `API_RATE_LIMIT` | `300 per minute` | Default per-client, per-route limit. Measure normal traffic before tightening it. |
+| `LOGIN_RATE_LIMIT` | `10 per minute` | Stricter per-client limit for `POST /api/auth/login`. |
+| `RATELIMIT_STORAGE_URI` | `memory://` | Appropriate for the current single-worker Vercel demo. Use shared Redis-compatible storage when running multiple workers or replicas, and retain edge limits. |
 
 The current Content Security Policy permits API connections to the same origin.
 A separately hosted frontend is not a drop-in configuration: review the CSP,
@@ -126,12 +132,11 @@ Vite reads these while building the SPA, not when the final container starts:
 
 | Variable | Production default | Guidance |
 | --- | ---: | --- |
-| `VITE_SHOW_DEMO_CREDENTIALS` | `false` | Never enable this on a public deployment; it displays and fills the known seeded credentials. Development mode shows the helper automatically. |
 | `VITE_MIN_PASSWORD_LENGTH` | `12` | Client-side validation for employee creation. Keep it equal to the backend's `MIN_PASSWORD_LENGTH`. |
 
-The current Dockerfile does not provide either variable, so its production
-image deliberately uses the defaults above. Changing a runtime service
-variable after the image is built has no effect on Vite code. Keep
+The current Dockerfile does not provide this variable, so its production image
+deliberately uses the default above. Changing a runtime service variable after
+the image is built has no effect on Vite code. Keep
 `MIN_PASSWORD_LENGTH=12` for the standard image; a different value requires a
 deliberately configured frontend build as well as the matching backend value.
 
@@ -223,15 +228,48 @@ Production seeding has two independent gates:
   `APP_ENV=production`.
 
 Both default to `false` at the deployment level. Leave them false for real
-restaurant or customer data. The bundled seed creates known accounts
-(`admin`, `manager`, and `waiter`) with the known password `password`; enabling
-it on a public deployment creates an immediate credential risk.
+restaurant or customer data. The bundled seed creates only the known public
+account `demo` with password `restaurant-demo`. It has the canonical Server role
+and cannot manage users, roles, menu items, tables, or delete orders.
 
-If an isolated, disposable portfolio environment intentionally uses the seed,
-restrict public access, rotate or remove every seeded account before opening
-access, and return `SEED_DATABASE` and `ALLOW_DEMO_SEED` to `false` after the
-one-time operation. The seed is non-destructive and repeatable, but that does
-not make its credentials production-safe.
+Use a dedicated Neon project or branch for the public demo. Do not give Preview
+deployments the production `DATABASE_URL`; either protect previews with Vercel
+Deployment Protection or connect them to a separate disposable branch. Keep the
+Neon connection string server-side and use its pooled TLS endpoint.
+
+Repository configuration cannot enforce account-level provider controls. Before
+sharing the URL, configure a Vercel Firewall rate-limit rule for the login/API
+traffic, turn on usage notifications (and Spend Management with automatic pause
+when the plan supports it), and set a low Neon maximum autoscaling size with
+scale-to-zero. Monitor both providers after publishing because public demo
+credentials make automated traffic expected rather than exceptional.
+
+### Restoring the public demo baseline
+
+The ordinary `seed` command is additive. It deliberately does not remove visitor
+changes. The `reset-demo` command is different: it deletes all application rows,
+including accounts, orders, payments, revoked tokens, catalog data, and tables,
+then recreates the known seed baseline. It does not drop the migrated schema.
+
+Run it only against the isolated demo database:
+
+```bash
+APP_ENV=production \
+ALLOW_DEMO_RESET=true \
+flask --app manage:app reset-demo \
+  --confirm reset-restaurant-pos-demo
+```
+
+`ALLOW_DEMO_RESET` defaults to `false`, and the confirmation phrase is always
+required. Prefer injecting `ALLOW_DEMO_RESET=true` only into this one command;
+do not save it as a Vercel application variable. The public application has no
+HTTP reset endpoint. After a reset, previously issued sessions refer to deleted
+users and are rejected.
+
+Create and retain a separate `pg_dump` or Neon restore point before publishing.
+On plans with a short point-in-time restore window, the independent dump is the
+long-lived recovery baseline. A scheduled reset should invoke this CLI command
+from a trusted job with scoped secrets, never through a public route.
 
 ## Health checks and smoke test
 
@@ -339,6 +377,8 @@ Confirm all of the following before directing users to the deployment:
   actual network topology.
 - The trusted edge rate-limits login attempts and authentication-failure alerts
   reach an operator.
+- Application responses include rate-limit headers and repeated login attempts
+  receive HTTP `429`.
 - `/api/health` and `/api/ready` are healthy, and readiness fails when database
   access is intentionally removed in a staging exercise.
 - Migrations report the expected current revision.
@@ -348,4 +388,7 @@ Confirm all of the following before directing users to the deployment:
   in browser local storage.
 - Backups, log retention, alerts, and a previous image rollback are configured
   and have an owner.
-- `SEED_DATABASE` and `ALLOW_DEMO_SEED` are false.
+- `SEED_DATABASE`, `ALLOW_DEMO_SEED`, and `ALLOW_DEMO_RESET` are false.
+- Preview deployments cannot reach the production demo database.
+- The UI identifies the environment as a shared demo and tells visitors not to
+  submit real customer or payment data.

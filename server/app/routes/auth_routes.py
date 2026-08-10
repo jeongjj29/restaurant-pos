@@ -1,4 +1,4 @@
-from flask import Blueprint, make_response
+from flask import Blueprint, current_app, make_response
 from flask_jwt_extended import (
     create_access_token,
     get_jwt,
@@ -9,7 +9,7 @@ from flask_jwt_extended import (
 from sqlalchemy.exc import SQLAlchemyError
 from app.authorization import access_level_required, current_user
 from app.models import User, TokenBlockList
-from app.extensions import db, jwt
+from app.extensions import db, jwt, limiter
 from .utils import get_json_object
 
 auth_bp = Blueprint("auth_bp", __name__, url_prefix="/api/auth")
@@ -27,6 +27,7 @@ def revoked_token_callback(jwt_header, jwt_payload):
 
 
 @auth_bp.route("/login", methods=["POST"])
+@limiter.limit(lambda: current_app.config["LOGIN_RATE_LIMIT"])
 def login():
     data = get_json_object({"username", "password"})
 

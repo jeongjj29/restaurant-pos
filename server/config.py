@@ -57,7 +57,7 @@ class Config:
     JWT_COOKIE_CSRF_PROTECT = True
     JWT_SESSION_COOKIE = False
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(
-        minutes=env_int("JWT_ACCESS_TOKEN_MINUTES", 480)
+        minutes=env_int("JWT_ACCESS_TOKEN_MINUTES", 60 if PRODUCTION else 480)
     )
 
     SQLALCHEMY_DATABASE_URI = normalize_database_url(
@@ -78,6 +78,13 @@ class Config:
     SALES_TAX_RATE = os.getenv("SALES_TAX_RATE", "0.08875")
     MIN_PASSWORD_LENGTH = env_int("MIN_PASSWORD_LENGTH", 12 if PRODUCTION else 8)
     ALLOW_DEMO_SEED = env_bool("ALLOW_DEMO_SEED", False)
+    ALLOW_DEMO_RESET = env_bool("ALLOW_DEMO_RESET", False)
+
+    RATELIMIT_ENABLED = env_bool("RATELIMIT_ENABLED", PRODUCTION)
+    RATELIMIT_DEFAULT = os.getenv("API_RATE_LIMIT", "300 per minute")
+    RATELIMIT_STORAGE_URI = os.getenv("RATELIMIT_STORAGE_URI", "memory://")
+    RATELIMIT_HEADERS_ENABLED = True
+    LOGIN_RATE_LIMIT = os.getenv("LOGIN_RATE_LIMIT", "10 per minute")
 
     SESSION_COOKIE_SECURE = PRODUCTION
     SESSION_COOKIE_HTTPONLY = True

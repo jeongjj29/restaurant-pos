@@ -6,7 +6,7 @@ from unittest.mock import patch
 from sqlalchemy.exc import SQLAlchemyError
 
 from app import create_app
-from app.extensions import db
+from app.extensions import db, limiter
 from app.models import Role, TokenBlockList, User
 
 
@@ -24,6 +24,9 @@ class AuthAndHealthRoutesTestCase(unittest.TestCase):
                 "JWT_COOKIE_CSRF_PROTECT": True,
                 "JWT_COOKIE_SECURE": False,
                 "MIN_PASSWORD_LENGTH": 8,
+                "RATELIMIT_ENABLED": True,
+                "RATELIMIT_DEFAULT": "1000 per minute",
+                "LOGIN_RATE_LIMIT": "2 per minute",
             }
         )
 
@@ -44,6 +47,9 @@ class AuthAndHealthRoutesTestCase(unittest.TestCase):
             user.password_hash = "secure-password"
             db.session.add(user)
             db.session.commit()
+
+    def setUp(self):
+        limiter.reset()
 
     @classmethod
     def tearDownClass(cls):
@@ -158,6 +164,23 @@ class AuthAndHealthRoutesTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.get_json()["message"], "Invalid credentials")
         self.assertIsNone(client.get_cookie("access_token_cookie"))
+
+    def test_login_is_rate_limited_per_client(self):
+        client = self.app.test_client()
+        for _ in range(2):
+            response = client.post(
+                "/api/auth/login",
+                json={"username": "manager01", "password": "wrong-password"},
+            )
+            self.assertEqual(response.status_code, 401)
+
+        limited_response = client.post(
+            "/api/auth/login",
+            json={"username": "manager01", "password": "wrong-password"},
+        )
+        self.assertEqual(limited_response.status_code, 429)
+        self.assertEqual(limited_response.get_json()["message"], "Too many requests")
+        self.assertIn("Retry-After", limited_response.headers)
 
     def test_login_rejects_non_string_credentials_without_a_server_error(self):
         client = self.app.test_client()

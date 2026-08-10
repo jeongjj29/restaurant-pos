@@ -263,10 +263,12 @@ class ManageCliCommandsTestCase(unittest.TestCase):
             sentinel = User.query.filter_by(username="sentinel").one()
             self.assertTrue(sentinel.authenticate("keep-this-password"))
 
-            admin = User.query.filter_by(username="admin").one()
-            waiter = User.query.filter_by(username="waiter").one()
-            self.assertTrue(admin.authenticate("password"))
-            self.assertEqual(waiter.role.name, "Server")
+            demo = User.query.filter_by(username="demo").one()
+            self.assertTrue(demo.authenticate("restaurant-demo"))
+            self.assertEqual(demo.role.name, "Server")
+            self.assertIsNone(User.query.filter_by(username="admin").first())
+            self.assertIsNone(User.query.filter_by(username="manager").first())
+            self.assertIsNone(User.query.filter_by(username="waiter").first())
 
             seeded_tables = Table.query.filter(
                 Table.number.in_([1, 2, 3, 4, 5, 21, 22, 41, 42, 43, 44])
@@ -282,10 +284,99 @@ class ManageCliCommandsTestCase(unittest.TestCase):
             self.assertEqual(Order.query.filter_by(status="closed").count(), 1)
             self.assertEqual(Payment.query.count(), 1)
 
-        login_response = self.app.test_client().post(
-            "/api/auth/login", json={"username": "admin", "password": "password"}
+        demo_client = self.app.test_client()
+        login_response = demo_client.post(
+            "/api/auth/login",
+            json={"username": "demo", "password": "restaurant-demo"},
         )
         self.assertEqual(login_response.status_code, 200)
+        csrf_cookie = demo_client.get_cookie("csrf_access_token")
+        privileged_response = demo_client.post(
+            "/api/users",
+            json={},
+            headers={"X-CSRF-TOKEN": csrf_cookie.value},
+        )
+        self.assertEqual(privileged_response.status_code, 403)
+        self.assertEqual(
+            privileged_response.get_json()["message"], "Insufficient permissions"
+        )
+
+    def test_reset_demo_requires_confirmation_and_rebuilds_a_known_baseline(self):
+        rejected = self.runner.invoke(args=["reset-demo", "--confirm", "wrong"])
+        self.assertNotEqual(rejected.exit_code, 0)
+        self.assertIn("confirmation did not match", rejected.output)
+
+        with self.app.app_context():
+            sentinel_role = Role.query.filter_by(name="Auditor").first()
+            if sentinel_role is None:
+                sentinel_role = Role(name="Auditor", access_level=5)
+                db.session.add(sentinel_role)
+                db.session.flush()
+            if User.query.filter_by(username="sentinel").first() is None:
+                db.session.add(
+                    User(
+                        username="sentinel",
+                        first_name="Safe",
+                        last_name="User",
+                        email="safe@example.com",
+                        role=sentinel_role,
+                        password_hash="keep-this-password",
+                    )
+                )
+            db.session.commit()
+
+        result = self.runner.invoke(
+            args=["reset-demo", "--confirm", "reset-restaurant-pos-demo"]
+        )
+
+        self.assertEqual(result.exit_code, 0, result.output)
+        self.assertIn("Reset the demo database", result.output)
+        with self.app.app_context():
+            self.assertEqual(User.query.count(), 1)
+            self.assertIsNone(User.query.filter_by(username="sentinel").first())
+            demo = User.query.filter_by(username="demo").one()
+            self.assertEqual(demo.role.name, "Server")
+            self.assertTrue(demo.authenticate("restaurant-demo"))
+            self.assertEqual(Order.query.count(), 2)
+            self.assertEqual(Payment.query.count(), 1)
+
+    def test_reset_demo_is_blocked_in_production_without_explicit_gate(self):
+        fd, db_path = tempfile.mkstemp(suffix=".db")
+        os.close(fd)
+        production_app = create_app(
+            {
+                "TESTING": False,
+                "DEBUG": False,
+                "ENVIRONMENT": "production",
+                "PRODUCTION": False,
+                "ALLOW_DEMO_RESET": False,
+                "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}",
+                "JWT_SECRET_KEY": "test-jwt-secret",
+            }
+        )
+        register_cli_commands(production_app)
+        runner = production_app.test_cli_runner()
+
+        try:
+            with production_app.app_context():
+                db.create_all()
+                role = Role(name="Sentinel", access_level=1)
+                db.session.add(role)
+                db.session.commit()
+
+            result = runner.invoke(
+                args=["reset-demo", "--confirm", "reset-restaurant-pos-demo"]
+            )
+
+            self.assertNotEqual(result.exit_code, 0)
+            self.assertIn("disabled in production", result.output)
+            with production_app.app_context():
+                self.assertEqual(Role.query.filter_by(name="Sentinel").count(), 1)
+        finally:
+            with production_app.app_context():
+                db.session.remove()
+                db.drop_all()
+            os.remove(db_path)
 
     def test_dropdb_aborts_without_confirmation(self):
         result = self.runner.invoke(args=["dropdb"], input="n\n")

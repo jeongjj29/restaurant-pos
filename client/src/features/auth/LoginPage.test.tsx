@@ -45,7 +45,7 @@ describe("LoginPage", () => {
     localStorage.clear();
   });
 
-  it("fills local demo credentials without submitting", async () => {
+  it("fills the constrained public demo credentials without submitting", async () => {
     renderLoginPage();
     const user = userEvent.setup();
 
@@ -53,8 +53,9 @@ describe("LoginPage", () => {
       screen.getByRole("button", { name: "Fill demo credentials" })
     );
 
-    expect(screen.getByLabelText("Username")).toHaveValue("admin");
-    expect(screen.getByLabelText("Password")).toHaveValue("password");
+    expect(screen.getByLabelText("Username")).toHaveValue("demo");
+    expect(screen.getByLabelText("Password")).toHaveValue("restaurant-demo");
+    expect(screen.getByText(/do not enter real customer or payment data/i)).toBeInTheDocument();
     expect(mockedAxios.post).not.toHaveBeenCalled();
   });
 

@@ -13,6 +13,7 @@ import { fetchRoles } from "@employees/slices/rolesSlice";
 import DataSyncStatus from "./DataSyncStatus";
 import { hasMinimumAccess, MANAGER_ACCESS_LEVEL } from "@auth/access";
 import { fetchRuntimeConfig } from "@features/config/runtimeConfigSlice";
+import DemoNotice from "./DemoNotice";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -44,8 +45,9 @@ function App() {
   }, [refreshData]);
 
   return (
-    <div className="h-screen bg-transparent text-text-primary p-2 md:p-3">
-      <div className="flex h-full min-h-0 flex-col gap-2 md:flex-row">
+    <div className="flex h-screen flex-col gap-2 bg-transparent p-2 text-text-primary md:p-3">
+      <DemoNotice />
+      <div className="flex min-h-0 flex-1 flex-col gap-2 md:flex-row">
         <aside className="w-full md:w-56 md:h-full">
           <NavBar />
         </aside>

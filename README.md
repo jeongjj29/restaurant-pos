@@ -10,7 +10,7 @@ payments, menu management, employees, tables, and live sales summaries.
 - Partial or full payment settlement with automatic order closing
 - Menu, employee, and table management with role-aware permissions
 - Live revenue, ticket, order-status, and payment-method summaries
-- Idempotent, non-destructive local demo seeding
+- Idempotent sample seeding plus a guarded, deterministic demo reset
 
 ## Tech stack
 
@@ -38,8 +38,8 @@ The API runs at `http://localhost:5555`. Check it at
 `http://localhost:5555/api/health`.
 
 Run migrations before seeding. The seed can be run again safely: it merges the
-bundled demo catalog and users without dropping existing data, and it creates
-sample orders only when the database has no orders.
+bundled demo catalog and limited public account without dropping existing data,
+and it creates sample orders only when the database has no orders.
 
 ### 2. Start the frontend
 
@@ -56,12 +56,13 @@ Open `http://localhost:5173`. Vite proxies `/api` requests to Flask on port
 
 ### 3. Sign in
 
-- Username: `admin`
-- Password: `password`
+- Username: `demo`
+- Password: `restaurant-demo`
 
 The login page also has a **Fill demo credentials** button. It fills the form
-without submitting it. These credentials are local-demo data and must not be
-used for an internet-facing deployment.
+without submitting it. The shared account has Server-level access: visitors can
+exercise order and payment flows, but cannot manage users, roles, menu items, or
+tables.
 
 ## Suggested demo walkthrough
 
@@ -70,9 +71,8 @@ used for an internet-facing deployment.
    table starts a new order.
 3. Open **Orders -> All Orders**, select an open order, and settle it. Partial
    payments keep it open; the exact remaining payment closes it.
-4. Open **Settings -> Reports** to show recorded revenue and payment mix.
-5. Use **Settings -> Menu**, **Employees**, or **Tables** to demonstrate
-   create/edit flows and floor-layout management.
+4. Use a separately created, private administrator when presenting **Settings**,
+   reports, menu, employee, or table management. Never publish that password.
 
 The seed also includes one paid takeout order so reports are populated on first
 launch.
@@ -92,6 +92,16 @@ publishing the app. In particular, production requires:
   HttpOnly cookies;
 - database migrations and an initial administrator;
 - provider-managed backups, logs, and health checks.
+
+For a public portfolio deployment, keep PostgreSQL because stateful order and
+payment behavior is part of the demo, but use a dedicated disposable database
+that contains no real data. The production image enables application-level rate
+limits, uses one-hour login cookies, disables automatic seed/reset operations,
+and displays a warning not to enter real customer or payment information.
+
+After deploying a new demo baseline, remove older seeded privileged accounts by
+running the guarded reset described in [DEPLOYMENT.md](DEPLOYMENT.md). This is a
+destructive operation and should only target the isolated demo database.
 
 `compose.production.yml` is useful for a production-like local smoke test. Its
 published port is plain HTTP, so it is not an internet-ready TLS edge and should

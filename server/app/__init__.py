@@ -4,7 +4,7 @@ from werkzeug.exceptions import RequestEntityTooLarge
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import Config, validate_runtime_config
-from .extensions import db, migrate, api, bcrypt, cors, jwt
+from .extensions import db, migrate, api, bcrypt, cors, jwt, limiter
 from .routes import register_blueprints
 
 
@@ -36,6 +36,7 @@ def create_app(config_overrides=None):
             supports_credentials=True,
         )
     jwt.init_app(app)
+    limiter.init_app(app)
 
     register_blueprints(app)
 
@@ -56,6 +57,10 @@ def create_app(config_overrides=None):
     @app.errorhandler(RequestEntityTooLarge)
     def handle_request_too_large(error):
         return {"message": "Request body is too large"}, 413
+
+    @app.errorhandler(429)
+    def handle_rate_limit(error):
+        return {"message": "Too many requests"}, 429
 
     @app.errorhandler(404)
     def handle_not_found(error):

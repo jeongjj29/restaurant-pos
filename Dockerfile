@@ -32,13 +32,18 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 FROM python:3.12-slim-bookworm@sha256:4766d8b510c428e595d74b9cc5bbb2fae8e26316fffb4adc89908d79aacd58a2 AS runtime
 
 ENV APP_ENV=production \
+    ALLOW_DEMO_RESET=false \
+    ALLOW_DEMO_SEED=false \
     CLIENT_DIST_DIR=/app/client \
+    JWT_ACCESS_TOKEN_MINUTES=60 \
     JWT_COOKIE_SECURE=true \
     PATH=/opt/venv/bin:$PATH \
     PORT=8080 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    RATELIMIT_ENABLED=true \
     RUN_MIGRATIONS=true \
+    SEED_DATABASE=false \
     WEB_CONCURRENCY=2
 
 RUN apt-get update \

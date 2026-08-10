@@ -5,14 +5,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { login } from "@auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { LoginFormValues } from "./types";
+import DemoNotice from "@components/DemoNotice";
 
 const DEMO_CREDENTIALS: LoginFormValues = {
-  username: "admin",
-  password: "password",
+  username: "demo",
+  password: "restaurant-demo",
 };
-
-const showDemoCredentials =
-  import.meta.env.DEV || import.meta.env.VITE_SHOW_DEMO_CREDENTIALS === "true";
 
 const safeReturnPath = (state: unknown) => {
   if (!state || typeof state !== "object" || !("from" in state)) return "/";
@@ -37,7 +35,10 @@ function LoginPage() {
   });
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-3 px-4 py-4">
+      <div className="w-full max-w-md">
+        <DemoNotice />
+      </div>
       <div className="glass-panel w-full max-w-md rounded-2xl p-8">
         <p className="mb-2 text-xs uppercase tracking-[0.2em] text-text-secondary">
           Staff Access
@@ -69,34 +70,34 @@ function LoginPage() {
         >
           {({ isSubmitting, setValues }) => (
             <Form className="space-y-4">
-              {showDemoCredentials && (
-                <div className="rounded-xl border border-accent/35 bg-accent/10 p-3">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-soft">
-                        Local demo account
-                      </p>
-                      <p className="mt-1 text-sm text-text-secondary">
-                        Username <code className="text-text-primary">admin</code> ·
-                        Password <code className="text-text-primary">password</code>
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        void setValues(DEMO_CREDENTIALS, false);
-                        setLoginError(null);
-                      }}
-                      className="rounded-lg border border-accent/50 px-3 py-2 text-sm font-semibold text-accent-soft transition-colors hover:bg-accent/15"
-                    >
-                      Fill demo credentials
-                    </button>
+              <div className="rounded-xl border border-accent/35 bg-accent/10 p-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-soft">
+                      Public demo account
+                    </p>
+                    <p className="mt-1 text-sm text-text-secondary">
+                      Username <code className="text-text-primary">demo</code> ·
+                      Password{" "}
+                      <code className="text-text-primary">restaurant-demo</code>
+                    </p>
                   </div>
-                  <p className="mt-2 text-xs text-text-disabled">
-                    This only fills the local demo form. Select Login to continue.
-                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void setValues(DEMO_CREDENTIALS, false);
+                      setLoginError(null);
+                    }}
+                    className="rounded-lg border border-accent/50 px-3 py-2 text-sm font-semibold text-accent-soft transition-colors hover:bg-accent/15"
+                  >
+                    Fill demo credentials
+                  </button>
                 </div>
-              )}
+                <p className="mt-2 text-xs text-text-disabled">
+                  This account can run order workflows but cannot manage users,
+                  roles, menu items, or tables.
+                </p>
+              </div>
 
               <div>
                 <label
